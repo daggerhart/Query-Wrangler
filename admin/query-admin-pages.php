@@ -233,23 +233,23 @@ function qw_save_settings( $post ) {
 	$settings->save();
 }
 
-function qw_settings_page() {
-	$settings = QW_Settings::get_instance();
-	$settings_args = array(
-		'edit_themes'              => qw_all_edit_themes(),
-		'meta_value_field_options' => array(
-			0 => 'Default handler',
-			1 => 'New handler (beta)',
-		),
-	);
-	$settings_args = array_merge( $settings_args, $settings->values );
-	$args          = array(
-		'title'   => 'Query Wrangler Settings',
-		'content' => theme( 'query_settings', $settings_args )
-	);
-
-	print theme( 'admin_wrapper', $args );
-}
+//function qw_settings_page() {
+//	$settings = QW_Settings::get_instance();
+//	$settings_args = array(
+//		'edit_themes'              => qw_all_edit_themes(),
+//		'meta_value_field_options' => array(
+//			0 => 'Default handler',
+//			1 => 'New handler (beta)',
+//		),
+//	);
+//	$settings_args = array_merge( $settings_args, $settings->values );
+//	$args          = array(
+//		'title'   => 'Query Wrangler Settings',
+//		'content' => theme( 'query_settings', $settings_args )
+//	);
+//
+//	print theme( 'admin_wrapper', $args );
+//}
 
 /*
  * Create Query Page
