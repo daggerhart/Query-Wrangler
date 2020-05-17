@@ -2,7 +2,7 @@
 
 namespace QueryWrangler\Handler;
 
-interface HandlerManagerInterface {
+interface HandlerTypeManagerInterface {
 
 	/**
 	 * Unique name for the type of items managed.
@@ -10,6 +10,13 @@ interface HandlerManagerInterface {
 	 * @return string
 	 */
 	public function type();
+
+	/**
+	 * Whether or not this type of handler item can be used more than once per query.
+	 *
+	 * @return bool
+	 */
+	public function multiple();
 
 	/**
 	 * Gather all item types of the handler type.

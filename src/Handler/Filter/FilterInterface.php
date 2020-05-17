@@ -34,6 +34,7 @@ interface FilterInterface extends HandlerItemTypeInterface {
 	 * HTML form output for the administration configuration of this filter.
 	 *
 	 * @param array $filter
+	 *
 	 * @return string
 	 */
 	public function settingsForm( array $filter );

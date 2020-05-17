@@ -10,9 +10,10 @@ use QueryWrangler\Admin\MetaBox\QueryEditor;
 use QueryWrangler\Admin\MetaBox\QueryPreview;
 use QueryWrangler\Admin\Page\Import;
 use QueryWrangler\Admin\Page\Settings;
-use QueryWrangler\Handler\Field\FieldManager;
-use QueryWrangler\Handler\Filter\FilterManager;
-use QueryWrangler\Handler\Sort\SortManager;
+use QueryWrangler\Handler\Display\DisplayTypeManager;
+use QueryWrangler\Handler\Field\FieldTypeManager;
+use QueryWrangler\Handler\Filter\FilterTypeManager;
+use QueryWrangler\Handler\Sort\SortTypeManager;
 use QueryWrangler\PostType\Query;
 use QueryWrangler\Query\QueryProcessor;
 
@@ -44,9 +45,10 @@ class Loader {
                 'shortcode_compat' => 0,
             ] );
         } );
-		$container->set( 'field.manager', FieldManager::class );
-		$container->set( 'filter.manager', FilterManager::class );
-		$container->set( 'sort.manager', SortManager::class );
+		$container->set( 'handler.display.manager', DisplayTypeManager::class );
+		$container->set( 'handler.field.manager', FieldTypeManager::class );
+		$container->set( 'handler.filter.manager', FilterTypeManager::class );
+		$container->set( 'handler.sort.manager', SortTypeManager::class );
 		$container->set( 'query.processor', QueryProcessor::class );
 		$this->container = $container;
 

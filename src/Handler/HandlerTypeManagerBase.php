@@ -8,7 +8,7 @@ use Kinglet\Invoker\InvokerInterface;
 use Kinglet\Registry;
 use Kinglet\Template\RendererInterface;
 
-abstract class HandlerManagerBase extends Registry implements HandlerManagerInterface, ContainerInjectionInterface {
+abstract class HandlerTypeManagerBase extends Registry implements HandlerTypeManagerInterface, ContainerInjectionInterface {
 
 	/**
 	 * @var InvokerInterface

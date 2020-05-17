@@ -25,6 +25,7 @@ function qw_all_edit_themes() {
 }
 
 /*
+ * @todo - DONE
  * Basic Settings
  */
 function qw_all_basic_settings() {
@@ -39,6 +40,7 @@ function qw_all_basic_settings() {
 }
 
 /*
+ * @todo - DONE
  * Fields Hook
  */
 function qw_all_fields() {
@@ -62,6 +64,7 @@ function qw_all_fields() {
 }
 
 /*
+ * @todo - DONE
  * filters Hook
  */
 function qw_all_filters() {
@@ -113,6 +116,8 @@ function qw_all_overrides() {
 }
 
 /*
+ * @todo - DONE
+ *
  * Sort Options Hook
  */
 function qw_all_sort_options() {

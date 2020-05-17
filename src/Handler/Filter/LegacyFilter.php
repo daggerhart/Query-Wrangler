@@ -87,7 +87,7 @@ class LegacyFilter implements FilterInterface, FilterExposableInterface {
 	 * @inheritDoc
 	 */
 	public function displayTypes() {
-		return $this->registration['query_display_types'];
+		return $this->registration['query_display_types'] ?? [];
 	}
 
 	/**
@@ -98,9 +98,26 @@ class LegacyFilter implements FilterInterface, FilterExposableInterface {
 	}
 
 	/**
+	 * Whether or not this Filter previous a "basic" in older version of QW.
+	 *
+	 * @return bool
+	 */
+	public function isLegacyBasic() {
+		return isset( $this->registration['option_type'] );
+	}
+
+	/**
 	 * @inheritDoc
 	 */
 	public function process( array $args, array $filter ) {
+		if ( $this->isLegacyBasic() ) {
+			/*
+			 * @todo - need to make sure to set $filter['values'], or change this.
+			 * @todo - was hard-coded in QW 1.x - qw_generate_query_args()
+			 */
+			$args[ $this->type() ] = $filter['values'][ $this->type() ];
+		}
+
 		if ( !empty( $this->registration['query_args_callback'] ) && is_callable( $this->registration['query_args_callback'] ) ) {
 			return $this->invoker->call( $this->registration['query_args_callback'], [
 				'args' => $args,

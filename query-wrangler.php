@@ -37,6 +37,13 @@ define( 'QW_DEFAULT_THEME', 'views' );
 define( 'QW_FORM_PREFIX', "qw-query-options" );
 
 
+require_once QW_PLUGIN_DIR . '/vendor/autoload.php';
+
+$loader = new \QueryWrangler\Loader();
+
+return;
+// --------------------------------------------------------------------------------
+
 include_once QW_PLUGIN_DIR . '/includes/class-qw-settings.php';
 include_once QW_PLUGIN_DIR . '/includes/class-qw-query.php';
 include_once QW_PLUGIN_DIR . '/widget.query.php';
@@ -173,42 +180,42 @@ add_action( 'admin_init', 'qw_check_version', 901 );
  * All my hook_menu implementations
  */
 function qw_menu() {
-	global $menu;
-	// get the first available menu placement around 30, trivial, I know
-	$menu_placement = 1000;
-	for ( $i = 30; $i < 100; $i ++ ) {
-		if ( ! isset( $menu[ $i ] ) ) {
-			$menu_placement = $i;
-			break;
-		}
-	}
+//	global $menu;
+//	// get the first available menu placement around 30, trivial, I know
+//	$menu_placement = 1000;
+//	for ( $i = 30; $i < 100; $i ++ ) {
+//		if ( ! isset( $menu[ $i ] ) ) {
+//			$menu_placement = $i;
+//			break;
+//		}
+//	}
 	// http://codex.wordpress.org/Function_Reference/add_menu_page
-	$list_page = add_menu_page( 'Query Wrangler',
-		'Query Wrangler',
-		'manage_options',
-		'query-wrangler',
-		'qw_page_handler',
-		'',
-		$menu_placement );
+//	$list_page = add_menu_page( 'Query Wrangler',
+//		'Query Wrangler',
+//		'manage_options',
+//		'query-wrangler',
+//		'qw_page_handler',
+//		'',
+//		$menu_placement );
 	// http://codex.wordpress.org/Function_Reference/add_submenu_page
-	$create_page = add_submenu_page( 'query-wrangler',
-		'Create New Query',
-		'Add New',
-		'manage_options',
-		'qw-create',
-		'qw_create_query_page' );
-	$import_page = add_submenu_page( 'query-wrangler',
-		'Import',
-		'Import',
-		'manage_options',
-		'qw-import',
-		'qw_import_page' );
-	$settings_page = add_submenu_page( 'query-wrangler',
-		'Settings',
-		'Settings',
-		'manage_options',
-		'qw-settings',
-		'qw_settings_page' );
+//	$create_page = add_submenu_page( 'query-wrangler',
+//		'Create New Query',
+//		'Add New',
+//		'manage_options',
+//		'qw-create',
+//		'qw_create_query_page' );
+//	$import_page = add_submenu_page( 'query-wrangler',
+//		'Import',
+//		'Import',
+//		'manage_options',
+//		'qw-import',
+//		'qw_import_page' );
+//	$settings_page = add_submenu_page( 'query-wrangler',
+//		'Settings',
+//		'Settings',
+//		'manage_options',
+//		'qw-settings',
+//		'qw_settings_page' );
 	//$debug_page  = add_submenu_page( 'query-wrangler', 'Debug', 'Debug', 'manage_options', 'qw-debug', 'qw_debug');
 }
 
