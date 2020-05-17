@@ -1,0 +1,26 @@
+{
+    "name": "daggerhart/query-wrangler",
+    "description": "WordPress query plugin",
+    "type": "wordpress-plugin",
+    "license": "GPL2",
+    "authors": [
+        {
+            "name": "Jonathan Daggerhart",
+            "email": "jonathan@daggerhart.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/daggerhart/kinglet.git"
+        }
+    ],
+    "require": {
+        "daggerhart/kinglet": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "QueryWrangler\\": "src/"
+        }
+    }
+}

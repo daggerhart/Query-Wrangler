@@ -1,0 +1,105 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "03f58dc1ea0e3811e28cc6dfd59e1a9a",
+    "packages": [
+        {
+            "name": "daggerhart/kinglet",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/daggerhart/kinglet.git",
+                "reference": "9dcaa8beba6a18e8906b5363a515f4587801a75c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/daggerhart/kinglet/zipball/9dcaa8beba6a18e8906b5363a515f4587801a75c",
+                "reference": "9dcaa8beba6a18e8906b5363a515f4587801a75c",
+                "shasum": ""
+            },
+            "require": {
+                "psr/container": "^1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kinglet\\": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Jonathan Daggerhart",
+                    "email": "jonathan@daggerhart.com"
+                }
+            ],
+            "description": "WordPress admin classes.",
+            "support": {
+                "source": "https://github.com/daggerhart/kinglet/tree/master",
+                "issues": "https://github.com/daggerhart/kinglet/issues"
+            },
+            "time": "2020-05-15T21:58:39+00:00"
+        },
+        {
+            "name": "psr/container",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/container.git",
+                "reference": "b7ce3b176482dbbc1245ebf52b181af44c2cf55f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/container/zipball/b7ce3b176482dbbc1245ebf52b181af44c2cf55f",
+                "reference": "b7ce3b176482dbbc1245ebf52b181af44c2cf55f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Container\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common Container Interface (PHP FIG PSR-11)",
+            "homepage": "https://github.com/php-fig/container",
+            "keywords": [
+                "PSR-11",
+                "container",
+                "container-interface",
+                "container-interop",
+                "psr"
+            ],
+            "time": "2017-02-14T16:28:37+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "daggerhart/kinglet": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
