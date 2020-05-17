@@ -2,7 +2,10 @@
 
 namespace QueryWrangler\Handler;
 
-interface HandlerTypeManagerInterface {
+use Kinglet\Registry\RegistryInterface;
+use QueryWrangler\Query\QwQuery;
+
+interface HandlerTypeManagerInterface extends RegistryInterface {
 
 	/**
 	 * Unique name for the type of items managed.
@@ -24,5 +27,12 @@ interface HandlerTypeManagerInterface {
 	 * @void
 	 */
 	public function collect();
+
+	/**
+	 * @param QwQuery $query
+	 *
+	 * @return array
+	 */
+	public function getDataFromQuery( QwQuery $query );
 
 }

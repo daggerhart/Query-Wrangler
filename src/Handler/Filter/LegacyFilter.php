@@ -110,6 +110,9 @@ class LegacyFilter implements FilterInterface, FilterExposableInterface {
 	 * @inheritDoc
 	 */
 	public function process( array $args, array $filter ) {
+		if ( empty( $filter['values'] ) && isset( $filter[ $filter['type'] ] ) ) {
+			$filter['values'][ $filter['type'] ] = $filter[ $filter['type'] ];
+		}
 		if ( $this->isLegacyBasic() ) {
 			/*
 			 * @todo - need to make sure to set $filter['values'], or change this.
@@ -119,11 +122,12 @@ class LegacyFilter implements FilterInterface, FilterExposableInterface {
 		}
 
 		if ( !empty( $this->registration['query_args_callback'] ) && is_callable( $this->registration['query_args_callback'] ) ) {
-			return $this->invoker->call( $this->registration['query_args_callback'], [
-				'args' => $args,
+			call_user_func_array( $this->registration['query_args_callback'], [
+				'args' => &$args,
 				'filter' => $filter,
 			] );
 		}
+
 		return $args;
 	}
 

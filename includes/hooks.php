@@ -1,5 +1,6 @@
 <?php
 /*
+ * @todo - DONE
  * All Handlers
  *
  * Handlers are groups of items that can be added and removed from a query
@@ -16,6 +17,7 @@ function qw_all_handlers() {
 }
 
 /*
+ * @todo - SKIPPING
  * Editor themes
  */
 function qw_all_edit_themes() {

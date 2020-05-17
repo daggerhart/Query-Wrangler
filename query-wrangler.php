@@ -41,32 +41,31 @@ require_once QW_PLUGIN_DIR . '/vendor/autoload.php';
 
 $loader = new \QueryWrangler\Loader();
 
-return;
 // --------------------------------------------------------------------------------
 
-include_once QW_PLUGIN_DIR . '/includes/class-qw-settings.php';
-include_once QW_PLUGIN_DIR . '/includes/class-qw-query.php';
-include_once QW_PLUGIN_DIR . '/widget.query.php';
+//include_once QW_PLUGIN_DIR . '/includes/class-qw-settings.php';
+//include_once QW_PLUGIN_DIR . '/includes/class-qw-query.php';
+//include_once QW_PLUGIN_DIR . '/widget.query.php';
 
 /*
  * Init functions
  */
 function qw_init_frontend() {
-	$settings = QW_Settings::get_instance();
+	//$settings = QW_Settings::get_instance();
 
 	// some additional functions to support php 5.2-
 	include_once QW_PLUGIN_DIR . '/includes/php-polyfill.php';
 
 	// include Template Wrangler
-	if ( ! function_exists( 'theme' ) ) {
-		include_once QW_PLUGIN_DIR . '/template-wrangler.php';
-	}
+//	if ( ! function_exists( 'theme' ) ) {
+//		include_once QW_PLUGIN_DIR . '/template-wrangler.php';
+//	}
 	// Wordpress hooks
 	include_once QW_PLUGIN_DIR . '/includes/hooks.php';
 	include_once QW_PLUGIN_DIR . '/includes/exposed.php';
 	include_once QW_PLUGIN_DIR . '/includes/handlers.php';
 	include_once QW_PLUGIN_DIR . '/includes/class-qw-shortcodes.php';
-	QW_Shortcodes::register();
+	//QW_Shortcodes::register();
 
 	// basics
 	include_once QW_PLUGIN_DIR . '/includes/basics/display_title.php';
@@ -95,12 +94,12 @@ function qw_init_frontend() {
 	include_once QW_PLUGIN_DIR . '/includes/fields/taxonomy_terms.php';
 
 	// meta value field as a setting
-	if ( $settings->get( 'meta_value_field_handler', 0 ) ) {
+	//if ( $settings->get( 'meta_value_field_handler', 0 ) ) {
 		include_once QW_PLUGIN_DIR . '/includes/fields/meta_value_new.php';
-	}
-	else {
+	//}
+	//else {
 		include_once QW_PLUGIN_DIR . '/includes/fields/meta_value.php';
-	}
+	//}
 
 	// filters
 	include_once QW_PLUGIN_DIR . '/includes/filters/author.php';
@@ -132,9 +131,12 @@ function qw_init_frontend() {
 	include_once QW_PLUGIN_DIR . '/includes/theme.php';
 	include_once QW_PLUGIN_DIR . '/includes/pages.php';
 	include_once QW_PLUGIN_DIR . '/includes/class-qw-override.php';
-	QW_Override::register();
+	//QW_Override::register();
 
 }
+
+add_action( 'init', 'qw_init_frontend' );
+return;
 
 function qw_admin_init() {
 	$settings = QW_Settings::get_instance();

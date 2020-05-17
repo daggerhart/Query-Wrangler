@@ -15,7 +15,7 @@ class LegacySort implements SortInterface {
 	/**
 	 * @var string
 	 */
-	protected $hook_key;
+	protected $hookKey;
 
 	/**
 	 * @var array
@@ -40,8 +40,8 @@ class LegacySort implements SortInterface {
 	 */
 	public function __construct( $type, array $registration ) {
 		$this->registration = $registration;
-		$this->type = !empty( $this->registration['type'] ) ? $this->type = $this->registration['type'] : $type;
-		$this->hook_key = $type;
+		$this->type = !empty( $this->registration['type'] ) ? $this->registration['type'] : $type;
+		$this->hookKey = $type;
 	}
 
 	/**
@@ -63,6 +63,10 @@ class LegacySort implements SortInterface {
 	 */
 	public function type() {
 		return $this->type;
+	}
+
+	public function hookKey() {
+		return $this->hookKey;
 	}
 
 	/**
@@ -118,11 +122,14 @@ class LegacySort implements SortInterface {
 	 * @inheritDoc
 	 */
 	public function process( array $args, array $sort ) {
+
 		if ( !empty( $this->registration['query_args_callback'] ) && is_callable( $this->registration['query_args_callback'] ) ) {
-			return $this->invoker->call( $this->registration['query_args_callback'], [
-				'args' => $args,
+			call_user_func_array( $this->registration['query_args_callback'], [
+				'args' => &$args,
 				'sort' => $sort,
 			] );
+
+			return $args;
 		}
 
 		// Default pattern.

@@ -5,7 +5,7 @@ namespace QueryWrangler\Handler;
 use Kinglet\Container\ContainerInjectionInterface;
 use Kinglet\Container\ContainerInterface;
 use Kinglet\Invoker\InvokerInterface;
-use Kinglet\Registry;
+use Kinglet\Registry\Registry;
 use Kinglet\Template\RendererInterface;
 
 abstract class HandlerTypeManagerBase extends Registry implements HandlerTypeManagerInterface, ContainerInjectionInterface {

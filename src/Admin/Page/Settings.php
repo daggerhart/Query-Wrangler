@@ -6,7 +6,7 @@ use Kinglet\Admin\Messenger;
 use Kinglet\Admin\PageBase;
 use Kinglet\Form\Form;
 use Kinglet\Form\FormFactory;
-use Kinglet\Repository\OptionRepository;
+use Kinglet\Registry\OptionRepository;
 
 class Settings extends PageBase {
 

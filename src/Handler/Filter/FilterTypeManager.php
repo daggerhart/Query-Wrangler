@@ -4,8 +4,17 @@ namespace QueryWrangler\Handler\Filter;
 
 use QueryWrangler\Handler\Field\LegacyField;
 use QueryWrangler\Handler\HandlerTypeManagerBase;
+use QueryWrangler\Query\QwQuery;
 
 class FilterTypeManager extends HandlerTypeManagerBase {
+
+	/**
+	 * {@inheritDoc}
+	 * @return FilterInterface
+	 */
+	public function get( $key ) {
+		return parent::get( $key );
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -37,7 +46,7 @@ class FilterTypeManager extends HandlerTypeManagerBase {
 			$instance = new LegacyFilter( $type, $item );
 			$instance->setInvoker( $this->invoker );
 			$instance->setRenderer( $this->renderer );
-			$this->set( $type, $instance );
+			$this->set( $instance->type(), $instance );
 		}
 
 		$legacy = apply_filters( 'qw_basics', [] );
@@ -48,7 +57,15 @@ class FilterTypeManager extends HandlerTypeManagerBase {
 			$instance = new LegacyField( $type, $item );
 			$instance->setInvoker( $this->invoker );
 			$instance->setRenderer( $this->renderer );
-			$this->set( $type, $instance );
+			$this->set( $instance->type(), $instance );
 		}
 	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getDataFromQuery( QwQuery $query ) {
+		return $query->getFilters();
+	}
+
 }

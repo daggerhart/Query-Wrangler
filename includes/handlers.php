@@ -3,6 +3,9 @@ add_filter( 'qw_handlers', 'qw_handlers_default' );
 add_filter( 'tw_templates', 'qw_handlers_templates' );
 
 /*
+ * @todo - INPROGRESS
+ * @todo - DONE: title, desc, data, all
+ * @todo - REMAINING: form_prefix, wrapper_template
  * Default handlers
  */
 function qw_handlers_default( $handlers ) {
@@ -83,6 +86,7 @@ function qw_handlers_templates( $templates ) {
 }
 
 /*
+ * @todo - DONE
  * Simple functions for getting handler data from the query options
  */
 function qw_handler_field_data( $options ) {

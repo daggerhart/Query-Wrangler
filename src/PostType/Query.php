@@ -2,7 +2,7 @@
 
 namespace QueryWrangler\PostType;
 
-use Kinglet\Repository\OptionRepository;
+use Kinglet\Registry\OptionRepository;
 
 class Query {
 
@@ -17,6 +17,7 @@ class Query {
 
     /**
      * QWQuery constructor.
+     *
      * @param OptionRepository $settings
      */
 	public function __construct( OptionRepository $settings ) {

@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Primary function for building and displaying a query
  *
  * @param int $query_id Id for the query

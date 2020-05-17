@@ -4,18 +4,18 @@ namespace QueryWrangler\Admin\MetaBox;
 
 use Kinglet\Admin\MetaBoxBase;
 use Kinglet\Form\FormFactory;
-use Kinglet\Repository\RepositoryInterface;
-use QueryWrangler\Query\Query;
+use Kinglet\Registry\RegistryRepositoryInterface;
+use QueryWrangler\Query\QwQuery;
 
 class QueryPreview extends MetaBoxBase {
 
 	/**
-	 * @var RepositoryInterface
+	 * @var RegistryRepositoryInterface
 	 */
 	protected $settings;
 
     /**
-     * @var Query
+     * @var QwQuery
      */
     protected $query;
 
@@ -28,10 +28,10 @@ class QueryPreview extends MetaBoxBase {
      * Preview constructor.
      *
      * @param string|string[] $post_types
-     * @param RepositoryInterface $settings
+     * @param RegistryRepositoryInterface $settings
      * @param FormFactory $form_factory
      */
-    public function __construct( $post_types, RepositoryInterface $settings, FormFactory $form_factory ) {
+    public function __construct( $post_types, RegistryRepositoryInterface $settings, FormFactory $form_factory ) {
         parent::__construct( $post_types );
         $this->settings = $settings;
         $this->formFactory = $form_factory;
@@ -56,34 +56,10 @@ class QueryPreview extends MetaBoxBase {
 	 */
 	public function render( $post ) {
         $is_new = empty( $post->post_title );
-        $this->query = new Query( $post );
+        $this->query = new QwQuery( $post );
 		?>
 		Preview goes here.
 		<?php
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function save( $post_id, $post, $updated ) {
-        $this->query = new Query( $post );
-        $form = $this->form();
-        $submitted = $form->getSubmittedValues();
-        foreach ( $form->getFields() as $field_key => $field ) {
-            if ( isset( $submitted[ $field_key ] ) ) {
-                $this->query->metaUpdate( $field_key, $submitted[ $field_key ] );
-            }
-        }
-	}
-
-	/**
-	 * @return \Kinglet\Form\Form
-	 */
-	public function form() {
-		return $this->formFactory->create( [
-			'form_element' => FALSE,
-			'form_prefix' => $this->id(),
-		] );
 	}
 
 }

@@ -4,18 +4,18 @@ namespace QueryWrangler\Admin\MetaBox;
 
 use Kinglet\Admin\MetaBoxBase;
 use Kinglet\Form\FormFactory;
-use Kinglet\Repository\RepositoryInterface;
-use QueryWrangler\Query\Query;
+use Kinglet\Registry\RegistryRepositoryInterface;
+use QueryWrangler\Query\QwQuery;
 
 class QueryDetails extends MetaBoxBase {
 
 	/**
-	 * @var RepositoryInterface
+	 * @var RegistryRepositoryInterface
 	 */
 	protected $settings;
 
 	/**
-	 * @var Query
+	 * @var QwQuery
 	 */
 	protected $query;
 
@@ -28,10 +28,10 @@ class QueryDetails extends MetaBoxBase {
      * Preview constructor.
      *
      * @param string|string[] $post_types
-     * @param RepositoryInterface $settings
+     * @param RegistryRepositoryInterface $settings
      * @param FormFactory $form_factory
      */
-    public function __construct( $post_types, RepositoryInterface $settings, FormFactory $form_factory ) {
+    public function __construct( $post_types, RegistryRepositoryInterface $settings, FormFactory $form_factory ) {
         parent::__construct( $post_types );
         $this->settings = $settings;
         $this->formFactory = $form_factory;
@@ -56,7 +56,7 @@ class QueryDetails extends MetaBoxBase {
 	 */
 	public function render( $post ) {
         $is_new = empty( $post->post_title );
-        $this->query = new Query( $post );
+        $this->query = new QwQuery( $post );
         $this->d($this->query);
         ?>
 		<code><?php echo $this->query->slug(); ?></code>

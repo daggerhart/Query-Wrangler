@@ -3,8 +3,17 @@
 namespace QueryWrangler\Handler\Display;
 
 use QueryWrangler\Handler\HandlerTypeManagerBase;
+use QueryWrangler\Query\QwQuery;
 
 class DisplayTypeManager extends HandlerTypeManagerBase {
+
+	/**
+	 * {@inheritDoc}
+	 * @return DisplayInterface
+	 */
+	public function get( $key ) {
+		return parent::get( $key );
+	}
 
 	/**
 	 * @inheritDoc
@@ -39,8 +48,14 @@ class DisplayTypeManager extends HandlerTypeManagerBase {
 			$instance = new LegacyDisplay( $type, $item );
 			$instance->setInvoker( $this->invoker );
 			$instance->setRenderer( $this->renderer );
-			$this->set( $type, $instance );
+			$this->set( $instance->type(), $instance );
 		}
 	}
 
+	/**
+	 * @inheritDoc
+	 */
+	public function getDataFromQuery( QwQuery $query ) {
+		return $query->getDisplay();
+	}
 }

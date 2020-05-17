@@ -3,8 +3,17 @@
 namespace QueryWrangler\Handler\Sort;
 
 use QueryWrangler\Handler\HandlerTypeManagerBase;
+use QueryWrangler\Query\QwQuery;
 
 class SortTypeManager extends HandlerTypeManagerBase {
+
+	/**
+	 * {@inheritDoc}
+	 * @return SortInterface
+	 */
+	public function get( $key ) {
+		return parent::get( $key );
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -36,7 +45,14 @@ class SortTypeManager extends HandlerTypeManagerBase {
 			$instance = new LegacySort( $type, $item );
 			$instance->setInvoker( $this->invoker );
 			$instance->setRenderer( $this->renderer );
-			$this->set( $type, $instance );
+			$this->set( $instance->type(), $instance );
 		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getDataFromQuery( QwQuery $query ) {
+		return $query->getSorts();
 	}
 }
