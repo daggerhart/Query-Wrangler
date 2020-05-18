@@ -6,7 +6,7 @@ use Kinglet\Container\ContainerInjectionInterface;
 use Kinglet\Container\ContainerInterface;
 use Kinglet\Entity\QueryInterface;
 use Kinglet\Entity\TypeInterface;
-use Kinglet\Registry\RegistryClassInterface;
+use Kinglet\Registry\ClassRegistryInterface;
 use QueryWrangler\Handler\HandlerManager;
 
 class QueryProcessor implements ContainerInjectionInterface {
@@ -17,12 +17,12 @@ class QueryProcessor implements ContainerInjectionInterface {
 	protected $handlerManager;
 
 	/**
-	 * @var RegistryClassInterface
+	 * @var ClassRegistryInterface
 	 */
 	protected $entityTypeManager;
 
 	/**
-	 * @var RegistryClassInterface
+	 * @var ClassRegistryInterface
 	 */
 	protected $entityQueryManager;
 
@@ -30,10 +30,10 @@ class QueryProcessor implements ContainerInjectionInterface {
 	 * QueryProcessor constructor.
 	 *
 	 * @param HandlerManager $handler_manager
-	 * @param RegistryClassInterface $entity_type_manager
-	 * @param RegistryClassInterface $entity_query_manager
+	 * @param ClassRegistryInterface $entity_type_manager
+	 * @param ClassRegistryInterface $entity_query_manager
 	 */
-	public function __construct( HandlerManager $handler_manager, RegistryClassInterface $entity_type_manager, RegistryClassInterface $entity_query_manager ) {
+	public function __construct( HandlerManager $handler_manager, ClassRegistryInterface $entity_type_manager, ClassRegistryInterface $entity_query_manager ) {
 		$this->handlerManager = $handler_manager;
 		$this->entityTypeManager = $entity_type_manager;
 		$this->entityQueryManager = $entity_query_manager;
@@ -84,7 +84,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 		 * Previously @see qw_generate_query_args()
 		 */
 		$args = [];
-		$filter_manager = $this->handlerManager->get('filter');
+		$filter_manager = $this->handlerManager->get( 'filter' );
 		$filter_manager->collect();
 		foreach ( $filter_manager->getDataFromQuery( $query ) as $name => $item ) {
 			if ( $filter_manager->has( $item['type'] ) ) {
@@ -93,7 +93,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 			}
 		}
 
-		$sort_manager = $this->handlerManager->get('sort');
+		$sort_manager = $this->handlerManager->get( 'sort' );
 		$sort_manager->collect();
 		foreach ( $sort_manager->getDataFromQuery( $query ) as $name => $item ) {
 			if ( $sort_manager->has( $item['type'] ) ) {
@@ -101,6 +101,34 @@ class QueryProcessor implements ContainerInjectionInterface {
 				$args = $sort_type->process( $args, $item );
 			}
 		}
+
+		// @todo - allow display types to affect rendering on their own.
+		/**
+		 * Display handlers render and modify specific parts of the output.
+		 * Some have their own sub-display implementations (like row styles).
+		 *
+		 * - Title (? not implemented in 1.x)
+		 * - Wrapper
+		 *   - Header
+		 *   - Empty
+		 *   - Template Style : Renders rows and row wrapping element. (table|unformatted|list)
+		 *     - Row Style[]  : Collection of rendered Fields.
+		 *       - Fields[]
+		 *         Fields have settings which affect its own output
+		 *   - Pager Style
+		 *   - Footer
+		 *
+		 */
+
+
+//		$display_manager = $this->handlerManager->get( 'display' );
+//		$display_manager->collect();
+//		foreach ( $display_manager->getDataFromQuery( $query ) as $name => $item ) {
+//			if ( $display_manager->has( $item['type'] ) ) {
+//				$display_type = $display_manager->get( $item['type'] );
+//			}
+//		}
+
 		// @todo - exposed forms look
 		// @todo - pagination special handling
 
@@ -117,11 +145,14 @@ class QueryProcessor implements ContainerInjectionInterface {
 
 		// theme output
 		// return
+		$test = [];
 		ob_start();
-		$entity_query->execute( function( $item ) {
+		$entity_query->execute( function( $item ) use( &$test ) {
 			/** @var TypeInterface $item */
+			$test[] = $item->id();
 			echo "{$item->id()} - ".get_the_title()."<hr>";
 		} );
+		print_r($test);
 		$themed = ob_get_clean();
 		return $themed;
 	}

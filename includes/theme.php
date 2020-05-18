@@ -267,6 +267,7 @@ function qw_make_template_part_rows( &$qw_query, $options ) {
 }
 
 /*
+ * @todo - mostly DONE
  * Build array of fields and rows for templating
  *
  * @param object $new_query WP_Query object generated
@@ -444,6 +445,7 @@ function qw_make_fields_rows( &$qw_query, $options ) {
 }
 
 /**
+ * @todo - DONE
  * Convert multi-dimensional groups of rows into single-dimension of rows
  *
  * @param $groups
@@ -483,6 +485,7 @@ function qw_make_groups_rows( $groups, $group_by_field_name = NULL ) {
 }
 
 /*
+ * @todo - DONE
  * Make theme row classes
  */
 function qw_row_classes( $i, $last_row ) {

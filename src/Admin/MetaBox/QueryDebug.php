@@ -52,11 +52,11 @@ class QueryDebug extends MetaBoxBase {
 			$this->query = new QwQuery( $post );
 			$queryProcessor = $this->container->get('query.processor');
 			echo $queryProcessor->execute( $this->query );
-			dump('end of debug metabox');
+			$this->d('end of debug metabox');
 		}
 		catch (\Exception $e) {
 			print "<pre>";
-			dump($e->getMessage());
+			$this->d($e->getMessage());
 			print "</pre>";
 		}
 

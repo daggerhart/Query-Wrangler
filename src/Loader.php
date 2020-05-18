@@ -105,8 +105,10 @@ class Loader {
         $settings = $this->container->get( 'settings' );
         $form_factory = $this->container->get( 'form.factory' );
 		$messenger = $this->container->get( 'messenger' );
+
 		$import = new Import( $form_factory, $messenger );
 		$import->addToSubMenu( $import->parentSlug() );
+
 		$settingsPage = new Settings( $settings, $form_factory, $messenger );
 		$settingsPage->addToSubMenu( $settingsPage->parentSlug() );
 	}

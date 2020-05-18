@@ -16,11 +16,11 @@ interface DisplayInterface extends HandlerItemTypeInterface {
 	/**
 	 * HTML form output for the administration configuration of this sort.
 	 *
-	 * @param array $sort
+	 * @param array $display
 	 * @param array $values
 	 *
 	 * @return string
 	 */
-	public function settingsForm( array $sort, array $values );
+	public function settingsForm( array $display, array $values );
 
 }
