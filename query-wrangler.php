@@ -54,7 +54,7 @@ function qw_init_frontend() {
 	//$settings = QW_Settings::get_instance();
 
 	// some additional functions to support php 5.2-
-	include_once QW_PLUGIN_DIR . '/includes/php-polyfill.php';
+//	include_once QW_PLUGIN_DIR . '/includes/php-polyfill.php';
 
 	// include Template Wrangler
 //	if ( ! function_exists( 'theme' ) ) {
@@ -64,7 +64,7 @@ function qw_init_frontend() {
 	include_once QW_PLUGIN_DIR . '/includes/hooks.php';
 	include_once QW_PLUGIN_DIR . '/includes/exposed.php';
 	include_once QW_PLUGIN_DIR . '/includes/handlers.php';
-	include_once QW_PLUGIN_DIR . '/includes/class-qw-shortcodes.php';
+	//include_once QW_PLUGIN_DIR . '/includes/class-qw-shortcodes.php';
 	//QW_Shortcodes::register();
 
 	// basics

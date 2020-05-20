@@ -94,19 +94,19 @@ function qw_handler_field_data( $options ) {
 		return $options['display']['field_settings']['fields'];
 	}
 }
-
+// @todo - DONE
 function qw_handler_sort_data( $options ) {
 	if ( isset( $options['args']['sorts'] ) ) {
 		return $options['args']['sorts'];
 	}
 }
-
+// @todo - DONE
 function qw_handler_filter_data( $options ) {
 	if ( isset( $options['args']['filters'] ) ) {
 		return $options['args']['filters'];
 	}
 }
-
+// @todo - DONE
 function qw_handler_override_data( $options ) {
 	if ( isset( $options['override'] ) ) {
 		return $options['override'];

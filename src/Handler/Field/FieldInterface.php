@@ -2,6 +2,7 @@
 
 namespace QueryWrangler\Handler\Field;
 
+use Kinglet\Entity\TypeInterface;
 use QueryWrangler\Handler\HandlerItemTypeInterface;
 
 interface FieldInterface extends HandlerItemTypeInterface {
@@ -15,17 +16,14 @@ interface FieldInterface extends HandlerItemTypeInterface {
 	public function processAsContent();
 
 	/**
-	 * Array of context during rendering.
-	 * Includes:
-	 *   - $post WP_Post
-	 *   - $field array
-	 *   - $tokens array
 	 *
-	 * @param array $context
+	 * @param TypeInterface $entity
+	 * @param array $settings
+	 * @param array $tokens
 	 *
 	 * @return string
 	 */
-	public function render( array $context );
+	public function render( TypeInterface $entity, array $settings, array $tokens = [] );
 
 	/**
 	 * HTML form output for the administration configuration of this field.

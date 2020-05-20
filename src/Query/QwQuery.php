@@ -15,6 +15,7 @@ class QwQuery extends Post {
 	protected $filters = [];
 	protected $sorts = [];
 	protected $args = [];
+	protected $rowStyle = 'posts';
 
 	/**
 	 * QwQuery constructor.
@@ -110,6 +111,10 @@ class QwQuery extends Post {
 		return $this->paging;
 	}
 
+	public function getRowStyle() {
+		return $this->rowStyle;
+	}
+
 	/**
 	 * Populate the object expecting version 1.x values.
 	 *
@@ -136,6 +141,10 @@ class QwQuery extends Post {
 					$this->paging[ $item ] = $data['data']['args'][ $item ];
 				}
 			}
+		}
+		if ( !empty( $data['data']['display']['row_style'] ) ) {
+			$this->rowStyle = $data['data']['display']['row_style'];
+			unset( $data['data']['display']['row_style'] );
 		}
 		if ( !empty( $data['data']['display'] ) ) {
 			$this->display = $data['data']['display'];

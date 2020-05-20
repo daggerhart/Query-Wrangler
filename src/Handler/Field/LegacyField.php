@@ -2,6 +2,7 @@
 
 namespace QueryWrangler\Handler\Field;
 
+use Kinglet\Entity\TypeInterface;
 use Kinglet\Invoker\InvokerInterface;
 use Kinglet\Template\RendererInterface;
 
@@ -96,11 +97,18 @@ class LegacyField implements FieldInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function render( array $context ) {
+	public function render( TypeInterface $entity, array $settings, array $tokens = [] ) {
 		if ( !empty( $this->registration['output_callback'] ) && is_callable( $this->registration['output_callback'] ) ) {
-			return $this->renderer->render( $this->registration['output_callback'], $context );
+			return $this->renderer->render( $this->registration['output_callback'], [
+				$entity->object(),
+				$settings,
+				$tokens,
+			] );
 		}
-		return '';
+
+		// If no callback, it expects the value to be a property on the object.
+		$object = $entity->object();
+		return $object->{$settings['type']} ?? '';
 	}
 
 	/**

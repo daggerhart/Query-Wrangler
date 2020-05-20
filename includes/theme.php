@@ -267,7 +267,7 @@ function qw_make_template_part_rows( &$qw_query, $options ) {
 }
 
 /*
- * @todo - mostly DONE
+ * @todo - DONE
  * Build array of fields and rows for templating
  *
  * @param object $new_query WP_Query object generated
@@ -342,9 +342,7 @@ function qw_make_fields_rows( &$qw_query, $options ) {
 			if ( isset( $field_defaults['output_callback'] ) && function_exists( $field_defaults['output_callback'] ) ) {
 				// callbacks with token arguments
 				if ( isset( $field_defaults['output_arguments'] ) ) {
-					$row['fields'][ $field_name ]['output'] .= $field_defaults['output_callback']( $this_post,
-						$field,
-						$tokens );
+					$row['fields'][ $field_name ]['output'] .= $field_defaults['output_callback']( $this_post, $field, $tokens );
 				} // normal callback w/o arguments
 				else {
 					$row['fields'][ $field_name ]['output'] .= $field_defaults['output_callback']();

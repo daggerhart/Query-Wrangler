@@ -16,6 +16,7 @@ use QueryWrangler\Handler\Field\FieldTypeManager;
 use QueryWrangler\Handler\Filter\FilterTypeManager;
 use QueryWrangler\Handler\HandlerManager;
 use QueryWrangler\Handler\Paging\PagingTypeManager;
+use QueryWrangler\Handler\RowStyle\RowStyleTypeManager;
 use QueryWrangler\Handler\Sort\SortTypeManager;
 use QueryWrangler\PostType\Query;
 use QueryWrangler\Query\QueryProcessor;
@@ -62,12 +63,14 @@ class Loader {
 		$container->set( 'handler.filter.manager', FilterTypeManager::class );
 		$container->set( 'handler.sort.manager', SortTypeManager::class );
 		$container->set( 'handler.paging.manager', PagingTypeManager::class );
+		$container->set( 'handler.row_style.manager', RowStyleTypeManager::class );
 		$container->set( 'handler.manager', function ( ContainerInterface $container ) {
 			$display = $container->get( 'handler.display.manager' );
 			$field = $container->get( 'handler.field.manager' );
 			$filter = $container->get( 'handler.filter.manager' );
 			$sort = $container->get( 'handler.sort.manager' );
 			$paging = $container->get( 'handler.paging.manager' );
+			$row_style = $container->get( 'handler.row_style.manager' );
 
 			return new HandlerManager( [
 				$display->type() => $display,
@@ -75,6 +78,7 @@ class Loader {
 				$filter->type() => $filter,
 				$sort->type() => $sort,
 				$paging->type() => $paging,
+				$row_style->type() => $row_style,
 			] );
 		} );
 		$container->set( 'query.processor', QueryProcessor::class );

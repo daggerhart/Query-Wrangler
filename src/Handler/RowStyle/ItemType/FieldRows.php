@@ -1,8 +1,12 @@
 <?php
 
-namespace QueryWrangler\Display\RowStyle;
+namespace QueryWrangler\Handler\RowStyle\ItemType;
 
 use Kinglet\Entity\QueryInterface;
+use Kinglet\Entity\TypeInterface;
+use QueryWrangler\Handler\Field\FieldInterface;
+use QueryWrangler\Handler\HandlerTypeManagerInterface;
+use QueryWrangler\Handler\RowStyle\RowStyleBase;
 use QueryWrangler\Query\QwQuery;
 
 class FieldRows extends RowStyleBase {
@@ -38,7 +42,7 @@ class FieldRows extends RowStyleBase {
 	/**
 	 * @inheritDoc
 	 */
-	public function render( QwQuery $qw_query, QueryInterface $entity_query ) {
+	public function render( QwQuery $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager ) {
 		$display = $qw_query->getDisplay();
 		$fields = $qw_query->getFields();
 		$grouped_rows = [];
@@ -47,8 +51,11 @@ class FieldRows extends RowStyleBase {
 		$group_by = isset( $display['field_settings']['group_by_field'] ) ? $display['field_settings']['group_by_field'] : NULL;
 		$i = 0;
 
-		// @todo - sort fields according to weight
-		$entity_query->execute( function( $item ) use ( $fields, $display, $current_post_id, $group_by, &$grouped_rows, &$tokens, &$i ) {
+		// sort according to weights
+		uasort( $fields, 'qw_cmp' );
+
+		$entity_query->execute( function( $item ) use ( $field_type_manager, $fields, $display, $current_post_id, $group_by, &$grouped_rows, &$tokens, &$i ) {
+			/** @var TypeInterface $item */
 			$row = [
 				'row_classes' => [],
 				'fields' => [],
@@ -78,9 +85,11 @@ class FieldRows extends RowStyleBase {
 				$row['fields'][ $name ]['output'] = '';
 				$row['fields'][ $name ]['classes'] = implode( " ", $classes );
 
-				// @todo - field type renders itself (prev "output_callback"
-
-				// @todo ... end field type work
+				if ( $field_type_manager->has( $settings['type'] ) ) {
+					/** @var FieldInterface $field_type */
+					$field_type = $field_type_manager->get( $settings['type'] );
+					$row['fields'][ $name ]['output'] = $field_type->render( $item, $settings, $tokens );
+				}
 
 				// Handle field emptiness.
 				$row['is_empty'] = empty( $row['fields'][ $name ]['output'] );
@@ -104,7 +113,7 @@ class FieldRows extends RowStyleBase {
 
 				// apply link to field
 				if ( isset( $settings['link'] ) ) {
-					$row['fields'][ $name ]['output'] = '<a class="query-field-link" href="' . get_permalink() . '">' . $row['fields'][ $name ]['output'] . '</a>';
+					$row['fields'][ $name ]['output'] = '<a class="query-field-link" href="' . $item->url() . '">' . $row['fields'][ $name ]['output'] . '</a>';
 				}
 
 				// get default field label for tables

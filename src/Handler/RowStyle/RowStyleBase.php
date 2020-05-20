@@ -1,6 +1,6 @@
 <?php
 
-namespace QueryWrangler\Display\RowStyle;
+namespace QueryWrangler\Handler\RowStyle;
 
 abstract class RowStyleBase implements RowStyleInterface {
 

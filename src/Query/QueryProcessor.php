@@ -5,9 +5,10 @@ namespace QueryWrangler\Query;
 use Kinglet\Container\ContainerInjectionInterface;
 use Kinglet\Container\ContainerInterface;
 use Kinglet\Entity\QueryInterface;
-use Kinglet\Entity\TypeInterface;
 use Kinglet\Registry\ClassRegistryInterface;
+use QueryWrangler\Handler\Field\FieldTypeManager;
 use QueryWrangler\Handler\HandlerManager;
+use QueryWrangler\Handler\RowStyle\RowStyleTypeManager;
 
 class QueryProcessor implements ContainerInjectionInterface {
 
@@ -100,10 +101,11 @@ class QueryProcessor implements ContainerInjectionInterface {
 		/**
 		 * Filter Type allow for multiple instances of its items.
 		 * Loop through existing filters on the query.
+		 *
+		 * @todo - exposed forms processing
 		 */
 		$filter_manager = $this->handlerManager->get( 'filter' );
 		$filter_manager->collect();
-		dump($filter_manager->all());
 		foreach ( $filter_manager->getDataFromQuery( $query ) as $name => $item ) {
 			if ( $filter_manager->has( $item['type'] ) ) {
 				$filter_type = $filter_manager->get( $item['type'] );
@@ -114,6 +116,8 @@ class QueryProcessor implements ContainerInjectionInterface {
 		/**
 		 * Sort Type allow for multiple instances of its items.
 		 * Loop through existing filters on the query.
+		 *
+		 * @todo - exposed forms processing
 		 */
 		$sort_manager = $this->handlerManager->get( 'sort' );
 		$sort_manager->collect();
@@ -123,6 +127,10 @@ class QueryProcessor implements ContainerInjectionInterface {
 				$args = $sort_type->process( $args, $item );
 			}
 		}
+
+		/** @var QueryInterface $entity_query */
+		$entity_query = $this->entityQueryManager->getInstance( $query->queryType() );
+		$entity_query->setArguments( $args );
 
 		// @todo - allow display types to affect rendering on their own.
 		/**
@@ -139,12 +147,18 @@ class QueryProcessor implements ContainerInjectionInterface {
 		 *         Fields have settings which affect its own output
 		 *   - Footer
 		 */
+		/** @var FieldTypeManager $field_manager */
+		$field_manager = $this->handlerManager->get( 'field' );
+		$field_manager->collect();
+
+		/** @var RowStyleTypeManager $row_style_manager */
+		$row_style_manager = $this->handlerManager->get( 'row_style' );
+		$row_style_manager->collect();
+		$row_style = $row_style_manager->getDataFromQuery( $query );
+		$row_style_type = $row_style_manager->get( $row_style );
+		$rows = $row_style_type->render( $query, $entity_query, $field_manager );
 
 		// @todo - display manager handles simple stuff, but ultimately...
-
-		// @todo -
-		//   - the ROW STYLE needs: ( qw_query, entity_query, fieldManager )
-		//     and returns an array of rendered rows that...
 
 		// @todo
 		//   - the TEMPLATE STYLE then renders into a template, and then...
@@ -169,11 +183,8 @@ class QueryProcessor implements ContainerInjectionInterface {
 		dump([
 			'args' => $args,
 			'display' => $display,
+			'rows' => $rows,
 		]);
-
-		// @todo - exposed forms look
-		// @todo - pagination special handling
-
 
 		// return
 		return '';//$themed;

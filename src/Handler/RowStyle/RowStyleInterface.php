@@ -1,8 +1,9 @@
 <?php
 
-namespace QueryWrangler\Display\RowStyle;
+namespace QueryWrangler\Handler\RowStyle;
 
 use Kinglet\Entity\QueryInterface;
+use QueryWrangler\Handler\HandlerTypeManagerInterface;
 use QueryWrangler\Query\QwQuery;
 
 interface RowStyleInterface {
@@ -34,9 +35,10 @@ interface RowStyleInterface {
 	 *   Type entity. Contains all the configuration for the WordPress query.
 	 * @param QueryInterface $entity_query
 	 *   Query entity. Performs the WordPress query.
+	 * @param HandlerTypeManagerInterface $field_type_manager
 	 *
 	 * @return string
 	 */
-	public function render( QwQuery $qw_query, QueryInterface $entity_query );
+	public function render( QwQuery $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager );
 
 }

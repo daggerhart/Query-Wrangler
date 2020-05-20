@@ -1,12 +1,12 @@
 <?php
 
-namespace QueryWrangler\Handler\Field;
+namespace QueryWrangler\Handler\RowStyle;
 
 use QueryWrangler\Handler\HandlerItemTypeDiscoverableRegistry;
 use QueryWrangler\Handler\HandlerTypeManagerBase;
 use QueryWrangler\Query\QwQuery;
 
-class FieldTypeManager extends HandlerTypeManagerBase {
+class RowStyleTypeManager extends HandlerTypeManagerBase {
 
 	/**
 	 * @var bool
@@ -15,7 +15,7 @@ class FieldTypeManager extends HandlerTypeManagerBase {
 
 	/**
 	 * {@inheritDoc}
-	 * @return FieldInterface
+	 * @return RowStyleInterface
 	 */
 	public function get( $key ) {
 		return parent::get( $key );
@@ -25,35 +25,21 @@ class FieldTypeManager extends HandlerTypeManagerBase {
 	 * {@inheritDoc}
 	 */
 	public function type() {
-		return 'field';
+		return 'row_style';
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public function multiple() {
-		return TRUE;
+		return FALSE;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public function collect() {
-		$this->collectLegacy();
 		$this->collectTypes();
-	}
-
-	/**
-	 * Gather items registered with the old approach.
-	 */
-	public function collectLegacy() {
-		$legacy = apply_filters( 'qw_fields', [] );
-		foreach ($legacy as $type => $item) {
-			$instance = new LegacyField( $type, $item );
-			$instance->setInvoker( $this->invoker );
-			$instance->setRenderer( $this->renderer );
-			$this->set( $instance->type(), $instance );
-		}
 	}
 
 	/**
@@ -63,13 +49,13 @@ class FieldTypeManager extends HandlerTypeManagerBase {
 		if ( !$this->typesRegistered ) {
 			$this->typesRegistered = TRUE;
 			add_filter( "qw_handler_item_types--{$this->type()}", function( $sources ) {
-				$sources['QueryWrangler\Handler\Field\ItemType'] = QW_PLUGIN_DIR . '/src/Handler/Field/ItemType';
+				$sources['QueryWrangler\Handler\RowStyle\ItemType'] = QW_PLUGIN_DIR . '/src/Handler/RowStyle/ItemType';
 				return $sources;
 			} );
 		}
 
 		$items = new HandlerItemTypeDiscoverableRegistry(
-			'QueryWrangler\Handler\Field\FieldInterface',
+			'QueryWrangler\Handler\RowStyle\RowStyleInterface',
 			'type',
 			"qw_handler_item_types--{$this->type()}"
 		);
@@ -87,6 +73,7 @@ class FieldTypeManager extends HandlerTypeManagerBase {
 	 * @inheritDoc
 	 */
 	public function getDataFromQuery( QwQuery $query ) {
-		return $query->getFields();
+		return $query->getRowStyle();
 	}
+
 }
