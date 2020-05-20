@@ -1,6 +1,6 @@
 <?php
 // hook into qw_basics
-add_filter( 'qw_basics', 'qw_basic_settings_offset' );
+//add_filter( 'qw_basics', 'qw_basic_settings_offset' );
 
 /*
  * Basic Settings

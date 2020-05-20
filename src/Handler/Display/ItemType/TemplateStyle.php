@@ -1,21 +1,23 @@
 <?php
 
-namespace QueryWrangler\Handler\Display;
+namespace QueryWrangler\Handler\Display\ItemType;
 
-class RowStyle implements DisplayInterface {
+use QueryWrangler\Handler\Display\DisplayInterface;
+
+class TemplateStyle implements DisplayInterface {
 
 	/**
 	 * @inheritDoc
 	 */
 	public function type() {
-		return 'row_style';
+		return 'template_style';
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function title() {
-		return __( 'Row Style', 'query-wrangler' );
+		return __( 'Template Style', 'query-wrangler' );
 	}
 
 	/**
@@ -37,6 +39,15 @@ class RowStyle implements DisplayInterface {
 	 */
 	public function queryTypes() {
 		return [];
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function process( array $display, array $query_data = [] ) {
+		// 1.x
+		$display['style'] = $query_data['style'];
+		return $display;
 	}
 
 	/**

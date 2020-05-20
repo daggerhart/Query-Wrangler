@@ -5,7 +5,7 @@ namespace QueryWrangler\Display\RowStyle;
 use Kinglet\Entity\QueryInterface;
 use QueryWrangler\Query\QwQuery;
 
-class FieldRows implements RowStyleInterface {
+class FieldRows extends RowStyleBase {
 
 	/**
 	 * @inheritDoc
@@ -39,10 +39,6 @@ class FieldRows implements RowStyleInterface {
 	 * @inheritDoc
 	 */
 	public function render( QwQuery $qw_query, QueryInterface $entity_query ) {
-
-	}
-
-	public function renderRows( QwQuery $qw_query, QueryInterface $entity_query ) {
 		$display = $qw_query->getDisplay();
 		$fields = $qw_query->getFields();
 		$grouped_rows = [];
@@ -162,64 +158,6 @@ class FieldRows implements RowStyleInterface {
 		foreach ( $rows as $i => $row ) {
 			$classes = array_merge( $rows[ $i ]['row_classes'], $this->rowClasses( $i, $last_row ) );
 			$rows[ $i ]['row_classes'] = implode( ' ', $classes );
-		}
-
-		return $rows;
-	}
-
-	/**
-	 * @param int $i
-	 * @param int $last
-	 *
-	 * @return array
-	 */
-	protected function rowClasses( $i, $last ) {
-		$classes   = [
-			'query-row',
-			'query-row-' . $i,
-		];
-		$classes[] = ( $i % 2 ) ? 'query-row-odd' : 'query-row-even';
-
-		if ( $i === 0 ){
-			$classes[] = 'query-row-first';
-		}
-		else if ( $i === $last ){
-			$classes[] = 'query-row-last';
-		}
-
-		return $classes;
-	}
-
-	/**
-	 * @param array $grouped_rows
-	 * @param string|null $group_by
-	 *
-	 * @return array
-	 */
-	protected function flattenGroupedRows( $grouped_rows, $group_by = NULL ) {
-		$rows = [];
-
-		foreach ( $grouped_rows as $group ) {
-			$first_row = reset( $group );
-
-			// group row
-			if ( $group_by && isset( $first_row['fields'][ $group_by ] ) ) {
-
-				// create the row that acts as the group header
-				$rows[] = [
-					'row_classes' => 'query-group-row',
-					'fields' => [
-						$group_by => [
-							'classes' => 'query-group-row-field',
-							'output' => $first_row['fields'][ $group_by ]['content']
-						],
-					],
-				];
-			}
-
-			foreach ( $group as $row ) {
-				$rows[] = $row;
-			}
 		}
 
 		return $rows;

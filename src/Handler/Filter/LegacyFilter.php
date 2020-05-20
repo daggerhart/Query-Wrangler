@@ -109,22 +109,22 @@ class LegacyFilter implements FilterInterface, FilterExposableInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function process( array $args, array $filter ) {
-		if ( empty( $filter['values'] ) && isset( $filter[ $filter['type'] ] ) ) {
-			$filter['values'][ $filter['type'] ] = $filter[ $filter['type'] ];
+	public function process( array $args, array $values ) {
+		if ( empty( $values['values'] ) && isset( $values[ $values['type'] ] ) ) {
+			$values['values'][ $values['type'] ] = $values[ $values['type'] ];
 		}
 		if ( $this->isLegacyBasic() ) {
 			/*
 			 * @todo - need to make sure to set $filter['values'], or change this.
 			 * @todo - was hard-coded in QW 1.x - qw_generate_query_args()
 			 */
-			$args[ $this->type() ] = $filter['values'][ $this->type() ];
+			$args[ $this->type() ] = $values['values'][ $this->type() ];
 		}
 
 		if ( !empty( $this->registration['query_args_callback'] ) && is_callable( $this->registration['query_args_callback'] ) ) {
 			call_user_func_array( $this->registration['query_args_callback'], [
 				'args' => &$args,
-				'filter' => $filter,
+				'filter' => $values,
 			] );
 		}
 

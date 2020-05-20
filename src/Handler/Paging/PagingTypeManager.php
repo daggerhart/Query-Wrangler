@@ -1,12 +1,12 @@
 <?php
 
-namespace QueryWrangler\Handler\Filter;
+namespace QueryWrangler\Handler\Paging;
 
 use QueryWrangler\Handler\HandlerItemTypeDiscoverableRegistry;
 use QueryWrangler\Handler\HandlerTypeManagerBase;
 use QueryWrangler\Query\QwQuery;
 
-class FilterTypeManager extends HandlerTypeManagerBase {
+class PagingTypeManager extends HandlerTypeManagerBase {
 
 	/**
 	 * @var bool
@@ -15,7 +15,7 @@ class FilterTypeManager extends HandlerTypeManagerBase {
 
 	/**
 	 * {@inheritDoc}
-	 * @return FilterInterface
+	 * @return PagingInterface
 	 */
 	public function get( $key ) {
 		return parent::get( $key );
@@ -25,35 +25,21 @@ class FilterTypeManager extends HandlerTypeManagerBase {
 	 * {@inheritDoc}
 	 */
 	public function type() {
-		return 'filter';
+		return 'paging';
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public function multiple() {
-		return TRUE;
+		return FALSE;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public function collect() {
-		$this->collectLegacy();
 		$this->collectTypes();
-	}
-
-	/**
-	 * Gather items registered with the old approach.
-	 */
-	public function collectLegacy() {
-		$legacy = apply_filters( 'qw_filters', [] );
-		foreach ($legacy as $type => $item) {
-			$instance = new LegacyFilter( $type, $item );
-			$instance->setInvoker( $this->invoker );
-			$instance->setRenderer( $this->renderer );
-			$this->set( $instance->type(), $instance );
-		}
 	}
 
 	/**
@@ -63,13 +49,13 @@ class FilterTypeManager extends HandlerTypeManagerBase {
 		if ( !$this->typesRegistered ) {
 			$this->typesRegistered = TRUE;
 			add_filter( "qw_handler_item_types--{$this->type()}", function( $sources ) {
-				$sources['QueryWrangler\Handler\Filter\ItemType'] = QW_PLUGIN_DIR . '/src/Handler/Filter/ItemType';
+				$sources['QueryWrangler\Handler\Paging\ItemType'] = QW_PLUGIN_DIR . '/src/Handler/Paging/ItemType';
 				return $sources;
 			} );
 		}
 
 		$items = new HandlerItemTypeDiscoverableRegistry(
-			'QueryWrangler\Handler\Filter\FilterInterface',
+			'QueryWrangler\Handler\Paging\PagingInterface',
 			'type',
 			"qw_handler_item_types--{$this->type()}"
 		);
@@ -87,7 +73,6 @@ class FilterTypeManager extends HandlerTypeManagerBase {
 	 * @inheritDoc
 	 */
 	public function getDataFromQuery( QwQuery $query ) {
-		return $query->getFilters();
+		return $query->getPaging();
 	}
-
 }

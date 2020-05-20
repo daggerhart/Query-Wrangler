@@ -15,6 +15,7 @@ use QueryWrangler\Handler\Display\DisplayTypeManager;
 use QueryWrangler\Handler\Field\FieldTypeManager;
 use QueryWrangler\Handler\Filter\FilterTypeManager;
 use QueryWrangler\Handler\HandlerManager;
+use QueryWrangler\Handler\Paging\PagingTypeManager;
 use QueryWrangler\Handler\Sort\SortTypeManager;
 use QueryWrangler\PostType\Query;
 use QueryWrangler\Query\QueryProcessor;
@@ -60,17 +61,20 @@ class Loader {
 		$container->set( 'handler.field.manager', FieldTypeManager::class );
 		$container->set( 'handler.filter.manager', FilterTypeManager::class );
 		$container->set( 'handler.sort.manager', SortTypeManager::class );
+		$container->set( 'handler.paging.manager', PagingTypeManager::class );
 		$container->set( 'handler.manager', function ( ContainerInterface $container ) {
 			$display = $container->get( 'handler.display.manager' );
 			$field = $container->get( 'handler.field.manager' );
 			$filter = $container->get( 'handler.filter.manager' );
 			$sort = $container->get( 'handler.sort.manager' );
+			$paging = $container->get( 'handler.paging.manager' );
 
 			return new HandlerManager( [
 				$display->type() => $display,
 				$field->type() => $field,
 				$filter->type() => $filter,
 				$sort->type() => $sort,
+				$paging->type() => $paging,
 			] );
 		} );
 		$container->set( 'query.processor', QueryProcessor::class );

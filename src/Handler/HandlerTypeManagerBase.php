@@ -21,7 +21,7 @@ abstract class HandlerTypeManagerBase extends Registry implements HandlerTypeMan
 	protected $renderer;
 
 	/**
-	 * FilterManager constructor.
+	 * HandlerTypeManagerBase constructor.
 	 *
 	 * @param InvokerInterface $invoker
 	 * @param RendererInterface $renderer

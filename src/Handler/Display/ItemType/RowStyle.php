@@ -1,21 +1,23 @@
 <?php
 
-namespace QueryWrangler\Handler\Display;
+namespace QueryWrangler\Handler\Display\ItemType;
 
-class PagerStyle implements DisplayInterface {
+use QueryWrangler\Handler\Display\DisplayInterface;
+
+class RowStyle implements DisplayInterface {
 
 	/**
 	 * @inheritDoc
 	 */
 	public function type() {
-		return 'pager';
+		return 'row_style';
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function title() {
-		return __( 'Pager', 'query-wrangler' );
+		return __( 'Row Style', 'query-wrangler' );
 	}
 
 	/**
@@ -37,6 +39,13 @@ class PagerStyle implements DisplayInterface {
 	 */
 	public function queryTypes() {
 		return [];
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function process( array $display, array $query_data = [] ) {
+		return $display;
 	}
 
 	/**

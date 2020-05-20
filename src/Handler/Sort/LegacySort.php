@@ -121,12 +121,12 @@ class LegacySort implements SortInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function process( array $args, array $sort ) {
+	public function process( array $args, array $values ) {
 
 		if ( !empty( $this->registration['query_args_callback'] ) && is_callable( $this->registration['query_args_callback'] ) ) {
 			call_user_func_array( $this->registration['query_args_callback'], [
 				'args' => &$args,
-				'sort' => $sort,
+				'sort' => $values,
 			] );
 
 			return $args;
@@ -134,7 +134,7 @@ class LegacySort implements SortInterface {
 
 		// Default pattern.
 		$args[ $this->orderByKey() ] = $this->type;
-		$args[ $this->orderKey() ] = $sort['order_value'];
+		$args[ $this->orderKey() ] = $values['order_value'];
 
 		return $args;
 	}

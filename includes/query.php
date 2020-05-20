@@ -7,11 +7,7 @@
  * @param bool $reset_post_data Reset the $wp_query after execution
  * @return string Can return a string of html based on parameter $return
  */
-function qw_execute_query(
-	$query_id,
-	$options_override = array(),
-	$reset_post_data = TRUE
-) {
+function qw_execute_query( $query_id, $options_override = array(), $reset_post_data = TRUE ) {
 	// get the query options
 	$options = qw_generate_query_options( $query_id, $options_override );
 
@@ -39,6 +35,7 @@ function qw_execute_query(
 }
 
 /*
+ * @todo - DONE
  * Get the Query, and set $options to defaults
  *
  * @param int
@@ -51,11 +48,7 @@ function qw_execute_query(
  * @return array
  *   Query options
  */
-function qw_generate_query_options(
-	$query_id,
-	$options_override = array(),
-	$full_override = FALSE
-) {
+function qw_generate_query_options( $query_id, $options_override = array(), $full_override = FALSE ) {
 	global $wpdb;
 	$table_name = $wpdb->prefix . "query_wrangler";
 	$sql        = "SELECT id,name,type,slug,data FROM " . $table_name . " WHERE id = %d";
@@ -93,6 +86,8 @@ function qw_generate_query_options(
 }
 
 /*
+ * @todo - everything except exposed filters is done
+ *
  * Generate the WP query itself
  *
  * @param array $options Query data
@@ -101,6 +96,16 @@ function qw_generate_query_options(
 function qw_generate_query_args( $options = array() ) {
 	$handlers = qw_preprocess_handlers( $options );
 
+	// standard arguments
+	// @todo - DONE as new Filter types
+	$args['post_status']         = $options['args']['post_status'];
+	$args['ignore_sticky_posts'] = isset( $options['args']['ignore_sticky_posts'] ) ? $options['args']['ignore_sticky_posts'] : 0;
+
+	// @todo - DONE as new Paging type
+	$args['posts_per_page']      = ( $options['args']['posts_per_page'] ) ? $options['args']['posts_per_page'] : 5;
+
+	// @todo - DONE as new Paging type
+	// Handle normal pagination vs offset pagination.
 	$paged = NULL;
 	// if pager_key is enabled, trick qw_get_page_number
 	if ( isset( $options['display']['page']['pager']['use_pager_key'] ) &&
@@ -111,14 +116,8 @@ function qw_generate_query_args( $options = array() ) {
 		$paged = $_GET[ $options['display']['page']['pager']['pager_key'] ];
 	}
 
-	// standard arguments
 	$args['paged']               = ( $paged ) ? $paged : qw_get_page_number();
-	$args['posts_per_page']      = ( $options['args']['posts_per_page'] ) ? $options['args']['posts_per_page'] : 5;
 	$args['offset']              = ( $options['args']['offset'] ) ? $options['args']['offset'] : 0;
-	$args['post_status']         = $options['args']['post_status'];
-	$args['ignore_sticky_posts'] = isset( $options['args']['ignore_sticky_posts'] ) ? $options['args']['ignore_sticky_posts'] : 0;
-
-	// Handle normal pagination vs offset pagination.
 	if ( $args['paged'] > 1 ) {
 		if ( $args['offset'] > 0 && $args['posts_per_page'] > 0 ) {
 			// Create offset pagination ourselves.
@@ -131,12 +130,14 @@ function qw_generate_query_args( $options = array() ) {
 		}
 	}
 
+	// @todo -
 	$submitted_data = qw_exposed_submitted_data();
 
 	foreach ( $handlers as $handler_type => $handler ) {
 		if ( is_array( $handler['items'] ) ) {
 			foreach ( $handler['items'] as $name => $item ) {
 				// Exposed items
+				// @todo -
 				if ( isset( $item['exposed_form'] ) ) {
 					if ( ! empty( $item['values']['exposed_key'] ) ) {
 						// override exposed key
@@ -148,6 +149,7 @@ function qw_generate_query_args( $options = array() ) {
 				}
 				// */
 
+				// @todo - DONE
 				// Alter the query args
 				// look for callback, and run it
 				if ( isset( $item['query_args_callback'] ) && function_exists( $item['query_args_callback'] ) ) {

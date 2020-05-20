@@ -10,6 +10,7 @@ class QwQuery extends Post {
 	protected $queryType = 'post';
 	protected $displayType = 'widget';
 	protected $display = [];
+	protected $paging = [];
 	protected $fields = [];
 	protected $filters = [];
 	protected $sorts = [];
@@ -103,6 +104,13 @@ class QwQuery extends Post {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getPaging() {
+		return $this->paging;
+	}
+
+	/**
 	 * Populate the object expecting version 1.x values.
 	 *
 	 * @param $data
@@ -111,13 +119,29 @@ class QwQuery extends Post {
 		if ( !empty( $data['type'] ) ) {
 			$this->displayType = $data['type'];
 		}
+
+		// Display
 		if ( !empty( $data['data']['display']['field_settings']['fields'] ) ) {
 			$this->fields = $data['data']['display']['field_settings']['fields'];
 			unset( $data['data']['display']['field_settings']['fields'] );
 		}
+		if ( !empty( $data['data']['display']['page'] ) ) {
+			$this->paging = $data['data']['display']['page'];
+			unset( $data['data']['display']['page'] );
+
+			// Some old "args" are now paging item types.
+			$items = ['posts_per_page', 'offset'];
+			foreach ( $items as $item ) {
+				if ( isset( $data['data']['args'][ $item ] ) ) {
+					$this->paging[ $item ] = $data['data']['args'][ $item ];
+				}
+			}
+		}
 		if ( !empty( $data['data']['display'] ) ) {
 			$this->display = $data['data']['display'];
 		}
+
+		// Args
 		if ( !empty( $data['data']['args']['sorts'] ) ) {
 			$this->sorts = $data['data']['args']['sorts'];
 			unset( $data['data']['args']['sorts'] );
@@ -125,6 +149,17 @@ class QwQuery extends Post {
 		if ( !empty( $data['data']['args']['filters'] ) ) {
 			$this->filters = $data['data']['args']['filters'];
 			unset( $data['data']['args']['filters'] );
+
+			// Some old "args" are now filter item types.
+			$items = ['post_status', 'ignore_sticky_posts'];
+			foreach ( $items as $item ) {
+				if ( isset( $data['data']['args'][ $item ] ) ) {
+					$this->filters[ $item ] = [
+						'type' => $item,
+						'value' => $data['data']['args'][ $item ]
+					];
+				}
+			}
 		}
 		if ( !empty( $data['data']['args'] ) ) {
 			$this->args = $data['data']['args'];

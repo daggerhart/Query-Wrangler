@@ -103,6 +103,20 @@ class LegacyDisplay implements DisplayInterface {
 	/**
 	 * @inheritDoc
 	 */
+	public function process( array $display, array $query_data = [] ) {
+		dump([
+			'type' => $this->type,
+			'reg' => $this->registration,
+		]);
+		if ( count( $values ) === 1 && isset( $values[0] ) && is_string( $values[0] ) ) {
+			$display[ $this->type ] = $values[0];
+		}
+		return $display;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	public function settingsForm( array $display, array $values ) {
 		if ( !empty( $this->registration['form_callback'] ) && is_callable( $this->registration['form_callback'] ) ) {
 			return $this->renderer->render( $this->registration['form_callback'], [

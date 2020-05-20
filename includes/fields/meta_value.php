@@ -7,7 +7,7 @@ add_filter( 'qw_fields', 'qw_field_meta_value' );
  * Add field to qw_fields
  */
 function qw_field_meta_value( $fields ) {
-	$show_silent_meta = QW_Settings::get_instance()->get( 'show_silent_meta', FALSE );
+	// @todo - $show_silent_meta = QW_Settings::get_instance()->get( 'show_silent_meta', FALSE );
 	// Create a unique cache name
 	$_cache_name = md5(json_encode($fields));
 	// Check if we have any cache for this

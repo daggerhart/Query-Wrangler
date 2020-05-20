@@ -24,11 +24,11 @@ interface FilterInterface extends HandlerItemTypeInterface {
 	 * Modify the WP_Query args array.
 	 *
 	 * @param array $args
-	 * @param array $filter
+	 * @param array $values
 	 *
 	 * @return array
 	 */
-	public function process( array $args, array $filter );
+	public function process( array $args, array $values );
 
 	/**
 	 * HTML form output for the administration configuration of this filter.

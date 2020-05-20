@@ -66,6 +66,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 		 */
 		$options = $query->meta( 'query_data' );
 		$options = $full_override ? $overrides : array_replace_recursive( (array) $options, $overrides );
+
 		// build query_details
 		$options['meta'] = array_replace( [
 			'id' => $query->id(),
@@ -84,8 +85,25 @@ class QueryProcessor implements ContainerInjectionInterface {
 		 * Previously @see qw_generate_query_args()
 		 */
 		$args = [];
+
+		/**
+		 * Paging Type does not allow for multiple instances of its items.
+		 * Loop through _all_ paging types because any of them could affect the query args.
+		 */
+		$paging_manager = $this->handlerManager->get( 'paging' );
+		$paging_manager->collect();
+		$paging_data = $paging_manager->getDataFromQuery( $query );
+		foreach ( $paging_manager->all() as $type => $paging_type ) {
+			$args = $paging_type->process( $args, $paging_data );
+		}
+
+		/**
+		 * Filter Type allow for multiple instances of its items.
+		 * Loop through existing filters on the query.
+		 */
 		$filter_manager = $this->handlerManager->get( 'filter' );
 		$filter_manager->collect();
+		dump($filter_manager->all());
 		foreach ( $filter_manager->getDataFromQuery( $query ) as $name => $item ) {
 			if ( $filter_manager->has( $item['type'] ) ) {
 				$filter_type = $filter_manager->get( $item['type'] );
@@ -93,6 +111,10 @@ class QueryProcessor implements ContainerInjectionInterface {
 			}
 		}
 
+		/**
+		 * Sort Type allow for multiple instances of its items.
+		 * Loop through existing filters on the query.
+		 */
 		$sort_manager = $this->handlerManager->get( 'sort' );
 		$sort_manager->collect();
 		foreach ( $sort_manager->getDataFromQuery( $query ) as $name => $item ) {
@@ -107,54 +129,54 @@ class QueryProcessor implements ContainerInjectionInterface {
 		 * Display handlers render and modify specific parts of the output.
 		 * Some have their own sub-display implementations (like row styles).
 		 *
-		 * - Title (? not implemented in 1.x)
 		 * - Wrapper
 		 *   - Header
 		 *   - Empty
+		 *   - Pager Style
 		 *   - Template Style : Renders rows and row wrapping element. (table|unformatted|list)
-		 *     - Row Style[]  : Collection of rendered Fields.
+	     *     - Row Style[]: EXECUTES QUERY - Collection of rendered Fields.
 		 *       - Fields[]
 		 *         Fields have settings which affect its own output
-		 *   - Pager Style
 		 *   - Footer
-		 *
 		 */
 
+		// @todo - display manager handles simple stuff, but ultimately...
 
-//		$display_manager = $this->handlerManager->get( 'display' );
-//		$display_manager->collect();
-//		foreach ( $display_manager->getDataFromQuery( $query ) as $name => $item ) {
-//			if ( $display_manager->has( $item['type'] ) ) {
-//				$display_type = $display_manager->get( $item['type'] );
-//			}
-//		}
+		// @todo -
+		//   - the ROW STYLE needs: ( qw_query, entity_query, fieldManager )
+		//     and returns an array of rendered rows that...
+
+		// @todo
+		//   - the TEMPLATE STYLE then renders into a template, and then...
+		//     it does this with the FileRenderer and creates template suggestions
+		//     to render the $content, then passes it to...
+		//   - the PAGER STYLE renders the desired pager using the results of the query
+		//   - the WRAPPER STYLE, which converts everything into variables for the wrapper template
+
+		/**
+		 * Display Type does not allow for multiple instances of its items.
+		 * Loop through _all_ paging types because any of them could affect the query args.
+		 */
+		$display_manager = $this->handlerManager->get( 'display' );
+		$display_manager->collect();
+		$display = [];
+		foreach ( $display_manager->all() as $type => $display_type ) {
+			$display = $display_type->process( $display, $options['data']['display'] );
+		}
+//		dump($display_manager->all());
+//		dump($display_manager->getDataFromQuery( $query ));
+
+		dump([
+			'args' => $args,
+			'display' => $display,
+		]);
 
 		// @todo - exposed forms look
 		// @todo - pagination special handling
 
-		/**
-		 * Perform the query.
-		 */
-		/** @var QueryInterface $entity_query */
-		try {
-			$entity_query = $this->entityQueryManager->getInstance( $query->queryType(), $args );
-		}
-		catch ( \ReflectionException $exception ) {
-			return "<!-- Query Wrangler Error: Could not find Entity Query of type {$query->queryType()}";
-		}
 
-		// theme output
 		// return
-		$test = [];
-		ob_start();
-		$entity_query->execute( function( $item ) use( &$test ) {
-			/** @var TypeInterface $item */
-			$test[] = $item->id();
-			echo "{$item->id()} - ".get_the_title()."<hr>";
-		} );
-		print_r($test);
-		$themed = ob_get_clean();
-		return $themed;
+		return '';//$themed;
 	}
 
 	public function preprocessQueryData( $data ) {
