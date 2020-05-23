@@ -2,16 +2,30 @@
 
 namespace QueryWrangler\Handler\RowStyle;
 
+use Kinglet\Container\ContainerAwareInterface;
+use Kinglet\Container\ContainerInterface;
 use QueryWrangler\Handler\HandlerItemTypeDiscoverableRegistry;
 use QueryWrangler\Handler\HandlerTypeManagerBase;
 use QueryWrangler\Query\QwQuery;
 
-class RowStyleTypeManager extends HandlerTypeManagerBase {
+class RowStyleTypeManager extends HandlerTypeManagerBase implements ContainerAwareInterface {
 
 	/**
 	 * @var bool
 	 */
 	protected $typesRegistered = FALSE;
+
+	/**
+	 * @var ContainerInterface
+	 */
+	protected $container;
+
+	/**
+	 * @inheritDoc
+	 */
+	public function setContainer( ContainerInterface $container ) {
+		$this->container = $container;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -62,7 +76,11 @@ class RowStyleTypeManager extends HandlerTypeManagerBase {
 
 		foreach ( $items->all() as $type => $item ) {
 			try {
+				/** @var RowStyleInterface $instance */
 				$instance = $items->getInstance( $type );
+				$instance->setFileRenderer( $this->container->get( 'renderer.file' ) );
+				$instance->setStringRenderer( $this->container->get( 'renderer.string' ) );
+				$instance->setCallableRenderer( $this->container->get( 'renderer.callable' ) );
 				$this->set( $instance->type(), $instance );
 			}
 			catch ( \ReflectionException $exception ) {}

@@ -73,6 +73,7 @@ class FieldRows extends RowStyleBase {
 				];
 
 				// add class for active menu trail
+				// @todo - context wrangling
 				if ( is_singular() && get_the_ID() === $current_post_id ) {
 					$classes[] = 'active-item';
 				}
@@ -107,7 +108,7 @@ class FieldRows extends RowStyleBase {
 				//       - but maybe it's best to keep all html heere... TBD
 				if ( isset( $settings['rewrite_output'] ) ) {
 					// replace tokens with results
-					$settings['custom_output'] = str_replace( array_keys( $tokens ), array_values( $tokens ), $settings['custom_output'] );
+					$settings['custom_output'] = $this->stringRenderer->render( $settings['custom_output'], $tokens );
 					$row['fields'][ $name ]['output'] = $settings['custom_output'];
 				}
 

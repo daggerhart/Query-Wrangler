@@ -2,8 +2,45 @@
 
 namespace QueryWrangler\Handler\RowStyle;
 
+use Kinglet\Template\RendererInterface;
+
 abstract class RowStyleBase implements RowStyleInterface {
 
+	/**
+	 * @var RendererInterface
+	 */
+	protected $fileRenderer;
+
+	/**
+	 * @var RendererInterface
+	 */
+	protected $stringRenderer;
+
+	/**
+	 * @var RendererInterface
+	 */
+	protected $callableRenderer;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setFileRenderer( RendererInterface $renderer ) {
+		$this->fileRenderer = $renderer;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setStringRenderer( RendererInterface $renderer ) {
+		$this->stringRenderer = $renderer;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function setCallableRenderer( RendererInterface $renderer ) {
+		$this->callableRenderer = $renderer;
+	}
 
 	/**
 	 * @param int $i

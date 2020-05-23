@@ -3,6 +3,7 @@
 namespace QueryWrangler\Handler\RowStyle;
 
 use Kinglet\Entity\QueryInterface;
+use Kinglet\Template\RendererInterface;
 use QueryWrangler\Handler\HandlerTypeManagerInterface;
 use QueryWrangler\Query\QwQuery;
 
@@ -22,6 +23,27 @@ interface RowStyleInterface {
 	 * @return string
 	 */
 	public function description();
+
+	/**
+	 * Attach the file rendering service to the Row Style.
+	 *
+	 * @param RendererInterface $renderer
+	 */
+	public function setFileRenderer( RendererInterface $renderer );
+
+	/**
+	 * Attach the string rendering service to the Row Style.
+	 *
+	 * @param RendererInterface $renderer
+	 */
+	public function setStringRenderer( RendererInterface $renderer );
+
+	/**
+	 * Attach the callable rendering service to the Row Style.
+	 *
+	 * @param RendererInterface $renderer
+	 */
+	public function setCallableRenderer( RendererInterface $renderer );
 
 	/**
 	 * @return string

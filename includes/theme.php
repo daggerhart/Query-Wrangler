@@ -183,7 +183,7 @@ function qw_template_query( &$qw_query, $options ) {
 }
 
 /*
- *
+ * @todo - test -- maybe Done
  */
 function qw_make_posts_rows( &$qw_query, $options ) {
 	$groups          = array();
@@ -225,7 +225,7 @@ function qw_make_posts_rows( &$qw_query, $options ) {
 }
 
 /*
- *
+ * @todo - test - maybe DONE
  */
 function qw_make_template_part_rows( &$qw_query, $options ) {
 	$groups          = array();

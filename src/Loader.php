@@ -4,7 +4,11 @@ namespace QueryWrangler;
 
 use Kinglet\Admin\MetaBoxBase;
 use Kinglet\Container\ContainerInterface;
+use Kinglet\FileSystem\Finder;
 use Kinglet\Registry\OptionRepository;
+use Kinglet\Template\FileRenderer;
+use Kinglet\Template\RendererInterface;
+use Kinglet\Template\StringRenderer;
 use QueryWrangler\Admin\MetaBox\QueryDebug;
 use QueryWrangler\Admin\MetaBox\QueryDetails;
 use QueryWrangler\Admin\MetaBox\QueryEditor;
@@ -65,6 +69,21 @@ class Loader {
 		$container->set( 'handler.paging.manager', PagingTypeManager::class );
 		$container->set( 'handler.row_style.manager', RowStyleTypeManager::class );
 		$container->set( 'handler.manager', function ( ContainerInterface $container ) {
+			// Setup the renderers before they are injected into other services.
+			/** @var FileRenderer $fileRenderer */
+			$fileRenderer = $container->get( 'renderer.file' );
+			$fileRenderer->setFinder( new Finder( [
+				QW_PLUGIN_DIR . '/templates',
+				QW_PLUGIN_DIR . '/templates/legacy',
+			] ) );
+
+			/** @var StringRenderer $stringRenderer */
+			$stringRenderer = $container->get( 'renderer.string' );
+			$stringRenderer->setOptions( [
+				'prefix' => '{{',
+				'suffix' => '}}',
+			] );
+
 			$display = $container->get( 'handler.display.manager' );
 			$field = $container->get( 'handler.field.manager' );
 			$filter = $container->get( 'handler.filter.manager' );
