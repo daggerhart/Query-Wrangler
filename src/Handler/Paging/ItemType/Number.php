@@ -37,7 +37,7 @@ class Number implements PagingInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function process( array $args, array $values ) {
+	public function process( array $args, array $values, int $page_number ) {
 		$args['number'] = 5;
 
 		if ( isset( $values['posts_per_page'] ) ) {

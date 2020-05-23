@@ -61,6 +61,6 @@ interface RowStyleInterface {
 	 *
 	 * @return string
 	 */
-	public function render( QwQuery $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager );
+	public function render(  QwQuery $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager );
 
 }

@@ -8,14 +8,17 @@ use WP_Post;
 class QwQuery extends Post {
 
 	protected $queryType = 'post';
-	protected $displayType = 'widget';
+	protected $args = [];
 	protected $display = [];
-	protected $paging = [];
+
+	protected $displayType = 'widget';
 	protected $fields = [];
 	protected $filters = [];
+	protected $pagerEnabled = false;
+	protected $pagerStyle = [];
+	protected $paging = [];
+	protected $rowStyle = [];
 	protected $sorts = [];
-	protected $args = [];
-	protected $rowStyle = 'posts';
 
 	/**
 	 * QwQuery constructor.
@@ -28,6 +31,12 @@ class QwQuery extends Post {
 		if ( $this->isLoaded() ) {
 			$data = $this->meta( 'query_data' );
 			if ( !empty( $data ) ) {
+				if ( !is_array( $data ) ) {
+					try {
+						$data = json_decode( $data, true );
+					}
+					catch ( \Exception $e ) {}
+				}
 				$this->populateV1( $data );
 			}
 		}
@@ -65,14 +74,14 @@ class QwQuery extends Post {
 	/**
 	 * @return string
 	 */
-	public function displayType() {
+	public function getDisplayType() {
 		return $this->displayType;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function queryType() {
+	public function getQueryType() {
 		return $this->queryType;
 	}
 
@@ -105,12 +114,29 @@ class QwQuery extends Post {
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function getPagerEnabled() {
+		return $this->pagerEnabled;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getPagerStyle() {
+		return $this->pagerStyle;
+	}
+
+	/**
 	 * @return array
 	 */
 	public function getPaging() {
 		return $this->paging;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getRowStyle() {
 		return $this->rowStyle;
 	}
@@ -120,7 +146,7 @@ class QwQuery extends Post {
 	 *
 	 * @param $data
 	 */
-	public function populateV1( $data ) {
+	protected function populateV1( $data ) {
 		if ( !empty( $data['type'] ) ) {
 			$this->displayType = $data['type'];
 		}
@@ -129,6 +155,11 @@ class QwQuery extends Post {
 		if ( !empty( $data['data']['display']['field_settings']['fields'] ) ) {
 			$this->fields = $data['data']['display']['field_settings']['fields'];
 			unset( $data['data']['display']['field_settings']['fields'] );
+		}
+		if ( !empty( $data['data']['display']['page']['pager'] ) ) {
+			$this->pagerStyle = $data['data']['display']['page']['pager'];
+			$this->pagerEnabled = !empty( $this->pagerStyle['active'] );
+			unset( $data['data']['display']['page']['pager'] );
 		}
 		if ( !empty( $data['data']['display']['page'] ) ) {
 			$this->paging = $data['data']['display']['page'];
@@ -143,8 +174,17 @@ class QwQuery extends Post {
 			}
 		}
 		if ( !empty( $data['data']['display']['row_style'] ) ) {
-			$this->rowStyle = $data['data']['display']['row_style'];
+			$row_style_type = $data['data']['display']['row_style'];
+			$row_style_type_singular =  rtrim ( $row_style_type, 's' );
+			$this->rowStyle = [
+				'type' => $row_style_type,
+			];
 			unset( $data['data']['display']['row_style'] );
+
+			if ( isset( $data['data']['display'][ $row_style_type_singular . '_settings' ] ) ) {
+				$this->rowStyle = array_merge( $this->rowStyle, $data['data']['display'][ $row_style_type_singular . '_settings' ] );
+				unset( $data['data']['display'][ $row_style_type_singular . '_settings' ] );
+			}
 		}
 		if ( !empty( $data['data']['display'] ) ) {
 			$this->display = $data['data']['display'];

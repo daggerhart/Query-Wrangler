@@ -21,6 +21,7 @@ function qw_basic_settings_pager( $basics ) {
 }
 
 /*
+ * @todo - DONE
  * Setup pager types
  */
 function qw_default_pager_types( $pagers ) {
@@ -113,6 +114,7 @@ function qw_basic_pager_form( $basic, $display ) {
 }
 
 /*
+ * @todo - DONE
  * Custom Pager function
  *
  * @param array $pager Query pager details
@@ -138,6 +140,7 @@ function qw_make_pager( $pager, $qw_query ) {
 }
 
 /*
+ * @todo - DONE
  * Custom Default Pager
  *
  * @param array $pager Query options for pager
@@ -198,6 +201,7 @@ function qw_theme_pager_default( $pager, $qw_query ) {
 }
 
 /*
+ * @todo - DONE
  * Default Pager with page numbers
  *
  * @param array $pager Query options for pager

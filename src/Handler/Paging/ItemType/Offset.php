@@ -37,7 +37,7 @@ class Offset implements PagingInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function process( array $args, array $values ) {
+	public function process( array $args, array $values, int $page_number ) {
 		// Handle normal pagination vs offset pagination.
 		$paged = NULL;
 		// Handle unique pager keys.
@@ -46,7 +46,7 @@ class Offset implements PagingInterface {
 			$paged = $_GET[ $values['pager']['pager_key'] ];
 		}
 
-		$args['paged'] = ( $paged ) ? $paged : qw_get_page_number();
+		$args['paged'] = ( $paged ) ? $paged : $page_number;
 		$args['offset'] = $values['offset'] ?? 0;
 		if ( $args['paged'] > 1 ) {
 			if ( $args['offset'] > 0 && $args['posts_per_page'] > 0 ) {

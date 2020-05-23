@@ -45,16 +45,17 @@ class FieldRows extends RowStyleBase {
 	public function render( QwQuery $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager ) {
 		$display = $qw_query->getDisplay();
 		$fields = $qw_query->getFields();
+		$row_style_settings = $qw_query->getRowStyle();
 		$grouped_rows = [];
 		$tokens = [];
 		$current_post_id = get_the_ID();
-		$group_by = isset( $display['field_settings']['group_by_field'] ) ? $display['field_settings']['group_by_field'] : NULL;
+		$group_by = isset( $row_style_settings['group_by_field'] ) ? $row_style_settings['group_by_field'] : NULL;
 		$i = 0;
 
 		// sort according to weights
 		uasort( $fields, 'qw_cmp' );
 
-		$entity_query->execute( function( $item ) use ( $field_type_manager, $fields, $display, $current_post_id, $group_by, &$grouped_rows, &$tokens, &$i ) {
+		$entity_query->execute( function( $item ) use ( $field_type_manager, $fields, $display, $row_style_settings, $current_post_id, $group_by, &$grouped_rows, &$tokens, &$i ) {
 			/** @var TypeInterface $item */
 			$row = [
 				'row_classes' => [],
@@ -121,7 +122,7 @@ class FieldRows extends RowStyleBase {
 				$row['fields'][ $name ]['label'] = ( isset( $settings['has_label'] ) ) ? $settings['label'] : '';
 
 				// apply labels to full style fields
-				if ( isset( $settings['has_label'] ) && $display['row_style'] != 'posts' && $display['style'] != 'table' ) {
+				if ( isset( $settings['has_label'] ) && $display['style'] != 'table' ) {
 					$row['fields'][ $name ]['output'] = '<label class="query-label">' . $settings['label'] . '</label> ' . $row['fields'][ $name ]['output'];
 				}
 				// the_content filter
@@ -151,7 +152,7 @@ class FieldRows extends RowStyleBase {
 			$group_hash = md5( $i );
 			if ( $group_by && isset( $row['fields'][ $group_by ] ) ) {
 				// Clean up group by field.
-				if ( !empty( $display['field_settings']['strip_group_by_field'] ) ) {
+				if ( !empty( $row_style_settings['strip_group_by_field'] ) ) {
 					$row['fields'][ $group_by ]['content'] = strip_tags( $row['fields'][ $group_by ]['content'] );
 				}
 				$group_by_field_content = $row['fields'][ $group_by ]['content'];

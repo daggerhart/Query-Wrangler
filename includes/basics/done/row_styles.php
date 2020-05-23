@@ -12,6 +12,7 @@ add_filter( 'qw_row_fields_styles', 'qw_default_row_fields_styles', 0 );
 add_filter( 'qw_row_complete_styles', 'qw_default_row_complete_styles', 0 );
 
 /*
+ * @todo - DONE
  * Basic Settings
  */
 function qw_basic_settings_row_style( $basics ) {
@@ -27,6 +28,7 @@ function qw_basic_settings_row_style( $basics ) {
 }
 
 /*
+ * @todo - DONE
  * Default Row Styles
  */
 function qw_default_row_styles( $row_styles ) {
@@ -51,6 +53,7 @@ function qw_default_row_styles( $row_styles ) {
 
 
 /*
+ * @todo - DONE
  * Default Row 'Posts' Styles
  */
 function qw_default_row_complete_styles( $row_complete_styles ) {

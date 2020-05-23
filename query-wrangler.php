@@ -74,14 +74,14 @@ function qw_init_frontend() {
 //	include_once QW_PLUGIN_DIR . '/includes/basics/ignore_sticky_posts.php';
 	include_once QW_PLUGIN_DIR . '/includes/basics/display_title.php';
 	include_once QW_PLUGIN_DIR . '/includes/basics/template_styles.php';
-	include_once QW_PLUGIN_DIR . '/includes/basics/row_styles.php';
+//	include_once QW_PLUGIN_DIR . '/includes/basics/row_styles.php';
 	include_once QW_PLUGIN_DIR . '/includes/basics/header.php';
 	include_once QW_PLUGIN_DIR . '/includes/basics/footer.php';
 	include_once QW_PLUGIN_DIR . '/includes/basics/empty.php';
 	include_once QW_PLUGIN_DIR . '/includes/basics/wrapper_settings.php';
 	include_once QW_PLUGIN_DIR . '/includes/basics/page_path.php';
 	include_once QW_PLUGIN_DIR . '/includes/basics/page_template.php';
-	include_once QW_PLUGIN_DIR . '/includes/basics/pager.php';
+//	include_once QW_PLUGIN_DIR . '/includes/basics/pager.php';
 
 	// fields
 	include_once QW_PLUGIN_DIR . '/includes/fields/default_fields.php';

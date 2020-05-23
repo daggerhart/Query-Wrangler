@@ -8,6 +8,7 @@ use Kinglet\Entity\QueryInterface;
 use Kinglet\Registry\ClassRegistryInterface;
 use QueryWrangler\Handler\Field\FieldTypeManager;
 use QueryWrangler\Handler\HandlerManager;
+use QueryWrangler\Handler\PagerStyle\PagerStyleTypeManager;
 use QueryWrangler\Handler\RowStyle\RowStyleTypeManager;
 
 class QueryProcessor implements ContainerInjectionInterface {
@@ -52,33 +53,39 @@ class QueryProcessor implements ContainerInjectionInterface {
 	}
 
 	/**
-	 * @param QwQuery $query
+	 * @param QwQuery $qw_query
 	 * @param array $overrides
 	 * @param bool $full_override
 	 *
 	 * @return false|string
 	 */
-	public function execute( QwQuery $query, $overrides = [], $full_override = FALSE ) {
+	public function execute( QwQuery $qw_query, $overrides = [], $full_override = FALSE ) {
 		/**
 		 * Process options.
 		 * @todo - consider new data struct
 		 *
 		 * Previously @see qw_generate_query_options()
 		 */
-		$options = $query->meta( 'query_data' );
+		$options = $qw_query->meta( 'query_data' );
 		$options = $full_override ? $overrides : array_replace_recursive( (array) $options, $overrides );
 
 		// build query_details
 		$options['meta'] = array_replace( [
-			'id' => $query->id(),
-			'slug' => $query->slug(),
-			'name' => $query->title(),
-			'type' => $query->displayType(),
+			'id' => $qw_query->id(),
+			'slug' => $qw_query->slug(),
+			'name' => $qw_query->title(),
+			'type' => $qw_query->getDisplayType(),
 			'pagination' => isset( $options['display']['page']['pager']['active'] ) ? 1 : 0,
 			'header' => $options['display']['header'],
 			'footer' => $options['display']['footer'],
 			'empty' => $options['display']['empty'],
 		], (array) $options['meta'] );
+
+		$wrapper = [
+			'rows' => [],
+			'pager' => null,
+		];
+		$current_page_number = $this->getCurrentPageNumber();
 
 		/**
 		 * Generate WP_Query args.
@@ -93,9 +100,9 @@ class QueryProcessor implements ContainerInjectionInterface {
 		 */
 		$paging_manager = $this->handlerManager->get( 'paging' );
 		$paging_manager->collect();
-		$paging_data = $paging_manager->getDataFromQuery( $query );
+		$paging_data = $paging_manager->getDataFromQuery( $qw_query );
 		foreach ( $paging_manager->all() as $type => $paging_type ) {
-			$args = $paging_type->process( $args, $paging_data );
+			$args = $paging_type->process( $args, $paging_data, $current_page_number );
 		}
 
 		/**
@@ -106,7 +113,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 		 */
 		$filter_manager = $this->handlerManager->get( 'filter' );
 		$filter_manager->collect();
-		foreach ( $filter_manager->getDataFromQuery( $query ) as $name => $item ) {
+		foreach ( $filter_manager->getDataFromQuery( $qw_query ) as $name => $item ) {
 			if ( $filter_manager->has( $item['type'] ) ) {
 				$filter_type = $filter_manager->get( $item['type'] );
 				$args = $filter_type->process( $args, $item );
@@ -121,7 +128,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 		 */
 		$sort_manager = $this->handlerManager->get( 'sort' );
 		$sort_manager->collect();
-		foreach ( $sort_manager->getDataFromQuery( $query ) as $name => $item ) {
+		foreach ( $sort_manager->getDataFromQuery( $qw_query ) as $name => $item ) {
 			if ( $sort_manager->has( $item['type'] ) ) {
 				$sort_type = $sort_manager->get( $item['type'] );
 				$args = $sort_type->process( $args, $item );
@@ -129,7 +136,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 		}
 
 		/** @var QueryInterface $entity_query */
-		$entity_query = $this->entityQueryManager->getInstance( $query->queryType() );
+		$entity_query = $this->entityQueryManager->getInstance( $qw_query->getQueryType() );
 		$entity_query->setArguments( $args );
 
 		// @todo - allow display types to affect rendering on their own.
@@ -154,9 +161,20 @@ class QueryProcessor implements ContainerInjectionInterface {
 		/** @var RowStyleTypeManager $row_style_manager */
 		$row_style_manager = $this->handlerManager->get( 'row_style' );
 		$row_style_manager->collect();
-		$row_style = $row_style_manager->getDataFromQuery( $query );
-		$row_style_type = $row_style_manager->get( $row_style );
-		$rows = $row_style_type->render( $query, $entity_query, $field_manager );
+		$row_style = $row_style_manager->getDataFromQuery( $qw_query );
+		$row_style_type = $row_style_manager->get( $row_style['type'] );
+		$wrapper['rows'] = $row_style_type->render( $qw_query, $entity_query, $field_manager );
+
+		if ( $qw_query->getPagerEnabled() ) {
+			$query_page_number = $this->getQueryPageNumber( $entity_query );
+
+			/** @var PagerStyleTypeManager $pager_style_manager */
+			$pager_style_manager = $this->handlerManager->get( 'pager_style' );
+			$pager_style_manager->collect();
+			$pager_style = $pager_style_manager->getDataFromQuery( $qw_query );
+			$pager_style_type = $pager_style_manager->get( $pager_style['type'] );
+			$wrapper['pager'] = $pager_style_type->render( $pager_style, $entity_query, $query_page_number );
+		}
 
 		// @todo - display manager handles simple stuff, but ultimately...
 
@@ -164,7 +182,6 @@ class QueryProcessor implements ContainerInjectionInterface {
 		//   - the TEMPLATE STYLE then renders into a template...
 		//     it does this with the FileRenderer and creates template suggestions
 		//     to render the $content, then passes it to...
-		//   - the PAGER STYLE renders the desired pager using the results of the query
 		//   - the WRAPPER STYLE, which converts everything into variables for the wrapper template
 
 		/**
@@ -175,15 +192,14 @@ class QueryProcessor implements ContainerInjectionInterface {
 		$display_manager->collect();
 		$display = [];
 		foreach ( $display_manager->all() as $type => $display_type ) {
-			$display = $display_type->process( $display, $options['data']['display'] );
+			$display = $display_type->process( $display, $qw_query->getDisplay() );
 		}
 //		dump($display_manager->all());
 //		dump($display_manager->getDataFromQuery( $query ));
 
-		dump([
+		dump( $wrapper += [
 			'args' => $args,
 			'display' => $display,
-			'rows' => $rows,
 		]);
 
 		// return
@@ -192,6 +208,66 @@ class QueryProcessor implements ContainerInjectionInterface {
 
 	public function preprocessQueryData( $data ) {
 		return $data;
+	}
+
+	/**
+	 * Get the current page number based on WordPress context or URL.
+	 *
+	 * @param array $keys
+	 *   Request parameter keys to look for page as page number value.
+	 * @return int
+	 */
+	public function getCurrentPageNumber( $keys = [ 'page', 'paged' ] ) {
+		// Default to page 1
+		$page = 1;
+
+		// Help figure out the current page.
+		$path_array = explode( '/page/', $_SERVER['REQUEST_URI'] );
+
+		// Global WP_Query context.
+		if ( get_query_var( 'paged' ) ) {
+			$page = get_query_var( 'paged' );
+		}
+		// Paging with URL.
+		else if ( isset( $path_array[1] ) ) {
+			$page = explode( '/', $path_array[1] );
+			$page = $page[0];
+		}
+		// Paging with request query parameter.
+		else {
+			foreach ( $keys as $key ) {
+				if ( isset( $_GET[ $key ] ) && is_numeric( $_GET[ $key ] ) ) {
+					$page = $_GET[ $key ];
+					break;
+				}
+			}
+		}
+
+		return intval( $page );
+	}
+
+	/**
+	 * Look in query for page number.
+	 *
+	 * @param QueryInterface $query
+	 * @param bool $fallback
+	 *   Fallback to the global page number context.
+	 *
+	 * @return int
+	 */
+	public function getQueryPageNumber( QueryInterface $query, $fallback = true ) {
+		$wp_query = $query->query();
+		$page = 1;
+
+		if ( ! is_null( $wp_query ) && isset( $wp_query->query_vars['paged'] ) ) {
+			$page = $wp_query->query_vars['paged'];
+		}
+		// Fallback to global page context.
+		else if ( $fallback ) {
+			$page = $this->getCurrentPageNumber();
+		}
+
+		return intval( $page );
 	}
 
 }

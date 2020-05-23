@@ -42,13 +42,12 @@ class PostRows extends RowStyleBase {
 	 * @inheritDoc
 	 */
 	public function render( QwQuery $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager ) {
-		$display = $qw_query->getDisplay();
+		$row_style_settings = $qw_query->getRowStyle();
 		$grouped_rows = [];
 		$current_post_id = get_the_ID();
-		$group_by = isset( $display['field_settings']['group_by_field'] ) ? $display['field_settings']['group_by_field'] : NULL;
 		$i = 0;
 
-		$entity_query->execute( function( $item ) use ( $qw_query, $display, $current_post_id, $group_by, &$grouped_rows, &$i ) {
+		$entity_query->execute( function( $item ) use ( $qw_query, $row_style_settings, $current_post_id, &$grouped_rows, &$i ) {
 			/** @var TypeInterface $item */
 			$row = [
 				'row_classes' => [],
@@ -65,9 +64,9 @@ class PostRows extends RowStyleBase {
 
 			// @todo - replace TW rendering
 			$row['fields'][ $i ]['output']  = theme( 'query_display_rows', [
-				'template' => 'query-' . $display['post_settings']['size'],
+				'template' => 'query-' . $row_style_settings['size'],
 				'slug'     => $qw_query->slug(),
-				'style'    => $display['post_settings']['size'],
+				'style'    => $row_style_settings['size'],
 			] );
 			$row['fields'][ $i ]['content'] = $row['fields'][ $i ]['output'];
 
@@ -78,7 +77,7 @@ class PostRows extends RowStyleBase {
 		} );
 
 		// Flatten and add classes.
-		$rows = $this->flattenGroupedRows( $grouped_rows, $group_by );
+		$rows = $this->flattenGroupedRows( $grouped_rows );
 		$last_row = count( $rows ) -1;
 		foreach ( $rows as $i => $row ) {
 			$classes = array_merge( $rows[ $i ]['row_classes'], $this->rowClasses( $i, $last_row ) );

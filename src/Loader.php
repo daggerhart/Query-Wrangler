@@ -7,7 +7,6 @@ use Kinglet\Container\ContainerInterface;
 use Kinglet\FileSystem\Finder;
 use Kinglet\Registry\OptionRepository;
 use Kinglet\Template\FileRenderer;
-use Kinglet\Template\RendererInterface;
 use Kinglet\Template\StringRenderer;
 use QueryWrangler\Admin\MetaBox\QueryDebug;
 use QueryWrangler\Admin\MetaBox\QueryDetails;
@@ -19,6 +18,7 @@ use QueryWrangler\Handler\Display\DisplayTypeManager;
 use QueryWrangler\Handler\Field\FieldTypeManager;
 use QueryWrangler\Handler\Filter\FilterTypeManager;
 use QueryWrangler\Handler\HandlerManager;
+use QueryWrangler\Handler\PagerStyle\PagerStyleTypeManager;
 use QueryWrangler\Handler\Paging\PagingTypeManager;
 use QueryWrangler\Handler\RowStyle\RowStyleTypeManager;
 use QueryWrangler\Handler\Sort\SortTypeManager;
@@ -68,6 +68,7 @@ class Loader {
 		$container->set( 'handler.sort.manager', SortTypeManager::class );
 		$container->set( 'handler.paging.manager', PagingTypeManager::class );
 		$container->set( 'handler.row_style.manager', RowStyleTypeManager::class );
+		$container->set( 'handler.pager_style.manager', PagerStyleTypeManager::class );
 		$container->set( 'handler.manager', function ( ContainerInterface $container ) {
 			// Setup the renderers before they are injected into other services.
 			/** @var FileRenderer $fileRenderer */
@@ -90,6 +91,7 @@ class Loader {
 			$sort = $container->get( 'handler.sort.manager' );
 			$paging = $container->get( 'handler.paging.manager' );
 			$row_style = $container->get( 'handler.row_style.manager' );
+			$pager_style = $container->get( 'handler.pager_style.manager' );
 
 			return new HandlerManager( [
 				$display->type() => $display,
@@ -98,6 +100,7 @@ class Loader {
 				$sort->type() => $sort,
 				$paging->type() => $paging,
 				$row_style->type() => $row_style,
+				$pager_style->type() => $pager_style,
 			] );
 		} );
 		$container->set( 'query.processor', QueryProcessor::class );
