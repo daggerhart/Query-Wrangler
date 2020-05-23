@@ -22,6 +22,7 @@ use QueryWrangler\Handler\PagerStyle\PagerStyleTypeManager;
 use QueryWrangler\Handler\Paging\PagingTypeManager;
 use QueryWrangler\Handler\RowStyle\RowStyleTypeManager;
 use QueryWrangler\Handler\Sort\SortTypeManager;
+use QueryWrangler\Handler\TemplateStyle\TemplateStyleTypeManager;
 use QueryWrangler\PostType\Query;
 use QueryWrangler\Query\QueryProcessor;
 use QueryWrangler\Query\QueryShortcode;
@@ -69,14 +70,18 @@ class Loader {
 		$container->set( 'handler.paging.manager', PagingTypeManager::class );
 		$container->set( 'handler.row_style.manager', RowStyleTypeManager::class );
 		$container->set( 'handler.pager_style.manager', PagerStyleTypeManager::class );
+		$container->set( 'handler.template_style.manager', TemplateStyleTypeManager::class );
 		$container->set( 'handler.manager', function ( ContainerInterface $container ) {
 			// Setup the renderers before they are injected into other services.
 			/** @var FileRenderer $fileRenderer */
 			$fileRenderer = $container->get( 'renderer.file' );
-			$fileRenderer->setFinder( new Finder( [
-				QW_PLUGIN_DIR . '/templates',
-				QW_PLUGIN_DIR . '/templates/legacy',
-			] ) );
+			$fileRenderer->setOptions( [
+				'paths' => [
+					QW_PLUGIN_DIR . '/templates',
+					QW_PLUGIN_DIR . '/templates/legacy',
+				],
+			] );
+			$fileRenderer->setFinder( new Finder() );
 
 			/** @var StringRenderer $stringRenderer */
 			$stringRenderer = $container->get( 'renderer.string' );
@@ -92,6 +97,7 @@ class Loader {
 			$paging = $container->get( 'handler.paging.manager' );
 			$row_style = $container->get( 'handler.row_style.manager' );
 			$pager_style = $container->get( 'handler.pager_style.manager' );
+			$template_style = $container->get( 'handler.template_style.manager' );
 
 			return new HandlerManager( [
 				$display->type() => $display,
@@ -101,6 +107,7 @@ class Loader {
 				$paging->type() => $paging,
 				$row_style->type() => $row_style,
 				$pager_style->type() => $pager_style,
+				$template_style->type() => $template_style,
 			] );
 		} );
 		$container->set( 'query.processor', QueryProcessor::class );

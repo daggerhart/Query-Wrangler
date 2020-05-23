@@ -81,7 +81,7 @@ class DisplayTypeManager extends HandlerTypeManagerBase {
 			}
 			$instance = new LegacyDisplay( $type, $item );
 			$instance->setInvoker( $this->invoker );
-			$instance->setRenderer( $this->renderer );
+			$instance->setRenderer( $this->callableRenderer );
 
 			// Legacy items can't replace newer types.
 			if ( !$this->has( $instance->type() ) ) {

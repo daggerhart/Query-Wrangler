@@ -10,6 +10,7 @@ use QueryWrangler\Handler\Field\FieldTypeManager;
 use QueryWrangler\Handler\HandlerManager;
 use QueryWrangler\Handler\PagerStyle\PagerStyleTypeManager;
 use QueryWrangler\Handler\RowStyle\RowStyleTypeManager;
+use QueryWrangler\Handler\TemplateStyle\TemplateStyleTypeManager;
 
 class QueryProcessor implements ContainerInjectionInterface {
 
@@ -83,6 +84,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 
 		$wrapper = [
 			'rows' => [],
+			'content' => null,
 			'pager' => null,
 		];
 		$current_page_number = $this->getCurrentPageNumber();
@@ -139,7 +141,6 @@ class QueryProcessor implements ContainerInjectionInterface {
 		$entity_query = $this->entityQueryManager->getInstance( $qw_query->getQueryType() );
 		$entity_query->setArguments( $args );
 
-		// @todo - allow display types to affect rendering on their own.
 		/**
 		 * Display handlers render and modify specific parts of the output.
 		 * Some have their own sub-display implementations (like row styles).
@@ -176,12 +177,18 @@ class QueryProcessor implements ContainerInjectionInterface {
 			$wrapper['pager'] = $pager_style_type->render( $pager_style, $entity_query, $query_page_number );
 		}
 
+		if ( is_array( $wrapper['rows'] ) && count( $wrapper['rows'] ) ) {
+			/** @var TemplateStyleTypeManager $template_style_manager */
+			$template_style_manager = $this->handlerManager->get( 'template_style' );
+			$template_style_manager->collect();
+			$template_style = $template_style_manager->getDataFromQuery( $qw_query );
+			$template_style_type = $template_style_manager->get( $template_style['type'] );
+			$wrapper['content'] = $template_style_type->render( $qw_query, $wrapper['rows'] );
+		}
+
 		// @todo - display manager handles simple stuff, but ultimately...
 
 		// @todo
-		//   - the TEMPLATE STYLE then renders into a template...
-		//     it does this with the FileRenderer and creates template suggestions
-		//     to render the $content, then passes it to...
 		//   - the WRAPPER STYLE, which converts everything into variables for the wrapper template
 
 		/**
@@ -197,13 +204,15 @@ class QueryProcessor implements ContainerInjectionInterface {
 //		dump($display_manager->all());
 //		dump($display_manager->getDataFromQuery( $query ));
 
-		dump( $wrapper += [
+		$dump = $wrapper + [
 			'args' => $args,
 			'display' => $display,
-		]);
+		];
+		unset($dump['content']);
+		dump( $dump );
 
 		// return
-		return '';//$themed;
+		return $wrapper['content'];
 	}
 
 	public function preprocessQueryData( $data ) {

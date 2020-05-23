@@ -19,6 +19,7 @@ class QwQuery extends Post {
 	protected $paging = [];
 	protected $rowStyle = [];
 	protected $sorts = [];
+	protected $templateStyle = [];
 
 	/**
 	 * QwQuery constructor.
@@ -142,25 +143,35 @@ class QwQuery extends Post {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getTemplateStyle() {
+		return $this->templateStyle;
+	}
+
+	/**
 	 * Populate the object expecting version 1.x values.
 	 *
 	 * @param $data
 	 */
 	protected function populateV1( $data ) {
+		// Display Type
 		if ( !empty( $data['type'] ) ) {
 			$this->displayType = $data['type'];
 		}
 
-		// Display
+		// Fields
 		if ( !empty( $data['data']['display']['field_settings']['fields'] ) ) {
 			$this->fields = $data['data']['display']['field_settings']['fields'];
 			unset( $data['data']['display']['field_settings']['fields'] );
 		}
+		// Pager Style
 		if ( !empty( $data['data']['display']['page']['pager'] ) ) {
 			$this->pagerStyle = $data['data']['display']['page']['pager'];
 			$this->pagerEnabled = !empty( $this->pagerStyle['active'] );
 			unset( $data['data']['display']['page']['pager'] );
 		}
+		// Page
 		if ( !empty( $data['data']['display']['page'] ) ) {
 			$this->paging = $data['data']['display']['page'];
 			unset( $data['data']['display']['page'] );
@@ -173,6 +184,14 @@ class QwQuery extends Post {
 				}
 			}
 		}
+		// Template Style
+		if ( !empty( $data['data']['display']['style'] ) ) {
+			$this->templateStyle = [
+				'type' => $data['data']['display']['style'],
+			];
+			unset( $data['data']['display']['style'] );
+		}
+		// Row Style
 		if ( !empty( $data['data']['display']['row_style'] ) ) {
 			$row_style_type = $data['data']['display']['row_style'];
 			$row_style_type_singular =  rtrim ( $row_style_type, 's' );
@@ -186,15 +205,12 @@ class QwQuery extends Post {
 				unset( $data['data']['display'][ $row_style_type_singular . '_settings' ] );
 			}
 		}
-		if ( !empty( $data['data']['display'] ) ) {
-			$this->display = $data['data']['display'];
-		}
-
-		// Args
+		// Sorts
 		if ( !empty( $data['data']['args']['sorts'] ) ) {
 			$this->sorts = $data['data']['args']['sorts'];
 			unset( $data['data']['args']['sorts'] );
 		}
+		// Filters
 		if ( !empty( $data['data']['args']['filters'] ) ) {
 			$this->filters = $data['data']['args']['filters'];
 			unset( $data['data']['args']['filters'] );
@@ -210,6 +226,11 @@ class QwQuery extends Post {
 				}
 			}
 		}
+		// Display (whatever is left)
+		if ( !empty( $data['data']['display'] ) ) {
+			$this->display = $data['data']['display'];
+		}
+		// Args (whatever is left)
 		if ( !empty( $data['data']['args'] ) ) {
 			$this->args = $data['data']['args'];
 		}

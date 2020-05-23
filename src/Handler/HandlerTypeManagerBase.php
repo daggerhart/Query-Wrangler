@@ -18,18 +18,38 @@ abstract class HandlerTypeManagerBase extends Registry implements HandlerTypeMan
 	/**
 	 * @var RendererInterface
 	 */
-	protected $renderer;
+	protected $callableRenderer;
+
+	/**
+	 * @var RendererInterface
+	 */
+	protected $fileRenderer;
+
+	/**
+	 * @var RendererInterface
+	 */
+	protected $stringRenderer;
 
 	/**
 	 * HandlerTypeManagerBase constructor.
 	 *
 	 * @param InvokerInterface $invoker
-	 * @param RendererInterface $renderer
+	 * @param RendererInterface $file_renderer
+	 * @param RendererInterface $callable_renderer
+	 * @param RendererInterface $string_renderer
 	 * @param array $items
 	 */
-	public function __construct( InvokerInterface $invoker, RendererInterface $renderer, array $items = [] ) {
+	public function __construct(
+		InvokerInterface $invoker,
+		RendererInterface $file_renderer,
+		RendererInterface $callable_renderer,
+		RendererInterface $string_renderer,
+		array $items = [] )
+	{
 		$this->invoker = $invoker;
-		$this->renderer = $renderer;
+		$this->fileRenderer = $file_renderer;
+		$this->callableRenderer = $callable_renderer;
+		$this->stringRenderer = $string_renderer;
 		parent::__construct( $items );
 	}
 
@@ -39,7 +59,9 @@ abstract class HandlerTypeManagerBase extends Registry implements HandlerTypeMan
 	public static function create( ContainerInterface $container ) {
 		return new static(
 			$container->get( 'invoker' ),
-			$container->get( 'renderer.callable' )
+			$container->get( 'renderer.file' ),
+			$container->get( 'renderer.callable' ),
+			$container->get( 'renderer.string' )
 		);
 	}
 

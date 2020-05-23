@@ -46,12 +46,12 @@ class SortTypeManager extends HandlerTypeManagerBase {
 	/**
 	 * Gather items registered with the old approach.
 	 */
-	public function collectLegacy() {
+	protected function collectLegacy() {
 		$legacy = apply_filters( 'qw_sort_options', [] );
 		foreach ($legacy as $type => $item) {
 			$instance = new LegacySort( $type, $item );
 			$instance->setInvoker( $this->invoker );
-			$instance->setRenderer( $this->renderer );
+			$instance->setRenderer( $this->callableRenderer );
 			$this->set( $instance->type(), $instance );
 		}
 	}
@@ -59,7 +59,7 @@ class SortTypeManager extends HandlerTypeManagerBase {
 	/**
 	 * Collect all new item types for this handler type.
 	 */
-	public function collectTypes() {
+	protected function collectTypes() {
 		if ( !$this->typesRegistered ) {
 			$this->typesRegistered = TRUE;
 			add_filter( "qw_handler_item_types--{$this->type()}", function( $sources ) {

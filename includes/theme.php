@@ -21,68 +21,27 @@ function qw_templates( $templates ) {
 			'options' => array(),
 		)
 	);
-	// full and field styles
-	$templates['query_display_rows'] = array(
-		'files'        => array(
-			'[template]-[slug].php',
-			'[template].php',
-			'templates/[template].php',
-		),
-		'default_path' => QW_PLUGIN_DIR,
-		'arguments'    => array(
-			'template' => 'query-unformatted',
-			'slug'     => 'not-found',
-			'style'    => 'unformatted',
-			'rows'     => array(),
-		)
-	);
+//	// full and field styles
+//	$templates['query_display_rows'] = array(
+//		'files'        => array(
+//			'[template]-[slug].php',
+//			'[template].php',
+//			'templates/[template].php',
+//		),
+//		'default_path' => QW_PLUGIN_DIR,
+//		'arguments'    => array(
+//			'template' => 'query-unformatted',
+//			'slug'     => 'not-found',
+//			'style'    => 'unformatted',
+//			'rows'     => array(),
+//		)
+//	);
 
 	return $templates;
 }
 
 // tw hook
 add_filter( 'tw_templates', 'qw_templates' );
-
-/*
- * Preprocess query_display_rows to allow field styles to define their own default path
- */
-function theme_query_display_rows_preprocess( $template ) {
-	// make sure we know what style to use
-	if ( isset( $template['arguments']['style'] ) ) {
-		// get the specific style
-		$all_styles = qw_all_styles();
-
-		// set this template's default path to the style's default path
-		if ( isset( $all_styles[ $template['arguments']['style'] ] ) ) {
-			$style                    = $all_styles[ $template['arguments']['style'] ];
-			$template['default_path'] = $style['default_path'];
-		}
-
-		//if(isset($all_styles[$template['preprocess_callback']])){
-		//  $template['preprocess_callback'] = $all_styles[$template['preprocess_callback']];
-		//}
-	}
-
-	return $template;
-}
-
-/*
- * Preprocess query_display_syle to allow field styles to define their own default path
- */
-function theme_query_display_style_preprocess( $template ) {
-	$all_styles = qw_all_styles();
-	// make sure we know what style to use
-	if ( isset( $all_styles[ $template['arguments']['style'] ] ) ) {
-		// get the specific style
-		$style = $all_styles[ $template['arguments']['style'] ];
-		// set this template's default path to the style's default path
-		if ( ! empty( $style['default_path'] ) ) {
-			$template['default_path'] = $style['default_path'];
-		}
-	}
-
-	return $template;
-}
 
 /*
  * Template the entire query
@@ -106,38 +65,36 @@ function qw_template_query( &$qw_query, $options ) {
 
 	// look for empty results
 	if ( $results_count > 0 ) {
-		$all_styles = qw_all_styles();
-
-		$style = $all_styles[ $options['display']['style'] ];
-
-		// setup row template arguments
-		$template_args = array(
-			'template' => 'query-' . $style['hook_key'],
-			'slug'     => $options['meta']['slug'],
-			'style'    => $style['hook_key'],
-			'options'  => $options,
-		);
-
-		if ( isset( $options['display'][ $style['settings_key'] ] ) ) {
-			$template_args['style_settings'] = $options['display'][ $style['settings_key'] ];
-		}
-
-		// the content of the widget is the result of the query
-		if ( $options['display']['row_style'] == "posts" ) {
-			$template_args['rows'] = qw_make_posts_rows( $qw_query, $options );
-		}
-		// setup row template arguments
-		else if ( $options['display']['row_style'] == "fields" ) {
-			$template_args['rows'] = qw_make_fields_rows( $qw_query, $options );
-		}
-		// template_part rows
-		else if ( $options['display']['row_style'] == "template_part" ) {
-			$template_args['rows'] = qw_make_template_part_rows( $qw_query, $options );
-		}
-
-		// template the query rows
-		$wrapper_args['content'] = theme( 'query_display_rows',
-			$template_args );
+//		$all_styles = qw_all_styles();
+//		$style = $all_styles[ $options['display']['style'] ];
+//
+//		// setup row template arguments
+//		$template_args = array(
+//			'template' => 'query-' . $style['hook_key'],
+//			'slug'     => $options['meta']['slug'],
+//			'style'    => $style['hook_key'],
+//			'options'  => $options,
+//		);
+//
+//		if ( isset( $options['display'][ $style['settings_key'] ] ) ) {
+//			$template_args['style_settings'] = $options['display'][ $style['settings_key'] ];
+//		}
+//
+//		// the content of the widget is the result of the query
+//		if ( $options['display']['row_style'] == "posts" ) {
+//			$template_args['rows'] = qw_make_posts_rows( $qw_query, $options );
+//		}
+//		// setup row template arguments
+//		else if ( $options['display']['row_style'] == "fields" ) {
+//			$template_args['rows'] = qw_make_fields_rows( $qw_query, $options );
+//		}
+//		// template_part rows
+//		else if ( $options['display']['row_style'] == "template_part" ) {
+//			$template_args['rows'] = qw_make_template_part_rows( $qw_query, $options );
+//		}
+//
+//		// template the query rows
+//		$wrapper_args['content'] = theme( 'query_display_rows', $template_args );
 	} // empty results
 	else {
 		// no pagination

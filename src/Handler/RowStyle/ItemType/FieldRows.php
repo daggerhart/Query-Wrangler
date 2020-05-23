@@ -42,6 +42,13 @@ class FieldRows extends RowStyleBase {
 	/**
 	 * @inheritDoc
 	 */
+	public function queryTypes() {
+		return [];
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	public function render( QwQuery $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager ) {
 		$display = $qw_query->getDisplay();
 		$fields = $qw_query->getFields();

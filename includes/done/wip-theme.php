@@ -1,5 +1,48 @@
 <?php
 
+/*
+ * @todo -- SKIPPING
+ * Preprocess query_display_rows to allow field styles to define their own default path
+ */
+function theme_query_display_rows_preprocess( $template ) {
+	// make sure we know what style to use
+	if ( isset( $template['arguments']['style'] ) ) {
+		// get the specific style
+		$all_styles = qw_all_styles();
+
+		// set this template's default path to the style's default path
+		if ( isset( $all_styles[ $template['arguments']['style'] ] ) ) {
+			$style                    = $all_styles[ $template['arguments']['style'] ];
+			$template['default_path'] = $style['default_path'];
+		}
+
+		//if(isset($all_styles[$template['preprocess_callback']])){
+		//  $template['preprocess_callback'] = $all_styles[$template['preprocess_callback']];
+		//}
+	}
+
+	return $template;
+}
+
+/*
+ * @todo -- SKIPPING
+ * Preprocess query_display_syle to allow field styles to define their own default path
+ */
+function theme_query_display_style_preprocess( $template ) {
+	$all_styles = qw_all_styles();
+	// make sure we know what style to use
+	if ( isset( $all_styles[ $template['arguments']['style'] ] ) ) {
+		// get the specific style
+		$style = $all_styles[ $template['arguments']['style'] ];
+		// set this template's default path to the style's default path
+		if ( ! empty( $style['default_path'] ) ) {
+			$template['default_path'] = $style['default_path'];
+		}
+	}
+
+	return $template;
+}
+
 
 /*
  * @todo - test -- maybe Done

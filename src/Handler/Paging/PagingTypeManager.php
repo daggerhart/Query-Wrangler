@@ -45,7 +45,7 @@ class PagingTypeManager extends HandlerTypeManagerBase {
 	/**
 	 * Collect all new item types for this handler type.
 	 */
-	public function collectTypes() {
+	protected function collectTypes() {
 		if ( !$this->typesRegistered ) {
 			$this->typesRegistered = TRUE;
 			add_filter( "qw_handler_item_types--{$this->type()}", function( $sources ) {

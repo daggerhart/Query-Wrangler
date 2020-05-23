@@ -41,6 +41,13 @@ class PostRows extends RowStyleBase {
 	/**
 	 * @inheritDoc
 	 */
+	public function queryTypes() {
+		return [];
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	public function render( QwQuery $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager ) {
 		$row_style_settings = $qw_query->getRowStyle();
 		$grouped_rows = [];

@@ -1,12 +1,12 @@
 <?php
 
-namespace QueryWrangler\Handler\Field;
+namespace QueryWrangler\Handler\TemplateStyle;
 
 use QueryWrangler\Handler\HandlerItemTypeDiscoverableRegistry;
 use QueryWrangler\Handler\HandlerTypeManagerBase;
 use QueryWrangler\Query\QwQuery;
 
-class FieldTypeManager extends HandlerTypeManagerBase {
+class TemplateStyleTypeManager extends HandlerTypeManagerBase {
 
 	/**
 	 * @var bool
@@ -15,7 +15,7 @@ class FieldTypeManager extends HandlerTypeManagerBase {
 
 	/**
 	 * {@inheritDoc}
-	 * @return FieldInterface
+	 * @return TemplateStyleInterface
 	 */
 	public function get( $key ) {
 		return parent::get( $key );
@@ -25,14 +25,14 @@ class FieldTypeManager extends HandlerTypeManagerBase {
 	 * {@inheritDoc}
 	 */
 	public function type() {
-		return 'field';
+		return 'template_style';
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public function multiple() {
-		return TRUE;
+		return FALSE;
 	}
 
 	/**
@@ -44,14 +44,13 @@ class FieldTypeManager extends HandlerTypeManagerBase {
 	}
 
 	/**
-	 * Gather items registered with the old approach.
+	 * Collect legacy template types
 	 */
 	protected function collectLegacy() {
-		$legacy = apply_filters( 'qw_fields', [] );
-		foreach ($legacy as $type => $item) {
-			$instance = new LegacyField( $type, $item );
-			$instance->setInvoker( $this->invoker );
-			$instance->setRenderer( $this->callableRenderer );
+		$legacy = apply_filters( 'qw_styles', [] );
+		foreach ( $legacy as $type => $item ) {
+			$instance = new LegacyTemplateStyle( $type, $item );
+			$instance->setFileRenderer( $this->fileRenderer );
 			$this->set( $instance->type(), $instance );
 		}
 	}
@@ -63,20 +62,22 @@ class FieldTypeManager extends HandlerTypeManagerBase {
 		if ( !$this->typesRegistered ) {
 			$this->typesRegistered = TRUE;
 			add_filter( "qw_handler_item_types--{$this->type()}", function( $sources ) {
-				$sources['QueryWrangler\Handler\Field\ItemType'] = QW_PLUGIN_DIR . '/src/Handler/Field/ItemType';
+				$sources['QueryWrangler\Handler\TemplateStyle\ItemType'] = QW_PLUGIN_DIR . '/src/Handler/TemplateStyle/ItemType';
 				return $sources;
 			} );
 		}
 
 		$items = new HandlerItemTypeDiscoverableRegistry(
-			'QueryWrangler\Handler\Field\FieldInterface',
+			'QueryWrangler\Handler\TemplateStyle\TemplateStyleInterface',
 			'type',
 			"qw_handler_item_types--{$this->type()}"
 		);
 
 		foreach ( $items->all() as $type => $item ) {
 			try {
+				/** @var TemplateStyleInterface $instance */
 				$instance = $items->getInstance( $type );
+				$instance->setFileRenderer( $this->fileRenderer );
 				$this->set( $instance->type(), $instance );
 			}
 			catch ( \ReflectionException $exception ) {}
@@ -87,6 +88,7 @@ class FieldTypeManager extends HandlerTypeManagerBase {
 	 * @inheritDoc
 	 */
 	public function getDataFromQuery( QwQuery $query ) {
-		return $query->getFields();
+		return $query->getTemplateStyle();
 	}
+
 }
