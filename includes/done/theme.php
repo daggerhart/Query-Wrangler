@@ -291,7 +291,13 @@ function qw_make_fields_rows( &$qw_query, $options ) {
 	}
 
 	// sort according to weights
-	uasort( $display['field_settings']['fields'], 'qw_cmp' );
+	uasort( $display['field_settings']['fields'], function( $a, $b ) {
+		if ( $a['weight'] == $b['weight'] ) {
+			return 0;
+		}
+
+		return ( $a['weight'] < $b['weight'] ) ? - 1 : 1;
+	} );
 
 	// look for selected group by field
 	$group_by_field_name = NULL;

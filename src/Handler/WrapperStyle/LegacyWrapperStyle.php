@@ -3,7 +3,7 @@
 namespace QueryWrangler\Handler\WrapperStyle;
 
 use Kinglet\Template\RendererInterface;
-use QueryWrangler\Query\QwQuery;
+use QueryWrangler\Query\QueryPostEntity;
 
 class LegacyWrapperStyle implements WrapperStyleInterface {
 
@@ -57,7 +57,7 @@ class LegacyWrapperStyle implements WrapperStyleInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function render( QwQuery $qw_query, array $settings, array $context ) {
+	public function render( QueryPostEntity $qw_query, array $settings, array $context ) {
 		$pager_settings = $qw_query->getPagerStyle();
 		$templates = [
 			"query-wrapper-{$qw_query->slug()}",

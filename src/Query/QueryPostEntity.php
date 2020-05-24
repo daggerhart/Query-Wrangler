@@ -5,7 +5,7 @@ namespace QueryWrangler\Query;
 use Kinglet\Entity\Type\Post;
 use WP_Post;
 
-class QwQuery extends Post {
+class QueryPostEntity extends Post {
 
 	protected $queryType = 'post';
 	protected $args = [];
@@ -49,7 +49,7 @@ class QwQuery extends Post {
 	 *
 	 * @param string $slug
 	 *
-	 * @return bool|QwQuery
+	 * @return bool|QueryPostEntity
 	 */
 	static public function loadBySlug( $slug ) {
 		$posts = get_posts( [
@@ -59,8 +59,9 @@ class QwQuery extends Post {
 			'ignore_sticky_posts' => 1,
 		] );
 		if ( count( $posts ) ) {
-			return self::load( reset( $posts ) );
+			return static::load( reset( $posts ) );
 		}
+
 		return FALSE;
 	}
 

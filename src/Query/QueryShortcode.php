@@ -115,10 +115,10 @@ class QueryShortcode implements ContainerInjectionInterface {
 
 		$qw_query = FALSE;
 		if ( $attributes['id'] ) {
-			$qw_query = QwQuery::load( $attributes['id'] );
+			$qw_query = QueryPostEntity::load( $attributes['id'] );
 		}
 		else if ( $attributes['slug'] ) {
-			$qw_query = QwQuery::loadBySlug( $attributes['slug'] );
+			$qw_query = QueryPostEntity::loadBySlug( $attributes['slug'] );
 		}
 
 		if ( !$qw_query || !$qw_query->isLoaded() ) {

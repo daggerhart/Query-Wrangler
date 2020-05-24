@@ -7,7 +7,7 @@ use Kinglet\Entity\TypeInterface;
 use QueryWrangler\Handler\Field\FieldInterface;
 use QueryWrangler\Handler\HandlerTypeManagerInterface;
 use QueryWrangler\Handler\RowStyle\RowStyleBase;
-use QueryWrangler\Query\QwQuery;
+use QueryWrangler\Query\QueryPostEntity;
 
 class FieldRows extends RowStyleBase {
 
@@ -49,7 +49,7 @@ class FieldRows extends RowStyleBase {
 	/**
 	 * @inheritDoc
 	 */
-	public function render( QwQuery $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager ) {
+	public function render( QueryPostEntity $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager ) {
 		$display = $qw_query->getDisplay();
 		$fields = $qw_query->getFields();
 		$row_style_settings = $qw_query->getRowStyle();
@@ -60,7 +60,13 @@ class FieldRows extends RowStyleBase {
 		$i = 0;
 
 		// sort according to weights
-		uasort( $fields, 'qw_cmp' );
+		uasort( $fields, function( $a, $b ) {
+			if ( $a['weight'] == $b['weight'] ) {
+				return 0;
+			}
+
+			return ( $a['weight'] < $b['weight'] ) ? - 1 : 1;
+		} );
 
 		$entity_query->execute( function( $item ) use ( $field_type_manager, $fields, $display, $row_style_settings, $current_post_id, $group_by, &$grouped_rows, &$tokens, &$i ) {
 			/** @var TypeInterface $item */

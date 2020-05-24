@@ -5,7 +5,7 @@ namespace QueryWrangler\Admin\MetaBox;
 use Kinglet\Admin\MetaBoxBase;
 use Kinglet\Form\FormFactory;
 use Kinglet\Registry\OptionRepository;
-use QueryWrangler\Query\QwQuery;
+use QueryWrangler\Query\QueryPostEntity;
 
 class QueryEditor extends MetaBoxBase {
 
@@ -15,7 +15,7 @@ class QueryEditor extends MetaBoxBase {
 	protected $settings;
 
 	/**
-	 * @var QwQuery
+	 * @var QueryPostEntity
 	 */
 	protected $query;
 
@@ -56,7 +56,7 @@ class QueryEditor extends MetaBoxBase {
 	 */
 	public function render( $post ) {
 		$is_new = empty( $post->post_title );
-		$this->query = new QwQuery( $post );
+		$this->query = new QueryPostEntity( $post );
 		print $this->form()->render();
 	}
 
@@ -64,7 +64,7 @@ class QueryEditor extends MetaBoxBase {
 	 * {@inheritdoc}
 	 */
 	public function save( $post_id, $post, $updated ) {
-		$this->query = new QwQuery( $post );
+		$this->query = new QueryPostEntity( $post );
 		$form = $this->form();
 		$submitted = $form->getSubmittedValues();
 		foreach ( $form->getFields() as $field_key => $field ) {

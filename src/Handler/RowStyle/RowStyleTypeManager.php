@@ -6,7 +6,7 @@ use Kinglet\Container\ContainerAwareInterface;
 use Kinglet\Container\ContainerInterface;
 use QueryWrangler\Handler\HandlerItemTypeDiscoverableRegistry;
 use QueryWrangler\Handler\HandlerTypeManagerBase;
-use QueryWrangler\Query\QwQuery;
+use QueryWrangler\Query\QueryPostEntity;
 
 class RowStyleTypeManager extends HandlerTypeManagerBase implements ContainerAwareInterface {
 
@@ -90,7 +90,7 @@ class RowStyleTypeManager extends HandlerTypeManagerBase implements ContainerAwa
 	/**
 	 * @inheritDoc
 	 */
-	public function getDataFromQuery( QwQuery $query ) {
+	public function getDataFromQuery( QueryPostEntity $query ) {
 		return $query->getRowStyle();
 	}
 

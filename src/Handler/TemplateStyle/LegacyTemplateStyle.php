@@ -3,7 +3,7 @@
 namespace QueryWrangler\Handler\TemplateStyle;
 
 use Kinglet\Template\RendererInterface;
-use QueryWrangler\Query\QwQuery;
+use QueryWrangler\Query\QueryPostEntity;
 
 class LegacyTemplateStyle implements TemplateStyleInterface {
 
@@ -83,7 +83,7 @@ class LegacyTemplateStyle implements TemplateStyleInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function render( QwQuery $qw_query, array $rows ) {
+	public function render( QueryPostEntity $qw_query, array $rows ) {
 		$templates = [
 			"{$this->registration['template']}-{$qw_query->slug()}",
 			"{$this->registration['template']}",

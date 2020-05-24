@@ -5,7 +5,7 @@ namespace QueryWrangler\Admin\Page;
 use Kinglet\Admin\Messenger;
 use Kinglet\Admin\PageBase;
 use Kinglet\Form\FormFactory;
-use QueryWrangler\PostType\Query;
+use QueryWrangler\PostType\QueryPostType;
 
 class Import extends PageBase {
 
@@ -105,7 +105,7 @@ class Import extends PageBase {
             $data = $this->decodeImport( $submitted['query_json'] );
             if ( is_array( $data ) ) {
                 $post_id = wp_insert_post( [
-                    'post_type' => Query::SLUG,
+                    'post_type' => QueryPostType::SLUG,
                     'post_title' => !empty( $submitted['query_name'] ) ? $submitted['query_name'] : $data['name'],
 	                'post_name' => $data['slug'],
                 ] );

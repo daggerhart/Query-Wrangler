@@ -86,7 +86,7 @@ function qw_insert_new_query( $post ) {
 		'slug' => sanitize_title( $post['qw-name'] ),
 		'type' => $post['qw-type'],
 		'path' => isset( $post['page-path'] ) ? urlencode( $post['page-path'] ) : NULL,
-		'data' => qw_serialize( qw_default_query_data() ),
+		'data' => maybe_serialize( qw_legacy_default_query_data() ),
 	);
 
 	$wpdb->insert( $table_name, $values );
@@ -137,7 +137,7 @@ function qw_update_query( $post ) {
 	// hook for presave
 	$query_id = (int) $_GET['edit'];
 	$options  = apply_filters( 'qw_pre_save', $options, $query_id );
-	$new_data = qw_serialize( $options );
+	$new_data = maybe_serialize( $options );
 
 	// update for pages
 	if ( isset( $options['display']['page']['path'] ) ) {
@@ -217,7 +217,7 @@ function qw_query_import( $post ) {
 		$query['name'] = $post['import-name'];
 		$query['slug'] = qw_make_slug( $post['import-name'] );
 	}
-	$query['data'] = qw_serialize( $query['data'] );
+	$query['data'] = maybe_serialize( $query['data'] );
 	$wpdb->insert( $table, $query );
 
 	return $wpdb->insert_id;

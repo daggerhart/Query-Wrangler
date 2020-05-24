@@ -60,8 +60,7 @@ function qw_generate_query_args_post_id( &$args, $filter ) {
 		$pids = explode( ",", $values );
 	}
 
-	array_walk( $pids, 'qw_trim' );
-	$args[ $filter['values']['compare'] ] = $pids;
+	$args[ $filter['values']['compare'] ] = array_map( 'trim', $pids );
 }
 
 
@@ -74,14 +73,14 @@ function qw_filter_post_id_exposed_process( &$args, $filter, $values ) {
 
 	// make into array
 	$values = explode( ",", $values );
-	array_walk( $values, 'qw_trim' );
+	$values = array_map( 'trim', $values );
 
 	// check allowed values
 	if ( isset( $filter['values']['exposed_limit_values'] ) ) {
 		$allowed = explode( ",", $filter['values']['post_ids'] );
 		// trim spaces
-		array_walk( $allowed, 'qw_trim' );
-		array_walk( $values, 'qw_trim' );
+		$allowed = array_map( 'trim', $allowed );
+		$values = array_map( 'trim', $values );
 		// loop through and check allowed values
 		foreach ( $values as $k => $value ) {
 			if ( ! in_array( $value, $allowed ) ) {

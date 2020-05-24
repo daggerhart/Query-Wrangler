@@ -57,7 +57,7 @@ class QW_Query {
 		else {
 			// new query object with default values
 			$this->is_new      = TRUE;
-			$this->data        = qw_default_query_data();
+			$this->data        = qw_legacy_default_query_data();
 			$this->row['data'] = $this->data;
 		}
 	}

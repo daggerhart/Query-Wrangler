@@ -9,7 +9,31 @@ add_filter( 'qw_row_styles', 'qw_default_row_styles', 0 );
 add_filter( 'qw_row_fields_styles', 'qw_default_row_fields_styles', 0 );
 
 // add default field styles to the filter
-add_filter( 'qw_row_complete_styles', 'qw_default_row_complete_styles', 0 );
+//add_filter( 'qw_row_complete_styles', 'qw_default_row_complete_styles', 0 );
+
+///*
+//// * @todo - DONE
+// * Row Style 'Posts' Styles Hook
+// */
+//function qw_all_row_complete_styles() {
+//	$row_complete_styles = apply_filters( 'qw_row_complete_styles', array() );
+//
+//	return $row_complete_styles;
+//}
+///*
+// * @todo - DONE
+// * Default Row 'Posts' Styles
+// */
+//function qw_default_row_complete_styles( $row_complete_styles ) {
+//	$row_complete_styles['complete'] = array(
+//		'title' => 'Complete Post',
+//	);
+//	$row_complete_styles['excerpt']  = array(
+//		'title' => 'Excerpt',
+//	);
+//
+//	return $row_complete_styles;
+//}
 
 /*
  * @todo - DONE
@@ -49,22 +73,6 @@ function qw_default_row_styles( $row_styles ) {
 	);
 
 	return $row_styles;
-}
-
-
-/*
- * @todo - DONE
- * Default Row 'Posts' Styles
- */
-function qw_default_row_complete_styles( $row_complete_styles ) {
-	$row_complete_styles['complete'] = array(
-		'title' => 'Complete Post',
-	);
-	$row_complete_styles['excerpt']  = array(
-		'title' => 'Excerpt',
-	);
-
-	return $row_complete_styles;
 }
 
 function qw_basic_display_row_style_form( $basic, $display ) {

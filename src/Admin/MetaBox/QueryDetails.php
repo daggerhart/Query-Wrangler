@@ -5,7 +5,7 @@ namespace QueryWrangler\Admin\MetaBox;
 use Kinglet\Admin\MetaBoxBase;
 use Kinglet\Form\FormFactory;
 use Kinglet\Registry\RegistryRepositoryInterface;
-use QueryWrangler\Query\QwQuery;
+use QueryWrangler\Query\QueryPostEntity;
 
 class QueryDetails extends MetaBoxBase {
 
@@ -15,7 +15,7 @@ class QueryDetails extends MetaBoxBase {
 	protected $settings;
 
 	/**
-	 * @var QwQuery
+	 * @var QueryPostEntity
 	 */
 	protected $query;
 
@@ -56,7 +56,10 @@ class QueryDetails extends MetaBoxBase {
 	 */
 	public function render( $post ) {
         $is_new = empty( $post->post_title );
-        $this->query = new QwQuery( $post );
+        $this->d(qw_all_post_statuses());
+		$this->d(qw_get_all_widgets());
+
+        $this->query = new QueryPostEntity( $post );
         $this->d($this->query);
         ?>
 		<code><?php echo $this->query->slug(); ?></code>

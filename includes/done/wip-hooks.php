@@ -139,6 +139,25 @@ function qw_all_sort_options() {
 
 /*
  * @todo - DONE
+ * Styles Hook
+ */
+function qw_all_styles() {
+	$styles = apply_filters( 'qw_styles', array() );
+
+	foreach ( $styles as $hook_key => $style ) {
+		$styles[ $hook_key ]['hook_key']    = $hook_key;
+		$styles[ $hook_key ]['form_prefix'] = QW_FORM_PREFIX . '[display][' . $hook_key . '_settings]';
+
+		if ( ! isset( $style['settings_key'] ) ) {
+			$styles[ $hook_key ]['settings_key'] = $hook_key . '_settings';
+		}
+	}
+
+	return $styles;
+}
+
+/*
+ * @todo - DONE
  * Row Styles Hook
  */
 function qw_all_row_styles() {
@@ -158,4 +177,47 @@ function qw_all_pager_types() {
 	$pagers = apply_filters( 'qw_pager_types', array() );
 
 	return $pagers;
+}
+
+/*
+ * @todo - SKIPPED
+ * Row Style 'Fields' Stlyes Hook
+ */
+function qw_all_row_fields_styles() {
+	$row_fields_styles = apply_filters( 'qw_row_fields_styles', array() );
+
+	return $row_fields_styles;
+}
+
+/*
+ * @todo - DONE - compatibility
+ * Post types
+ */
+function qw_all_post_types() {
+	$post_types = apply_filters( 'qw_post_types', array() );
+
+	// Get all verified post types
+	$post_types += get_post_types( array(
+		'public'   => TRUE,
+		'_builtin' => FALSE
+	),
+		'names',
+		'and' );
+	// Add standard types
+	$post_types['post'] = 'post';
+	$post_types['page'] = 'page';
+	// sort types
+	ksort( $post_types );
+
+	return $post_types;
+}
+
+/*
+ * @todo - DONE - compatibility
+ * Post Statuses
+ */
+function qw_all_post_statuses() {
+	$post_statuses = apply_filters( 'qw_post_statuses', array() );
+
+	return $post_statuses;
 }

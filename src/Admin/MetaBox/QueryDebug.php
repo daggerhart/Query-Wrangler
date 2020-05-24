@@ -4,12 +4,12 @@ namespace QueryWrangler\Admin\MetaBox;
 
 use Kinglet\Admin\MetaBoxBase;
 use Kinglet\Container\ContainerInterface;
-use QueryWrangler\Query\QwQuery;
+use QueryWrangler\Query\QueryPostEntity;
 
 class QueryDebug extends MetaBoxBase {
 
     /**
-     * @var QwQuery
+     * @var QueryPostEntity
      */
     protected $query;
 
@@ -49,7 +49,7 @@ class QueryDebug extends MetaBoxBase {
 	public function render( $post ) {
 		try {
 			$is_new = empty( $post->post_title );
-			$this->query = new QwQuery( $post );
+			$this->query = new QueryPostEntity( $post );
 			$queryProcessor = $this->container->get('query.processor');
 			echo $queryProcessor->execute( $this->query );
 			$this->d('end of debug metabox');

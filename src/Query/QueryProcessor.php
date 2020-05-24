@@ -59,14 +59,14 @@ class QueryProcessor implements ContainerInjectionInterface {
 	}
 
 	/**
-	 * @param QwQuery $qw_query
+	 * @param QueryPostEntity $qw_query
 	 * @param array $overrides
 	 * @param bool $full_override
 	 *
 	 * @return string
 	 * @throws ReflectionException
 	 */
-	public function execute( QwQuery $qw_query, $overrides = [], $full_override = FALSE ) {
+	public function execute( QueryPostEntity $qw_query, $overrides = [], $full_override = FALSE ) {
 		/**
 		 * Process options.
 		 * @todo - consider new data struct

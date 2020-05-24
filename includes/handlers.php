@@ -167,7 +167,13 @@ function qw_preprocess_handlers( $options ) {
 
 		// sort according to weight
 		if ( is_array( $handlers[ $type ]['items'] ) ) {
-			uasort( $handlers[ $type ]['items'], 'qw_cmp' );
+			uasort( $handlers[ $type ]['items'], function( $a, $b ) {
+				if ( $a['weight'] == $b['weight'] ) {
+					return 0;
+				}
+
+				return ( $a['weight'] < $b['weight'] ) ? - 1 : 1;
+			} );
 		}
 	}
 

@@ -6,7 +6,7 @@ use Kinglet\Entity\QueryInterface;
 use Kinglet\Entity\TypeInterface;
 use QueryWrangler\Handler\HandlerTypeManagerInterface;
 use QueryWrangler\Handler\RowStyle\RowStyleBase;
-use QueryWrangler\Query\QwQuery;
+use QueryWrangler\Query\QueryPostEntity;
 
 class TemplatePartRows extends RowStyleBase {
 
@@ -48,7 +48,7 @@ class TemplatePartRows extends RowStyleBase {
 	/**
 	 * @inheritDoc
 	 */
-	public function render( QwQuery $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager ) {
+	public function render( QueryPostEntity $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager ) {
 		$row_style_settings = $qw_query->getRowStyle();
 		$grouped_rows = [];
 		$current_post_id = get_the_ID();

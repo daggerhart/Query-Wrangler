@@ -2,8 +2,38 @@
 // hook into qw_basics
 add_filter( 'qw_basics', 'qw_basic_settings_post_status' );
 
-// add default fields to the hook filter
-add_filter( 'qw_post_statuses', 'qw_default_post_statuses', 0 );
+//// add default fields to the hook filter
+//add_filter( 'qw_post_statuses', 'qw_default_post_statuses', 0 );
+
+///*
+/// @todo - DONE - registry
+// * Post statuses as a hook for contributions
+// */
+//function qw_default_post_statuses( $post_statuses ) {
+//	$post_statuses['publish'] = array(
+//		'title' => 'Published',
+//	);
+//	$post_statuses['pending'] = array(
+//		'title' => 'Pending',
+//	);
+//	$post_statuses['draft']   = array(
+//		'title' => 'Draft',
+//	);
+//	$post_statuses['future']  = array(
+//		'title' => 'Future (Scheduled)',
+//	);
+//	$post_statuses['trash']   = array(
+//		'title' => 'Trashed',
+//	);
+//	$post_statuses['private'] = array(
+//		'title' => 'Private',
+//	);
+//	$post_statuses['any']     = array(
+//		'title' => 'Any',
+//	);
+//
+//	return $post_statuses;
+//}
 
 /*
  * Basic Settings
@@ -21,37 +51,9 @@ function qw_basic_settings_post_status( $basics ) {
 	return $basics;
 }
 
-/*
- * Post statuses as a hook for contributions
- */
-function qw_default_post_statuses( $post_statuses ) {
-	$post_statuses['publish'] = array(
-		'title' => 'Published',
-	);
-	$post_statuses['pending'] = array(
-		'title' => 'Pending',
-	);
-	$post_statuses['draft']   = array(
-		'title' => 'Draft',
-	);
-	$post_statuses['future']  = array(
-		'title' => 'Future (Scheduled)',
-	);
-	$post_statuses['trash']   = array(
-		'title' => 'Trashed',
-	);
-	$post_statuses['private'] = array(
-		'title' => 'Private',
-	);
-	$post_statuses['any']     = array(
-		'title' => 'Any',
-	);
-
-	return $post_statuses;
-}
-
 function qw_basic_post_status_form( $basic, $args ) {
 	$post_statuses = qw_all_post_statuses();
+	$post_statuses['any'] = 'Any';
 	?>
 	<p class="description"><?php print $basic['description']; ?></p>
 	<select id="qw-post-status"
@@ -63,7 +65,7 @@ function qw_basic_post_status_form( $basic, $args ) {
 				<?php if ( $args['post_status'] == $key ) {
 					print 'selected="selected"';
 				} ?>>
-				<?php print $post_status['title']; ?>
+				<?php print $post_status; ?>
 			</option>
 		<?php
 		}

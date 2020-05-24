@@ -4,7 +4,7 @@ namespace QueryWrangler\PostType;
 
 use Kinglet\Registry\OptionRepository;
 
-class Query {
+class QueryPostType {
 
 	const SLUG = 'qw_query';
 

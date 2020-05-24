@@ -5,7 +5,7 @@ namespace QueryWrangler\Admin\MetaBox;
 use Kinglet\Admin\MetaBoxBase;
 use Kinglet\Form\FormFactory;
 use Kinglet\Registry\RegistryRepositoryInterface;
-use QueryWrangler\Query\QwQuery;
+use QueryWrangler\Query\QueryPostEntity;
 
 class QueryPreview extends MetaBoxBase {
 
@@ -15,7 +15,7 @@ class QueryPreview extends MetaBoxBase {
 	protected $settings;
 
     /**
-     * @var QwQuery
+     * @var QueryPostEntity
      */
     protected $query;
 
@@ -56,7 +56,7 @@ class QueryPreview extends MetaBoxBase {
 	 */
 	public function render( $post ) {
         $is_new = empty( $post->post_title );
-        $this->query = new QwQuery( $post );
+        $this->query = new QueryPostEntity( $post );
 		?>
 		Preview goes here.
 		<?php

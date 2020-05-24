@@ -23,9 +23,10 @@ use QueryWrangler\Handler\RowStyle\RowStyleTypeManager;
 use QueryWrangler\Handler\Sort\SortTypeManager;
 use QueryWrangler\Handler\TemplateStyle\TemplateStyleTypeManager;
 use QueryWrangler\Handler\WrapperStyle\WrapperStyleTypeManager;
-use QueryWrangler\PostType\Query;
+use QueryWrangler\PostType\QueryPostType;
 use QueryWrangler\Query\QueryProcessor;
 use QueryWrangler\Query\QueryShortcode;
+use QueryWrangler\Service\WordPressRegistry;
 
 class Loader {
 
@@ -62,6 +63,7 @@ class Loader {
 				'shortcode_compat' => 0,
 			] );
 		} );
+		$container->set( 'wp.registry', WordPressRegistry::class );
 
 		$container->set( 'handler.field.manager', FieldTypeManager::class );
 		$container->set( 'handler.filter.manager', FilterTypeManager::class );
@@ -116,23 +118,39 @@ class Loader {
 		$this->container = $container;
 	}
 
+	/**
+	 * WARNING: This is not the right way to get the container.
+	 * For legacy compatibility ONLY.
+	 *
+	 * @return ContainerInterface
+	 */
+	public function getContainer() {
+		return $this->container;
+	}
+
+	/**
+	 *
+	 */
 	public function registerPostTypes() {
 	    $settings = $this->container->get( 'settings' );
-		$query = new Query( $settings );
+		$query = new QueryPostType( $settings );
 		$this->postTypes[ $query::SLUG ] = $query;
 	}
 
+	/**
+	 *
+	 */
 	public function registerMetaBoxes() {
 	    $settings = $this->container->get( 'settings' );
 	    $form_factory = $this->container->get( 'form.factory' );
-		$details = new QueryDetails( Query::SLUG, $settings, $form_factory );
-		$editor = new QueryEditor( Query::SLUG, $settings, $form_factory );
-		$preview = new QueryPreview( Query::SLUG, $settings, $form_factory );
+		$details = new QueryDetails( QueryPostType::SLUG, $settings, $form_factory );
+		$editor = new QueryEditor( QueryPostType::SLUG, $settings, $form_factory );
+		$preview = new QueryPreview( QueryPostType::SLUG, $settings, $form_factory );
 		$this->metaboxes[ $details->id() ] = $details;
 		$this->metaboxes[ $preview->id() ] = $preview;
 		$this->metaboxes[ $editor->id() ] = $editor;
 
-		new QueryDebug( Query::SLUG, $this->container );
+		new QueryDebug( QueryPostType::SLUG, $this->container );
 	}
 
 	/**

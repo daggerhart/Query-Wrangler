@@ -4,7 +4,7 @@ namespace QueryWrangler\Handler\Sort;
 
 use QueryWrangler\Handler\HandlerItemTypeDiscoverableRegistry;
 use QueryWrangler\Handler\HandlerTypeManagerBase;
-use QueryWrangler\Query\QwQuery;
+use QueryWrangler\Query\QueryPostEntity;
 
 class SortTypeManager extends HandlerTypeManagerBase {
 
@@ -86,7 +86,7 @@ class SortTypeManager extends HandlerTypeManagerBase {
 	/**
 	 * @inheritDoc
 	 */
-	public function getDataFromQuery( QwQuery $query ) {
+	public function getDataFromQuery( QueryPostEntity $query ) {
 		return $query->getSorts();
 	}
 }

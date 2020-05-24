@@ -3,7 +3,7 @@
 namespace QueryWrangler\Handler;
 
 use Kinglet\Registry\RegistryInterface;
-use QueryWrangler\Query\QwQuery;
+use QueryWrangler\Query\QueryPostEntity;
 
 interface HandlerTypeManagerInterface extends RegistryInterface {
 
@@ -29,10 +29,10 @@ interface HandlerTypeManagerInterface extends RegistryInterface {
 	public function collect();
 
 	/**
-	 * @param QwQuery $query
+	 * @param QueryPostEntity $query
 	 *
 	 * @return array
 	 */
-	public function getDataFromQuery( QwQuery $query );
+	public function getDataFromQuery( QueryPostEntity $query );
 
 }

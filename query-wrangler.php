@@ -38,8 +38,9 @@ define( 'QW_FORM_PREFIX', "qw-query-options" );
 
 
 require_once QW_PLUGIN_DIR . '/vendor/autoload.php';
+require_once QW_PLUGIN_DIR . '/includes/legacy-compatibility.php';
 
-$loader = new \QueryWrangler\Loader();
+$query_wrangler_loader = new \QueryWrangler\Loader();
 
 // --------------------------------------------------------------------------------
 

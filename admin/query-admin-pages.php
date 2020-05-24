@@ -161,7 +161,10 @@ function qw_edit_query_form() {
 		'post_statuses'       => qw_all_post_statuses(),
 		'styles'              => qw_all_styles(),
 		'row_styles'          => qw_all_row_styles(),
-		'row_complete_styles' => qw_all_row_complete_styles(),
+		'row_complete_styles' => [
+			'complete' => [ 'title' => 'Complete Post' ],
+			'excerpt' => [ 'title' => 'Excerpt' ],
+		],
 		'page_templates'      => get_page_templates(),
 		'post_types'          => qw_all_post_types(),
 		'pager_types'         => qw_all_pager_types(),

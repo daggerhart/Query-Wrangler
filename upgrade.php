@@ -76,7 +76,7 @@ function qw_upgrade_14_to_15() {
 		// save query
 		$update = array(
 			'path' => $path,
-			'data' => qw_serialize( $data ),
+			'data' => maybe_serialize( $data ),
 		);
 		$where  = array(
 			'id' => $query->id,
@@ -127,7 +127,7 @@ function qw_upgrade_132_to_14() {
 
 		// save query
 		$update = array(
-			'data' => qw_serialize( $data ),
+			'data' => maybe_serialize( $data ),
 		);
 		$where  = array(
 			'id' => $query->id,
@@ -164,7 +164,7 @@ function qw_upgrade_13_to_132() {
 		}
 
 		$update = array(
-			'data' => qw_serialize( $data ),
+			'data' => maybe_serialize( $data ),
 		);
 		$where  = array(
 			'id' => $query->id,
