@@ -122,9 +122,8 @@ class Import extends PageBase {
     public function decodeImport( $string ) {
         $string = stripslashes( $string );
         $data = json_decode( $string, TRUE );
-        if ( is_array( $data ) && isset( $data['display']['field_settings']['fields'] ) ) {
-            $fields = &$data['display']['field_settings']['fields'];
-
+        if ( is_array( $data ) && isset( $data['data']['display']['field_settings']['fields'] ) ) {
+            $fields = &$data['data']['display']['field_settings']['fields'];
             foreach( $fields as $field_name => $field ) {
                 $fields[ $field_name ]['custom_output'] = htmlspecialchars_decode( $field['custom_output'] );
                 $fields[ $field_name ]['empty_field_content'] = htmlspecialchars_decode( $field['empty_field_content'] );

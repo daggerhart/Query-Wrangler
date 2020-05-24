@@ -207,6 +207,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 		$dump = $wrapper + [
 			'args' => $args,
 			'display' => $display,
+			'qw_query' => $qw_query,
 		];
 		unset($dump['content']);
 		dump( $dump );

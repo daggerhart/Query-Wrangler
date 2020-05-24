@@ -84,7 +84,6 @@ class LegacyTemplateStyle implements TemplateStyleInterface {
 	 * @inheritDoc
 	 */
 	public function render( QwQuery $qw_query, array $rows ) {
-		dump($this->fileRenderer);
 		$templates = [
 			"{$this->registration['template']}-{$qw_query->slug()}",
 			"{$this->registration['template']}",

@@ -88,7 +88,8 @@ function qw_execute_query_page() {
 	}
 
 	// fix the query paging
-	if ( $paged = qw_get_page_number( $wp_query ) ) {
+	// @todo - FIX-- Disabled because removal of get_page_number function
+	if ( $paged = 1 ){ //qw_get_page_number( $wp_query ) ) {
 		$wp_query->query_vars['paged'] = $paged;
 		$wp_query->query_vars['page']  = $paged;
 	}

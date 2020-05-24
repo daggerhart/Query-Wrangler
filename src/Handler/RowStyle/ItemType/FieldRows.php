@@ -108,7 +108,7 @@ class FieldRows extends RowStyleBase {
 				}
 
 				// Create token for early replacement in rewrite_output.
-				$tokens[ '{{' . $name . '}}' ] = $row['fields'][ $name ]['output'];
+				$tokens[ $name ] = $row['fields'][ $name ]['output'];
 
 				// Look for rewrite output and replace tokens.
 				// @todo - maybe the field type handles rewriting...?
@@ -141,7 +141,7 @@ class FieldRows extends RowStyleBase {
 				}
 
 				// update the token for replacement by later fields
-				$tokens[ '{{' . $name . '}}' ] = $row['fields'][ $name ]['output'];
+				$tokens[ $name ] = $row['fields'][ $name ]['output'];
 
 				// save a copy of the field output in case it is excluded, but we need it later
 				$row['fields'][ $name ]['content'] = $row['fields'][ $name ]['output'];
