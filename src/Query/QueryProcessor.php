@@ -27,23 +27,16 @@ class QueryProcessor implements ContainerInjectionInterface {
 	/**
 	 * @var ClassRegistryInterface
 	 */
-	protected $entityTypeManager;
-
-	/**
-	 * @var ClassRegistryInterface
-	 */
 	protected $entityQueryManager;
 
 	/**
 	 * QueryProcessor constructor.
 	 *
 	 * @param HandlerManager $handler_manager
-	 * @param ClassRegistryInterface $entity_type_manager
 	 * @param ClassRegistryInterface $entity_query_manager
 	 */
-	public function __construct( HandlerManager $handler_manager, ClassRegistryInterface $entity_type_manager, ClassRegistryInterface $entity_query_manager ) {
+	public function __construct( HandlerManager $handler_manager, ClassRegistryInterface $entity_query_manager ) {
 		$this->handlerManager = $handler_manager;
-		$this->entityTypeManager = $entity_type_manager;
 		$this->entityQueryManager = $entity_query_manager;
 	}
 
@@ -53,7 +46,6 @@ class QueryProcessor implements ContainerInjectionInterface {
 	public static function create( ContainerInterface $container ) {
 		return new static(
 			$container->get( 'handler.manager' ),
-			$container->get( 'entity.type.manager' ),
 			$container->get( 'entity.query.manager')
 		);
 	}
@@ -78,7 +70,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 
 		// build query_details
 		// @todo - This doesn't do anything.
-		//       - OVERRIDING settings need to work somehow
+		//       - OVERRIDING settings with $overrides need to work somehow
 		$options['meta'] = array_replace( [
 			'id' => $qw_query->id(),
 			'slug' => $qw_query->slug(),

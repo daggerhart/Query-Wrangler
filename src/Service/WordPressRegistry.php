@@ -59,13 +59,21 @@ class WordPressRegistry extends Registry {
 	 * @return array
 	 */
 	public function getPostMetaKeys( $include_silent = true ) {
-		global $wpdb;
-
-		if ( $include_silent ) {
-			return $wpdb->get_col( "SELECT DISTINCT(meta_key) FROM {$wpdb->postmeta} ORDER BY meta_key" );
+		$key = 'post_meta_keys.' . $include_silent ? 'include_silent' : 'exclude_silent';
+		if ( $this->has( $key ) ) {
+			return $this->get( $key );
 		}
 
-		return $wpdb->get_col( "SELECT DISTINCT(meta_key) FROM {$wpdb->postmeta} WHERE meta_key NOT LIKE '\_%' ORDER BY meta_key" );
+		global $wpdb;
+
+		$sql = "SELECT DISTINCT(meta_key) FROM {$wpdb->postmeta} WHERE meta_key NOT LIKE '\_%' ORDER BY meta_key";
+		if ( $include_silent ) {
+			$sql = "SELECT DISTINCT(meta_key) FROM {$wpdb->postmeta} ORDER BY meta_key";
+		}
+
+		$value = $wpdb->get_col( $sql );
+		$this->set( $key, $value );
+		return $value;
 	}
 
 }
