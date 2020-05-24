@@ -14,6 +14,7 @@ class QueryPostEntity extends Post {
 	protected $displayType = 'widget';
 	protected $fields = [];
 	protected $filters = [];
+	protected $overrides = [];
 	protected $pagerEnabled = false;
 	protected $pagerStyle = [];
 	protected $paging = [];
@@ -115,6 +116,13 @@ class QueryPostEntity extends Post {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getOverrides() {
+		return $this->overrides;
+	}
+
+	/**
 	 * @return bool
 	 */
 	public function getPagerEnabled() {
@@ -167,6 +175,11 @@ class QueryPostEntity extends Post {
 			$this->displayType = $data['type'];
 		}
 
+		// Overrides
+		if ( !empty( $data['data']['override'] ) ) {
+			$this->overrides = $data['data']['override'];
+			unset( $data['data']['override'] );
+		}
 		// Fields
 		if ( !empty( $data['data']['display']['field_settings']['fields'] ) ) {
 			$this->fields = $data['data']['display']['field_settings']['fields'];

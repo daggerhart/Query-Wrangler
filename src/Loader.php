@@ -17,6 +17,7 @@ use QueryWrangler\Admin\Page\Settings;
 use QueryWrangler\Handler\Field\FieldTypeManager;
 use QueryWrangler\Handler\Filter\FilterTypeManager;
 use QueryWrangler\Handler\HandlerManager;
+use QueryWrangler\Handler\Override\OverrideTypeManager;
 use QueryWrangler\Handler\PagerStyle\PagerStyleTypeManager;
 use QueryWrangler\Handler\Paging\PagingTypeManager;
 use QueryWrangler\Handler\RowStyle\RowStyleTypeManager;
@@ -71,6 +72,7 @@ class Loader {
 		$container->set( 'handler.pager_style.manager', PagerStyleTypeManager::class );
 		$container->set( 'handler.template_style.manager', TemplateStyleTypeManager::class );
 		$container->set( 'handler.wrapper_style.manager', WrapperStyleTypeManager::class );
+		$container->set( 'handler.override.manager', OverrideTypeManager::class );
 		$container->set( 'handler.manager', function ( ContainerInterface $container ) {
 			// Setup the renderers before they are injected into other services.
 			/** @var FileRenderer $fileRenderer */
@@ -98,6 +100,7 @@ class Loader {
 			$pager_style = $container->get( 'handler.pager_style.manager' );
 			$template_style = $container->get( 'handler.template_style.manager' );
 			$wrapper_style = $container->get( 'handler.wrapper_style.manager' );
+			$override = $container->get( 'handler.override.manager' );
 
 			return new HandlerManager( [
 				$field->type() => $field,
@@ -108,6 +111,7 @@ class Loader {
 				$pager_style->type() => $pager_style,
 				$template_style->type() => $template_style,
 				$wrapper_style->type() => $wrapper_style,
+				$override->type() => $override,
 			] );
 		} );
 		$container->set( 'query.processor', QueryProcessor::class );

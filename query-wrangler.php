@@ -62,7 +62,7 @@ function qw_init_frontend() {
 //		include_once QW_PLUGIN_DIR . '/template-wrangler.php';
 //	}
 	// Wordpress hooks
-	include_once QW_PLUGIN_DIR . '/includes/hooks.php';
+//	include_once QW_PLUGIN_DIR . '/includes/hooks.php';
 	include_once QW_PLUGIN_DIR . '/includes/exposed.php';
 	include_once QW_PLUGIN_DIR . '/includes/handlers.php';
 	//include_once QW_PLUGIN_DIR . '/includes/class-qw-shortcodes.php';

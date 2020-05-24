@@ -98,7 +98,6 @@ class LegacyField implements FieldInterface {
 	 * @inheritDoc
 	 */
 	public function render( TypeInterface $entity, array $settings, array $tokens = [] ) {
-
 		if ( !empty( $this->registration['output_callback'] ) && is_callable( $this->registration['output_callback'] ) ) {
 			$args = [];
 			if ( !empty( $this->registration['output_arguments'] ) ) {
@@ -108,7 +107,13 @@ class LegacyField implements FieldInterface {
 					$tokens,
 				];
 			}
-			return $this->renderer->render( $this->registration['output_callback'], $args );
+
+			$rendered = $this->renderer->render( $this->registration['output_callback'], $args );
+			$rendered = $this->processAsContent() ?
+				apply_filters( 'the_content', $rendered ) :
+				do_shortcode( $rendered );
+
+			return $rendered;
 		}
 
 		// If no callback, it expects the value to be a property on the object.
