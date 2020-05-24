@@ -6,7 +6,7 @@ use Kinglet\Entity\QueryInterface;
 use Kinglet\Template\RendererInterface;
 use QueryWrangler\Handler\HandlerItemTypeInterface;
 use QueryWrangler\Handler\HandlerTypeManagerInterface;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 
 interface RowStyleInterface extends HandlerItemTypeInterface {
 

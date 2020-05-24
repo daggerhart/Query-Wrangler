@@ -1,10 +1,12 @@
 <?php
 
-namespace QueryWrangler\Query;
+namespace QueryWrangler;
 
 use Kinglet\Container\ContainerInjectionInterface;
 use Kinglet\Container\ContainerInterface;
 use Kinglet\Registry\RegistryRepositoryInterface;
+use QueryWrangler\QueryPostEntity;
+use QueryWrangler\Service\QueryProcessor;
 
 class QueryShortcode implements ContainerInjectionInterface {
 

@@ -4,7 +4,7 @@ namespace QueryWrangler\Handler\TemplateStyle;
 
 use Kinglet\Template\RendererInterface;
 use QueryWrangler\Handler\HandlerItemTypeInterface;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 
 interface TemplateStyleInterface extends HandlerItemTypeInterface {
 

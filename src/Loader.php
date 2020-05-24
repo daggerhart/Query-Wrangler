@@ -23,9 +23,7 @@ use QueryWrangler\Handler\RowStyle\RowStyleTypeManager;
 use QueryWrangler\Handler\Sort\SortTypeManager;
 use QueryWrangler\Handler\TemplateStyle\TemplateStyleTypeManager;
 use QueryWrangler\Handler\WrapperStyle\WrapperStyleTypeManager;
-use QueryWrangler\PostType\QueryPostType;
-use QueryWrangler\Query\QueryProcessor;
-use QueryWrangler\Query\QueryShortcode;
+use QueryWrangler\Service\QueryProcessor;
 use QueryWrangler\Service\WordPressRegistry;
 
 class Loader {

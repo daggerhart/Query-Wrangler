@@ -1,7 +1,7 @@
 <?php
 
 use Kinglet\Container\ContainerInterface;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 use QueryWrangler\Service\WordPressRegistry;
 
 /**
@@ -98,7 +98,7 @@ function qw_get_query_by_slug( $slug ) {
  */
 function qw_get_all_widgets() {
 	$posts = get_posts( [
-		'post_type' => \QueryWrangler\PostType\QueryPostType::SLUG,
+		'post_type' => QueryWrangler\QueryPostType::SLUG,
 		'post_status' => 'any',
 		'number' => -1,
 // @todo - implement this meta value

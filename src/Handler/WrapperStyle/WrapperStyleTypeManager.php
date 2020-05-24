@@ -4,7 +4,7 @@ namespace QueryWrangler\Handler\WrapperStyle;
 
 use QueryWrangler\Handler\HandlerItemTypeDiscoverableRegistry;
 use QueryWrangler\Handler\HandlerTypeManagerBase;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 
 class WrapperStyleTypeManager extends HandlerTypeManagerBase {
 

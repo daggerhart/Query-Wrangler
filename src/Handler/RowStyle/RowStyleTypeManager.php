@@ -6,7 +6,7 @@ use Kinglet\Container\ContainerAwareInterface;
 use Kinglet\Container\ContainerInterface;
 use QueryWrangler\Handler\HandlerItemTypeDiscoverableRegistry;
 use QueryWrangler\Handler\HandlerTypeManagerBase;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 
 class RowStyleTypeManager extends HandlerTypeManagerBase implements ContainerAwareInterface {
 

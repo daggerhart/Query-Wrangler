@@ -6,7 +6,7 @@ use Kinglet\Entity\QueryInterface;
 use Kinglet\Entity\TypeInterface;
 use QueryWrangler\Handler\HandlerTypeManagerInterface;
 use QueryWrangler\Handler\RowStyle\RowStyleBase;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 
 class PostRows extends RowStyleBase {
 

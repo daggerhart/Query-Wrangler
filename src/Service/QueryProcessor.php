@@ -1,6 +1,6 @@
 <?php
 
-namespace QueryWrangler\Query;
+namespace QueryWrangler\Service;
 
 use Kinglet\Container\ContainerInjectionInterface;
 use Kinglet\Container\ContainerInterface;
@@ -15,6 +15,7 @@ use QueryWrangler\Handler\RowStyle\RowStyleTypeManager;
 use QueryWrangler\Handler\Sort\SortTypeManager;
 use QueryWrangler\Handler\TemplateStyle\TemplateStyleTypeManager;
 use QueryWrangler\Handler\WrapperStyle\WrapperStyleTypeManager;
+use QueryWrangler\QueryPostEntity;
 use ReflectionException;
 
 class QueryProcessor implements ContainerInjectionInterface {

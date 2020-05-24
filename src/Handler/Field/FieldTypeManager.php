@@ -4,7 +4,7 @@ namespace QueryWrangler\Handler\Field;
 
 use QueryWrangler\Handler\HandlerItemTypeDiscoverableRegistry;
 use QueryWrangler\Handler\HandlerTypeManagerBase;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 
 class FieldTypeManager extends HandlerTypeManagerBase {
 

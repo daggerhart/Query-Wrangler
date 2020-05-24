@@ -5,7 +5,7 @@ namespace QueryWrangler\Admin\MetaBox;
 use Kinglet\Admin\MetaBoxBase;
 use Kinglet\Form\FormFactory;
 use Kinglet\Registry\OptionRepository;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 
 class QueryEditor extends MetaBoxBase {
 
@@ -78,9 +78,9 @@ class QueryEditor extends MetaBoxBase {
      * @return \Kinglet\Form\Form
      */
 	public function form() {
-	    $data = '';
-	    if ( $this->query->meta( 'query_data' ) ) {
-	        $data = json_encode( $this->query->meta( 'query_data' ), JSON_PRETTY_PRINT );
+	    $data = $this->query->meta( 'query_data' );
+	    if ( $data && is_array( $data ) ) {
+		    $data = json_encode( $this->query->meta( 'query_data' ), JSON_PRETTY_PRINT );
         }
 
 		return $this->formFactory->create( [

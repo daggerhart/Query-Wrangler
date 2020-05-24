@@ -4,7 +4,7 @@ namespace QueryWrangler\Handler\WrapperStyle;
 
 use Kinglet\Template\RendererInterface;
 use QueryWrangler\Handler\HandlerItemTypeInterface;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 
 interface WrapperStyleInterface extends HandlerItemTypeInterface {
 

@@ -4,7 +4,7 @@ namespace QueryWrangler\Handler\Sort;
 
 use QueryWrangler\Handler\HandlerItemTypeDiscoverableRegistry;
 use QueryWrangler\Handler\HandlerTypeManagerBase;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 
 class SortTypeManager extends HandlerTypeManagerBase {
 

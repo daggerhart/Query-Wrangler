@@ -7,7 +7,7 @@ use Kinglet\Entity\TypeInterface;
 use QueryWrangler\Handler\Field\FieldInterface;
 use QueryWrangler\Handler\HandlerTypeManagerInterface;
 use QueryWrangler\Handler\RowStyle\RowStyleBase;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 
 class FieldRows extends RowStyleBase {
 

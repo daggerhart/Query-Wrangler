@@ -3,7 +3,7 @@
 namespace QueryWrangler\Handler\WrapperStyle;
 
 use Kinglet\Template\RendererInterface;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 
 class LegacyWrapperStyle implements WrapperStyleInterface {
 

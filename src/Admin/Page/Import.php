@@ -5,7 +5,7 @@ namespace QueryWrangler\Admin\Page;
 use Kinglet\Admin\Messenger;
 use Kinglet\Admin\PageBase;
 use Kinglet\Form\FormFactory;
-use QueryWrangler\PostType\QueryPostType;
+use QueryWrangler\QueryPostType;
 
 class Import extends PageBase {
 

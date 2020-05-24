@@ -5,7 +5,7 @@ namespace QueryWrangler\Admin\MetaBox;
 use Kinglet\Admin\MetaBoxBase;
 use Kinglet\Form\FormFactory;
 use Kinglet\Registry\RegistryRepositoryInterface;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 
 class QueryPreview extends MetaBoxBase {
 

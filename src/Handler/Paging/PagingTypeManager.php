@@ -4,7 +4,7 @@ namespace QueryWrangler\Handler\Paging;
 
 use QueryWrangler\Handler\HandlerItemTypeDiscoverableRegistry;
 use QueryWrangler\Handler\HandlerTypeManagerBase;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 
 class PagingTypeManager extends HandlerTypeManagerBase {
 

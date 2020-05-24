@@ -1,6 +1,6 @@
 <?php
 
-namespace QueryWrangler\Query;
+namespace QueryWrangler;
 
 use Kinglet\Entity\Type\Post;
 use WP_Post;
@@ -34,11 +34,9 @@ class QueryPostEntity extends Post {
 			$data = $this->meta( 'query_data' );
 			if ( !empty( $data ) ) {
 				if ( !is_array( $data ) ) {
-					try {
-						$data = json_decode( $data, true );
-					}
-					catch ( \Exception $e ) {}
+					$data = json_decode( $data, true );
 				}
+
 				$this->populateLegacy( $data );
 			}
 		}

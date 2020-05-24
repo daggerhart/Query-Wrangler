@@ -3,7 +3,7 @@
 namespace QueryWrangler\Handler;
 
 use Kinglet\Registry\RegistryInterface;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 
 interface HandlerTypeManagerInterface extends RegistryInterface {
 

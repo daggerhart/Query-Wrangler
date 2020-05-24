@@ -3,7 +3,7 @@
 namespace QueryWrangler\Handler\TemplateStyle;
 
 use Kinglet\Template\RendererInterface;
-use QueryWrangler\Query\QueryPostEntity;
+use QueryWrangler\QueryPostEntity;
 
 class LegacyTemplateStyle implements TemplateStyleInterface {
 
