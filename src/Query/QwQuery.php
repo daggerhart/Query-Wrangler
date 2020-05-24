@@ -20,6 +20,7 @@ class QwQuery extends Post {
 	protected $rowStyle = [];
 	protected $sorts = [];
 	protected $templateStyle = [];
+	protected $wrapperStyle = [];
 
 	/**
 	 * QwQuery constructor.
@@ -38,7 +39,7 @@ class QwQuery extends Post {
 					}
 					catch ( \Exception $e ) {}
 				}
-				$this->populateV1( $data );
+				$this->populateLegacy( $data );
 			}
 		}
 	}
@@ -150,11 +151,18 @@ class QwQuery extends Post {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getWrapperStyle() {
+		return $this->wrapperStyle;
+	}
+
+	/**
 	 * Populate the object expecting version 1.x values.
 	 *
 	 * @param $data
 	 */
-	protected function populateV1( $data ) {
+	protected function populateLegacy( $data ) {
 		// Display Type
 		if ( !empty( $data['type'] ) ) {
 			$this->displayType = $data['type'];
@@ -183,6 +191,24 @@ class QwQuery extends Post {
 					$this->paging[ $item ] = $data['data']['args'][ $item ];
 				}
 			}
+		}
+		// Wrapper Style
+		if ( !empty( $data['data']['display']['title'] ) ) {
+			$this->wrapperStyle = [
+				'type' => 'legacy',
+				'title' => $data['data']['display']['title'] ?? '',
+				'header' => $data['data']['display']['header'] ?? '',
+				'footer' => $data['data']['display']['footer'] ?? '',
+				'empty' => $data['data']['display']['empty'] ?? '',
+				'wrapper_classes' => $data['data']['display']['wrapper-classes'] ?? '',
+			];
+			unset(
+				$data['data']['display']['title'],
+				$data['data']['display']['header'],
+				$data['data']['display']['footer'],
+				$data['data']['display']['empty'],
+				$data['data']['display']['wrapper-classes']
+			);
 		}
 		// Template Style
 		if ( !empty( $data['data']['display']['style'] ) ) {
@@ -226,6 +252,7 @@ class QwQuery extends Post {
 				}
 			}
 		}
+
 		// Display (whatever is left)
 		if ( !empty( $data['data']['display'] ) ) {
 			$this->display = $data['data']['display'];

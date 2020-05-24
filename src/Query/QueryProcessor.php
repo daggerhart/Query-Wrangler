@@ -7,10 +7,15 @@ use Kinglet\Container\ContainerInterface;
 use Kinglet\Entity\QueryInterface;
 use Kinglet\Registry\ClassRegistryInterface;
 use QueryWrangler\Handler\Field\FieldTypeManager;
+use QueryWrangler\Handler\Filter\FilterTypeManager;
 use QueryWrangler\Handler\HandlerManager;
 use QueryWrangler\Handler\PagerStyle\PagerStyleTypeManager;
+use QueryWrangler\Handler\Paging\PagingTypeManager;
 use QueryWrangler\Handler\RowStyle\RowStyleTypeManager;
+use QueryWrangler\Handler\Sort\SortTypeManager;
 use QueryWrangler\Handler\TemplateStyle\TemplateStyleTypeManager;
+use QueryWrangler\Handler\WrapperStyle\WrapperStyleTypeManager;
+use ReflectionException;
 
 class QueryProcessor implements ContainerInjectionInterface {
 
@@ -58,7 +63,8 @@ class QueryProcessor implements ContainerInjectionInterface {
 	 * @param array $overrides
 	 * @param bool $full_override
 	 *
-	 * @return false|string
+	 * @return string
+	 * @throws ReflectionException
 	 */
 	public function execute( QwQuery $qw_query, $overrides = [], $full_override = FALSE ) {
 		/**
@@ -71,6 +77,8 @@ class QueryProcessor implements ContainerInjectionInterface {
 		$options = $full_override ? $overrides : array_replace_recursive( (array) $options, $overrides );
 
 		// build query_details
+		// @todo - This doesn't do anything.
+		//       - OVERRIDING settings need to work somehow
 		$options['meta'] = array_replace( [
 			'id' => $qw_query->id(),
 			'slug' => $qw_query->slug(),
@@ -82,9 +90,9 @@ class QueryProcessor implements ContainerInjectionInterface {
 			'empty' => $options['display']['empty'],
 		], (array) $options['meta'] );
 
-		$wrapper = [
+		$wrapper_context = [
 			'rows' => [],
-			'content' => null,
+			'content' => '',
 			'pager' => null,
 		];
 		$current_page_number = $this->getCurrentPageNumber();
@@ -94,17 +102,18 @@ class QueryProcessor implements ContainerInjectionInterface {
 		 *
 		 * Previously @see qw_generate_query_args()
 		 */
-		$args = [];
+		$query_args = [];
 
 		/**
 		 * Paging Type does not allow for multiple instances of its items.
 		 * Loop through _all_ paging types because any of them could affect the query args.
 		 */
+		/** @var PagingTypeManager $paging_manager */
 		$paging_manager = $this->handlerManager->get( 'paging' );
 		$paging_manager->collect();
 		$paging_data = $paging_manager->getDataFromQuery( $qw_query );
 		foreach ( $paging_manager->all() as $type => $paging_type ) {
-			$args = $paging_type->process( $args, $paging_data, $current_page_number );
+			$query_args = $paging_type->process( $query_args, $paging_data, $current_page_number );
 		}
 
 		/**
@@ -113,12 +122,13 @@ class QueryProcessor implements ContainerInjectionInterface {
 		 *
 		 * @todo - exposed forms processing
 		 */
+		/** @var FilterTypeManager $filter_manager */
 		$filter_manager = $this->handlerManager->get( 'filter' );
 		$filter_manager->collect();
 		foreach ( $filter_manager->getDataFromQuery( $qw_query ) as $name => $item ) {
 			if ( $filter_manager->has( $item['type'] ) ) {
 				$filter_type = $filter_manager->get( $item['type'] );
-				$args = $filter_type->process( $args, $item );
+				$query_args = $filter_type->process( $query_args, $item );
 			}
 		}
 
@@ -128,33 +138,20 @@ class QueryProcessor implements ContainerInjectionInterface {
 		 *
 		 * @todo - exposed forms processing
 		 */
+		/** @var SortTypeManager $sort_manager */
 		$sort_manager = $this->handlerManager->get( 'sort' );
 		$sort_manager->collect();
 		foreach ( $sort_manager->getDataFromQuery( $qw_query ) as $name => $item ) {
 			if ( $sort_manager->has( $item['type'] ) ) {
 				$sort_type = $sort_manager->get( $item['type'] );
-				$args = $sort_type->process( $args, $item );
+				$query_args = $sort_type->process( $query_args, $item );
 			}
 		}
 
 		/** @var QueryInterface $entity_query */
 		$entity_query = $this->entityQueryManager->getInstance( $qw_query->getQueryType() );
-		$entity_query->setArguments( $args );
+		$entity_query->setArguments( $query_args );
 
-		/**
-		 * Display handlers render and modify specific parts of the output.
-		 * Some have their own sub-display implementations (like row styles).
-		 *
-		 * - Wrapper
-		 *   - Header
-		 *   - Empty
-		 *   - Pager Style
-		 *   - Template Style : Renders rows and row wrapping element. (table|unformatted|list)
-	     *     - Row Style[]: EXECUTES QUERY - Collection of rendered Fields.
-		 *       - Fields[]
-		 *         Fields have settings which affect its own output
-		 *   - Footer
-		 */
 		/** @var FieldTypeManager $field_manager */
 		$field_manager = $this->handlerManager->get( 'field' );
 		$field_manager->collect();
@@ -164,7 +161,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 		$row_style_manager->collect();
 		$row_style = $row_style_manager->getDataFromQuery( $qw_query );
 		$row_style_type = $row_style_manager->get( $row_style['type'] );
-		$wrapper['rows'] = $row_style_type->render( $qw_query, $entity_query, $field_manager );
+		$wrapper_context['rows'] = $row_style_type->render( $qw_query, $entity_query, $field_manager );
 
 		if ( $qw_query->getPagerEnabled() ) {
 			$query_page_number = $this->getQueryPageNumber( $entity_query );
@@ -174,50 +171,33 @@ class QueryProcessor implements ContainerInjectionInterface {
 			$pager_style_manager->collect();
 			$pager_style = $pager_style_manager->getDataFromQuery( $qw_query );
 			$pager_style_type = $pager_style_manager->get( $pager_style['type'] );
-			$wrapper['pager'] = $pager_style_type->render( $pager_style, $entity_query, $query_page_number );
+			$wrapper_context['pager'] = $pager_style_type->render( $pager_style, $entity_query, $query_page_number );
 		}
 
-		if ( is_array( $wrapper['rows'] ) && count( $wrapper['rows'] ) ) {
+		if ( is_array( $wrapper_context['rows'] ) && count( $wrapper_context['rows'] ) ) {
 			/** @var TemplateStyleTypeManager $template_style_manager */
 			$template_style_manager = $this->handlerManager->get( 'template_style' );
 			$template_style_manager->collect();
 			$template_style = $template_style_manager->getDataFromQuery( $qw_query );
 			$template_style_type = $template_style_manager->get( $template_style['type'] );
-			$wrapper['content'] = $template_style_type->render( $qw_query, $wrapper['rows'] );
+			$wrapper_context['content'] = $template_style_type->render( $qw_query, $wrapper_context['rows'] );
 		}
 
-		// @todo - display manager handles simple stuff, but ultimately...
+		/** @var WrapperStyleTypeManager $template_style_manager */
+		$wrapper_style_manager= $this->handlerManager->get( 'wrapper_style' );
+		$wrapper_style_manager->collect();
+		$wrapper_style = $wrapper_style_manager->getDataFromQuery( $qw_query );
+		$wrapper_style_type = $wrapper_style_manager->get( $wrapper_style['type'] );
+		$rendered = $wrapper_style_type->render( $qw_query, $wrapper_style, $wrapper_context );
 
-		// @todo
-		//   - the WRAPPER STYLE, which converts everything into variables for the wrapper template
-
-		/**
-		 * Display Type does not allow for multiple instances of its items.
-		 * Loop through _all_ paging types because any of them could affect the query args.
-		 */
-		$display_manager = $this->handlerManager->get( 'display' );
-		$display_manager->collect();
-		$display = [];
-		foreach ( $display_manager->all() as $type => $display_type ) {
-			$display = $display_type->process( $display, $qw_query->getDisplay() );
-		}
-//		dump($display_manager->all());
-//		dump($display_manager->getDataFromQuery( $query ));
-
-		$dump = $wrapper + [
-			'args' => $args,
-			'display' => $display,
+		$dump = $wrapper_context + [
+			'args' => $query_args,
 			'qw_query' => $qw_query,
 		];
 		unset($dump['content']);
 		dump( $dump );
 
-		// return
-		return $wrapper['content'];
-	}
-
-	public function preprocessQueryData( $data ) {
-		return $data;
+		return $rendered;
 	}
 
 	/**

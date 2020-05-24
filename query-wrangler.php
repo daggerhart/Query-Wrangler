@@ -128,7 +128,7 @@ function qw_init_frontend() {
 
 	// Necessary functions to show a query
 	include_once QW_PLUGIN_DIR . '/includes/query.php';
-	include_once QW_PLUGIN_DIR . '/includes/theme.php';
+//	include_once QW_PLUGIN_DIR . '/includes/theme.php';
 	include_once QW_PLUGIN_DIR . '/includes/pages.php';
 	include_once QW_PLUGIN_DIR . '/includes/class-qw-override.php';
 	//QW_Override::register();

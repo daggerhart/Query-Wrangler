@@ -14,7 +14,6 @@ use QueryWrangler\Admin\MetaBox\QueryEditor;
 use QueryWrangler\Admin\MetaBox\QueryPreview;
 use QueryWrangler\Admin\Page\Import;
 use QueryWrangler\Admin\Page\Settings;
-use QueryWrangler\Handler\Display\DisplayTypeManager;
 use QueryWrangler\Handler\Field\FieldTypeManager;
 use QueryWrangler\Handler\Filter\FilterTypeManager;
 use QueryWrangler\Handler\HandlerManager;
@@ -23,6 +22,7 @@ use QueryWrangler\Handler\Paging\PagingTypeManager;
 use QueryWrangler\Handler\RowStyle\RowStyleTypeManager;
 use QueryWrangler\Handler\Sort\SortTypeManager;
 use QueryWrangler\Handler\TemplateStyle\TemplateStyleTypeManager;
+use QueryWrangler\Handler\WrapperStyle\WrapperStyleTypeManager;
 use QueryWrangler\PostType\Query;
 use QueryWrangler\Query\QueryProcessor;
 use QueryWrangler\Query\QueryShortcode;
@@ -63,7 +63,6 @@ class Loader {
 			] );
 		} );
 
-		$container->set( 'handler.display.manager', DisplayTypeManager::class );
 		$container->set( 'handler.field.manager', FieldTypeManager::class );
 		$container->set( 'handler.filter.manager', FilterTypeManager::class );
 		$container->set( 'handler.sort.manager', SortTypeManager::class );
@@ -71,6 +70,7 @@ class Loader {
 		$container->set( 'handler.row_style.manager', RowStyleTypeManager::class );
 		$container->set( 'handler.pager_style.manager', PagerStyleTypeManager::class );
 		$container->set( 'handler.template_style.manager', TemplateStyleTypeManager::class );
+		$container->set( 'handler.wrapper_style.manager', WrapperStyleTypeManager::class );
 		$container->set( 'handler.manager', function ( ContainerInterface $container ) {
 			// Setup the renderers before they are injected into other services.
 			/** @var FileRenderer $fileRenderer */
@@ -90,7 +90,6 @@ class Loader {
 				'suffix' => '}}',
 			] );
 
-			$display = $container->get( 'handler.display.manager' );
 			$field = $container->get( 'handler.field.manager' );
 			$filter = $container->get( 'handler.filter.manager' );
 			$sort = $container->get( 'handler.sort.manager' );
@@ -98,9 +97,9 @@ class Loader {
 			$row_style = $container->get( 'handler.row_style.manager' );
 			$pager_style = $container->get( 'handler.pager_style.manager' );
 			$template_style = $container->get( 'handler.template_style.manager' );
+			$wrapper_style = $container->get( 'handler.wrapper_style.manager' );
 
 			return new HandlerManager( [
-				$display->type() => $display,
 				$field->type() => $field,
 				$filter->type() => $filter,
 				$sort->type() => $sort,
@@ -108,6 +107,7 @@ class Loader {
 				$row_style->type() => $row_style,
 				$pager_style->type() => $pager_style,
 				$template_style->type() => $template_style,
+				$wrapper_style->type() => $wrapper_style,
 			] );
 		} );
 		$container->set( 'query.processor', QueryProcessor::class );
