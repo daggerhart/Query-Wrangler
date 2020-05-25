@@ -53,35 +53,36 @@ class QueryProcessor implements ContainerInjectionInterface {
 
 	/**
 	 * @param QueryPostEntity $query_post_entity
-	 * @param array $overrides
+	 * @param array $query_data_overrides
 	 * @param bool $full_override
 	 *
 	 * @return string
 	 * @throws ReflectionException
 	 */
-	public function execute( QueryPostEntity $query_post_entity, $overrides = [], $full_override = FALSE ) {
+	public function execute( QueryPostEntity $query_post_entity, $query_data_overrides = [], $full_override = FALSE ) {
 		/**
 		 * Process options.
 		 * @todo - consider new data struct
 		 *
 		 * Previously @see qw_generate_query_options()
 		 */
-		$options = $query_post_entity->meta( 'query_data' );
-		$options = $full_override ? $overrides : array_replace_recursive( (array) $options, $overrides );
+		$query_post_entity->populate( [], $query_data_overrides );
 
-		// build query_details
-		// @todo - This doesn't do anything.
-		//       - OVERRIDING settings with $overrides need to work somehow
-		$options['meta'] = array_replace( [
-			'id' => $query_post_entity->id(),
-			'slug' => $query_post_entity->slug(),
-			'name' => $query_post_entity->title(),
-			'type' => $query_post_entity->getDisplayType(),
-			'pagination' => isset( $options['display']['page']['pager']['active'] ) ? 1 : 0,
-			'header' => $options['display']['header'],
-			'footer' => $options['display']['footer'],
-			'empty' => $options['display']['empty'],
-		], (array) $options['meta'] );
+//		// @todo - This doesn't do anything.
+//		$options = $query_post_entity->meta( 'query_data' );
+//		$options = $full_override ? $overrides : array_replace_recursive( (array) $options, $overrides );
+//
+//		// build query_details
+//		$options['meta'] = array_replace( [
+//			'id' => $query_post_entity->id(),
+//			'slug' => $query_post_entity->slug(),
+//			'name' => $query_post_entity->title(),
+//			'type' => $query_post_entity->getDisplayType(),
+//			'pagination' => isset( $options['display']['page']['pager']['active'] ) ? 1 : 0,
+//			'header' => $options['display']['header'],
+//			'footer' => $options['display']['footer'],
+//			'empty' => $options['display']['empty'],
+//		], (array) $options['meta'] );
 
 		$wrapper_context = [
 			'rows' => [],

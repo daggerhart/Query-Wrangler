@@ -32,14 +32,7 @@ class QueryPostEntity extends Post {
 		parent::__construct( $object );
 
 		if ( $this->isLoaded() ) {
-			$data = $this->meta( 'query_data' );
-			if ( !empty( $data ) ) {
-				if ( !is_array( $data ) ) {
-					$data = json_decode( $data, true );
-				}
-
-				$this->populateLegacy( $data );
-			}
+			$this->populate();
 		}
 	}
 
@@ -165,11 +158,39 @@ class QueryPostEntity extends Post {
 	}
 
 	/**
+	 * Populate the object with data.
+	 *
+	 * @param array $data
+	 * @param array $replace
+	 */
+	public function populate( $data = [], $replace = [] ) {
+		if ( empty( $data ) ) {
+			$data = $this->meta( 'query_data' );
+		}
+
+		if ( !empty( $data ) ) {
+			if ( !is_array( $data ) ) {
+				$data = json_decode( $data, true );
+			}
+
+			// Version 1.x imported data.
+			if ( isset( $data['data'] ) ) {
+				$this->populateLegacy( $data, $replace );
+			}
+		}
+	}
+
+	/**
 	 * Populate the object expecting version 1.x values.
 	 *
-	 * @param $data
+	 * @param array $data
+	 * @param array $replace
 	 */
-	protected function populateLegacy( $data ) {
+	protected function populateLegacy( $data, $replace ) {
+		if ( !empty( $replace ) ) {
+			$data['data'] = array_replace_recursive( $data['data'], $replace );
+		}
+
 		// Display Type
 		if ( !empty( $data['type'] ) ) {
 			$this->displayType = $data['type'];

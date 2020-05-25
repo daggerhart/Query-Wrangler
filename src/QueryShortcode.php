@@ -14,11 +14,6 @@ class QueryShortcode implements ContainerInjectionInterface {
 	protected $processor;
 
 	/**
-	 * @var bool
-	 */
-	static protected $registered = FALSE;
-
-	/**
 	 * QueryShortcode constructor.
 	 *
 	 * @param QueryProcessor $processor
@@ -74,7 +69,7 @@ class QueryShortcode implements ContainerInjectionInterface {
 		 * @since 1.4
 		 *
 		 * @param array $attributes
-		 * @param array $options_override
+		 * @param array $query_data_overrides
 		 */
 		$attributes = apply_filters( 'qw_shortcode_attributes', $attributes, [] );
 
@@ -83,25 +78,25 @@ class QueryShortcode implements ContainerInjectionInterface {
 		 *
 		 * @since 1.4
 		 *
-		 * @param array $options_override
+		 * @param array $query_data_overrides
 		 * @param array $attributes
 		 */
-		$options_override = apply_filters( 'qw_shortcode_options', [], $attributes );
+		$query_data_overrides = apply_filters( 'qw_shortcode_options', [], $attributes );
 
-		$qw_query = FALSE;
+		$query_post_entity = false;
 		if ( $attributes['id'] ) {
-			$qw_query = QueryPostEntity::load( $attributes['id'] );
+			$query_post_entity = QueryPostEntity::load( $attributes['id'] );
 		}
 		else if ( $attributes['slug'] ) {
-			$qw_query = QueryPostEntity::loadBySlug( $attributes['slug'] );
+			$query_post_entity = QueryPostEntity::loadBySlug( $attributes['slug'] );
 		}
 
-		if ( !$qw_query || !$qw_query->isLoaded() ) {
+		if ( !$query_post_entity || !$query_post_entity->isLoaded() ) {
 			return "<!-- Query Wrangler ERROR: Query not found: {$attributes['id']} - {$attributes['slug']} -->";
 		}
 
 		try {
-			$output = $this->processor->execute( $qw_query, $options_override );
+			$output = $this->processor->execute( $query_post_entity, $query_data_overrides );
 		}
 		catch ( \Exception $exception ) {
 			$output = "<!-- Query Wrangler ERROR: {$exception->getMessage()} -->";
