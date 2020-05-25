@@ -52,7 +52,7 @@ class QueryPostEntity extends Post {
 	 */
 	static public function loadBySlug( $slug ) {
 		$posts = get_posts( [
-			'post_type' => 'qw_query',
+			'post_type' => QueryPostType::SLUG,
 			'post_name' => $slug,
 			'posts_per_page' => 1,
 			'ignore_sticky_posts' => 1,

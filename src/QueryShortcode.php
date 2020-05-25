@@ -4,8 +4,6 @@ namespace QueryWrangler;
 
 use Kinglet\Container\ContainerInjectionInterface;
 use Kinglet\Container\ContainerInterface;
-use Kinglet\Registry\RegistryRepositoryInterface;
-use QueryWrangler\QueryPostEntity;
 use QueryWrangler\Service\QueryProcessor;
 
 class QueryShortcode implements ContainerInjectionInterface {
@@ -16,11 +14,6 @@ class QueryShortcode implements ContainerInjectionInterface {
 	protected $processor;
 
 	/**
-	 * @var RegistryRepositoryInterface
-	 */
-	protected $settings;
-
-	/**
 	 * @var bool
 	 */
 	static protected $registered = FALSE;
@@ -29,12 +22,9 @@ class QueryShortcode implements ContainerInjectionInterface {
 	 * QueryShortcode constructor.
 	 *
 	 * @param QueryProcessor $processor
-	 * @param RegistryRepositoryInterface $settings
 	 */
-	public function __construct( QueryProcessor $processor, RegistryRepositoryInterface $settings ) {
+	public function __construct( QueryProcessor $processor ) {
 		$this->processor = $processor;
-		$this->settings = $settings;
-		$this->register();
 	}
 
 	/**
@@ -42,25 +32,8 @@ class QueryShortcode implements ContainerInjectionInterface {
 	 */
 	public static function create( ContainerInterface $container ) {
 		return new static(
-			$container->get( 'query.processor' ),
-			$container->get( 'settings' )
+			$container->get( 'query.processor' )
 		);
-	}
-
-	/**
-	 * Register the shortcode w/ WordPress.
-	 */
-	protected function register() {
-		if ( !static::$registered ) {
-			static::$registered = TRUE;
-
-			if ( $this->settings->get('shortcode_compat') ){
-				add_shortcode( 'qw_query', [ $this, 'doShortcode' ] );
-			}
-			else {
-				add_shortcode( 'query', [ $this, 'doShortcode' ] );
-			}
-		}
 	}
 
 	/**
@@ -124,10 +97,17 @@ class QueryShortcode implements ContainerInjectionInterface {
 		}
 
 		if ( !$qw_query || !$qw_query->isLoaded() ) {
-			return "<!-- Query Wrangler Query not found: {$attributes['id']} - {$attributes['slug']} -->";
+			return "<!-- Query Wrangler ERROR: Query not found: {$attributes['id']} - {$attributes['slug']} -->";
 		}
 
-		return $this->processor->execute( $qw_query, $options_override );
+		try {
+			$output = $this->processor->execute( $qw_query, $options_override );
+		}
+		catch ( \Exception $exception ) {
+			$output = "<!-- Query Wrangler ERROR: {$exception->getMessage()} -->";
+		}
+
+		return $output;
 	}
 
 }

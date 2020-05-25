@@ -26,6 +26,7 @@ use QueryWrangler\Handler\TemplateStyle\TemplateStyleTypeManager;
 use QueryWrangler\Handler\WrapperStyle\WrapperStyleTypeManager;
 use QueryWrangler\Service\QueryProcessor;
 use QueryWrangler\Service\WordPressRegistry;
+use WP_Query;
 
 class Loader {
 
@@ -48,7 +49,11 @@ class Loader {
 		$this->setupContainer();
 		add_action( 'plugins_loaded', [ $this, 'registerPostTypes' ] );
 		add_action( 'admin_init', [ $this, 'registerMetaBoxes' ] );
+		add_action( 'init', [ $this, 'registerShortcodes' ] );
 		add_action( 'admin_menu', [ $this, 'adminMenu' ] );
+		add_action( 'parse_query', [ $this, 'overrideFind' ] );
+		add_action( 'pre_get_posts', [ $this, 'overrideExecute' ], -1000 );
+		add_action( 'the_content', [ $this, 'queryTheContent' ] );
 	}
 
 	protected function setupContainer() {
@@ -131,7 +136,7 @@ class Loader {
 	}
 
 	/**
-	 *
+	 * Register all plugin post types.
 	 */
 	public function registerPostTypes() {
 	    $settings = $this->container->get( 'settings' );
@@ -140,23 +145,17 @@ class Loader {
 	}
 
 	/**
-	 *
+	 * Register all plugin shortcodes.
 	 */
-	public function registerMetaBoxes() {
-	    $settings = $this->container->get( 'settings' );
-	    $form_factory = $this->container->get( 'form.factory' );
-		$details = new QueryDetails( QueryPostType::SLUG, $settings, $form_factory );
-		$editor = new QueryEditor( QueryPostType::SLUG, $settings, $form_factory );
-		$preview = new QueryPreview( QueryPostType::SLUG, $settings, $form_factory );
-		$this->metaboxes[ $details->id() ] = $details;
-		$this->metaboxes[ $preview->id() ] = $preview;
-		$this->metaboxes[ $editor->id() ] = $editor;
-
-		new QueryDebug( QueryPostType::SLUG, $this->container );
+	public function registerShortcodes() {
+		$settings = $this->container->get( 'settings' );
+		$query_shortcode = $this->container->get( 'query.shortcode' );
+		$tag = $settings->get('shortcode_compat') ? 'qw_query' : 'query';
+		add_shortcode( $tag, [ $query_shortcode, 'doShortcode' ] );
 	}
 
 	/**
-	 * WordPress admin_menu hook.
+	 * Register all plugin admin menu items.
 	 */
 	public function adminMenu() {
         $settings = $this->container->get( 'settings' );
@@ -169,4 +168,67 @@ class Loader {
 		$settingsPage = new Settings( $settings, $form_factory, $messenger );
 		$settingsPage->addToSubMenu( $settingsPage->parentSlug() );
 	}
+
+	/**
+	 * Register all plugin meta boxes.
+	 */
+	public function registerMetaBoxes() {
+		$settings = $this->container->get( 'settings' );
+		$form_factory = $this->container->get( 'form.factory' );
+		$details = new QueryDetails( QueryPostType::SLUG, $settings, $form_factory );
+		$editor = new QueryEditor( QueryPostType::SLUG, $settings, $form_factory );
+		$preview = new QueryPreview( QueryPostType::SLUG, $settings, $form_factory );
+		$this->metaboxes[ $details->id() ] = $details;
+		$this->metaboxes[ $preview->id() ] = $preview;
+		$this->metaboxes[ $editor->id() ] = $editor;
+
+		new QueryDebug( QueryPostType::SLUG, $this->container );
+	}
+
+	/**
+	 * Hook into WP and attempt to resolve an override.
+	 *
+	 * @param WP_Query $wp_query
+	 */
+	public function overrideFind( WP_Query $wp_query) {
+		/** @var OverrideTypeManager $override */
+		$override = $this->container->get( 'handler.override.manager' );
+		$override->findOverride( $wp_query );
+	}
+
+	/**
+	 * Hook into WP and potentially perform an override.
+	 *
+	 * @param WP_Query $wp_query
+	 */
+	public function overrideExecute( WP_Query $wp_query ) {
+		/** @var OverrideTypeManager $override */
+		$override = $this->container->get( 'handler.override.manager' );
+		$override->executeOverride( $wp_query );
+	}
+
+	/**
+	 * When displaying QueryPostType on the frontend, provide processed
+	 * query as the_content() for the post.
+	 *
+	 * @param string $content
+	 *
+	 * @return string
+	 */
+	public function queryTheContent( $content ) {
+		if ( !is_admin() && get_post_type() == QueryPostType::SLUG ) {
+			/** @var QueryProcessor $processor */
+			$processor = $this->container->get( 'query.processor' );
+			$query_post_entity = QueryPostEntity::load( get_the_ID() );
+			try {
+				$content = $processor->execute( $query_post_entity );
+			}
+			catch ( \Exception $exception ) {
+				$content = "<!-- Query Wrangler ERROR: {$exception->getMessage()} -->";
+			}
+		}
+
+		return $content;
+	}
+
 }

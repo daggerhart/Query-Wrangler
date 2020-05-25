@@ -26,51 +26,7 @@ class QueryPostType {
 		if ( !self::$initialized ) {
 			self::$initialized = TRUE;
 			add_action( 'init', [ $this, 'registerPostType' ] );
-
-			add_action( 'parse_query', function( $wp_query ) {
-				$wp_query->query_wrangler_override = false;
-				if ( $wp_query->is_main_query() && !empty( $_SERVER['REQUEST_URI'] ) ) {
-					$post = $this->getQueryByPagePath( $_SERVER['REQUEST_URI'] );
-					if ( $post ) {
-						$wp_query->query_wrangler_override = true;
-						$wp_query->query_wrangler_override_query_post = $post;
-					}
-				}
-			} );
-			add_action( 'pre_get_posts', function( $wp_query ) {
-				if ( $wp_query->is_main_query() && $wp_query->query_wrangler_override ) {
-					$tmp_query = new \WP_Query( [
-						'post__in' => [ $wp_query->query_wrangler_override_query_post->ID ],
-						'post_type' => [ $wp_query->query_wrangler_override_query_post->post_type ],
-					] );
-					$wp_query->query_vars = $tmp_query->query_vars;
-				}
-			}, -1000 );
 		}
-	}
-
-	/**
-	 * @param string $path
-	 *
-	 * @return bool|\WP_Post
-	 */
-	public function getQueryByPagePath( $path ) {
-		$path = trim( $path, '/' );
-		$path = explode( '/page/', $path )[0];
-		$posts = get_posts( [
-			'post_type' => self::SLUG,
-			'post_status' => 'publish',
-			'posts_per_page' => 1,
-			'meta_query' => [
-				'page_path' => [
-					// @todo - implement this meta_key
-					'key' => 'query_page_path',
-					'value' => $path,
-				],
-			],
-		] );
-
-		return !empty( $posts ) ? $posts[0] : false;
 	}
 
 	public function labels() {
