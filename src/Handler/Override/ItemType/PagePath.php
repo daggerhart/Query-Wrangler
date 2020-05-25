@@ -13,21 +13,21 @@ class PagePath implements OverrideInterface {
 	 * @inheritDoc
 	 */
 	public function type() {
-		return '';
+		return 'page_path';
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function title() {
-		return __( '', 'query-wrangler' );
+		return __( 'Page Path', 'query-wrangler' );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function description() {
-		return __( '', 'query-wrangler' );
+		return __( 'Override the output of the given URL with this query.', 'query-wrangler' );
 	}
 
 	/**
@@ -52,7 +52,7 @@ class PagePath implements OverrideInterface {
 				'meta_query' => [
 					$this->type() => [
 						// @todo - implement this meta_key
-						'key' => 'query_page_path',
+						'key' => 'query_override_'. $this->type(),
 						'value' => $path,
 					],
 				],

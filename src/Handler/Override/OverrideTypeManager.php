@@ -86,6 +86,9 @@ class OverrideTypeManager extends HandlerTypeManagerBase {
 		 * @var OverrideInterface $override_type
 		 */
 		foreach ( $this->all() as $type => $override_type ) {
+			if ( !in_array( 'post', $override_type->queryTypes() ) ) {
+				continue;
+			}
 			$wp_query->query_wrangler_override_entity = $override_type->getOverride( $wp_query );
 			if ( $wp_query->query_wrangler_override_entity ) {
 				$wp_query->query_wrangler_override_type = $override_type;

@@ -35,7 +35,7 @@ class TaxonomyArchive implements OverrideInterface {
 	 * @inheritDoc
 	 */
 	public function queryTypes() {
-		return ['post'];
+		return [ 'post' ];
 	}
 
 	/**
@@ -71,6 +71,12 @@ class TaxonomyArchive implements OverrideInterface {
 	 * @inheritDoc
 	 */
 	public function doOverride( WP_Query $wp_query, QueryPostEntity $entity ) {
-		// TODO: Implement doOverride() method.
+		// @todo - is this right? probably. override the entire archive page.
+		$post = $entity->object();
+		$tmp_query = new \WP_Query( [
+			'post__in' => [ $post->ID ],
+			'post_type' => [ $post->post_type ],
+		] );
+		$wp_query->query_vars = $tmp_query->query_vars;
 	}
 }

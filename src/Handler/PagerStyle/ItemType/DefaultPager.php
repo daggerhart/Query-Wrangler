@@ -78,7 +78,7 @@ class DefaultPager implements PagerStyleInterface {
 			if ( $exposed_path ) {
 				$url .= '?' . $exposed_path;
 			}
-			$output .= "<div class='query-nextpage'><a href='{$url}>{$settings['next']}</a></div>";
+			$output .= "<div class='query-nextpage'><a href='{$url}'>{$settings['next']}</a></div>";
 		}
 
 		return $output;

@@ -96,6 +96,8 @@ class QueryProcessor implements ContainerInjectionInterface {
 		 *
 		 * Previously @see qw_generate_query_args()
 		 */
+		/** @var QueryInterface $entity_query */
+		$entity_query = $this->entityQueryManager->getInstance( $query_post_entity->getQueryType() );
 		$query_args = [];
 
 		/**
@@ -107,6 +109,9 @@ class QueryProcessor implements ContainerInjectionInterface {
 		$paging_manager->collect();
 		$paging_data = $paging_manager->getDataFromQuery( $query_post_entity );
 		foreach ( $paging_manager->all() as $type => $paging_type ) {
+			if ( !in_array( $entity_query->type(), $paging_type->queryTypes() ) ) {
+				continue;
+			}
 			$query_args = $paging_type->process( $query_args, $paging_data, $current_page_number );
 		}
 
@@ -122,6 +127,9 @@ class QueryProcessor implements ContainerInjectionInterface {
 		foreach ( $filter_manager->getDataFromQuery( $query_post_entity ) as $name => $item ) {
 			if ( $filter_manager->has( $item['type'] ) ) {
 				$filter_type = $filter_manager->get( $item['type'] );
+				if ( !in_array( $entity_query->type(), $filter_type->queryTypes() ) ) {
+					continue;
+				}
 				$query_args = $filter_type->process( $query_args, $item );
 			}
 		}
@@ -129,8 +137,6 @@ class QueryProcessor implements ContainerInjectionInterface {
 		/**
 		 * Sort Type allow for multiple instances of its items.
 		 * Loop through existing filters on the query.
-		 *
-		 * @todo - exposed forms processing
 		 */
 		/** @var SortTypeManager $sort_manager */
 		$sort_manager = $this->handlerManager->get( 'sort' );
@@ -138,12 +144,16 @@ class QueryProcessor implements ContainerInjectionInterface {
 		foreach ( $sort_manager->getDataFromQuery( $query_post_entity ) as $name => $item ) {
 			if ( $sort_manager->has( $item['type'] ) ) {
 				$sort_type = $sort_manager->get( $item['type'] );
+				if ( !in_array( $entity_query->type(), $sort_type->queryTypes() ) ) {
+					continue;
+				}
 				$query_args = $sort_type->process( $query_args, $item );
 			}
 		}
 
-		/** @var QueryInterface $entity_query */
-		$entity_query = $this->entityQueryManager->getInstance( $query_post_entity->getQueryType() );
+		/**
+		 * Query args should be ready.
+		 */
 		$entity_query->setArguments( $query_args );
 
 		/** @var FieldTypeManager $field_manager */
