@@ -52,31 +52,31 @@ class QueryProcessor implements ContainerInjectionInterface {
 	}
 
 	/**
-	 * @param QueryPostEntity $qw_query
+	 * @param QueryPostEntity $query_post_entity
 	 * @param array $overrides
 	 * @param bool $full_override
 	 *
 	 * @return string
 	 * @throws ReflectionException
 	 */
-	public function execute( QueryPostEntity $qw_query, $overrides = [], $full_override = FALSE ) {
+	public function execute( QueryPostEntity $query_post_entity, $overrides = [], $full_override = FALSE ) {
 		/**
 		 * Process options.
 		 * @todo - consider new data struct
 		 *
 		 * Previously @see qw_generate_query_options()
 		 */
-		$options = $qw_query->meta( 'query_data' );
+		$options = $query_post_entity->meta( 'query_data' );
 		$options = $full_override ? $overrides : array_replace_recursive( (array) $options, $overrides );
 
 		// build query_details
 		// @todo - This doesn't do anything.
 		//       - OVERRIDING settings with $overrides need to work somehow
 		$options['meta'] = array_replace( [
-			'id' => $qw_query->id(),
-			'slug' => $qw_query->slug(),
-			'name' => $qw_query->title(),
-			'type' => $qw_query->getDisplayType(),
+			'id' => $query_post_entity->id(),
+			'slug' => $query_post_entity->slug(),
+			'name' => $query_post_entity->title(),
+			'type' => $query_post_entity->getDisplayType(),
 			'pagination' => isset( $options['display']['page']['pager']['active'] ) ? 1 : 0,
 			'header' => $options['display']['header'],
 			'footer' => $options['display']['footer'],
@@ -104,7 +104,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 		/** @var PagingTypeManager $paging_manager */
 		$paging_manager = $this->handlerManager->get( 'paging' );
 		$paging_manager->collect();
-		$paging_data = $paging_manager->getDataFromQuery( $qw_query );
+		$paging_data = $paging_manager->getDataFromQuery( $query_post_entity );
 		foreach ( $paging_manager->all() as $type => $paging_type ) {
 			$query_args = $paging_type->process( $query_args, $paging_data, $current_page_number );
 		}
@@ -118,7 +118,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 		/** @var FilterTypeManager $filter_manager */
 		$filter_manager = $this->handlerManager->get( 'filter' );
 		$filter_manager->collect();
-		foreach ( $filter_manager->getDataFromQuery( $qw_query ) as $name => $item ) {
+		foreach ( $filter_manager->getDataFromQuery( $query_post_entity ) as $name => $item ) {
 			if ( $filter_manager->has( $item['type'] ) ) {
 				$filter_type = $filter_manager->get( $item['type'] );
 				$query_args = $filter_type->process( $query_args, $item );
@@ -134,7 +134,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 		/** @var SortTypeManager $sort_manager */
 		$sort_manager = $this->handlerManager->get( 'sort' );
 		$sort_manager->collect();
-		foreach ( $sort_manager->getDataFromQuery( $qw_query ) as $name => $item ) {
+		foreach ( $sort_manager->getDataFromQuery( $query_post_entity ) as $name => $item ) {
 			if ( $sort_manager->has( $item['type'] ) ) {
 				$sort_type = $sort_manager->get( $item['type'] );
 				$query_args = $sort_type->process( $query_args, $item );
@@ -142,7 +142,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 		}
 
 		/** @var QueryInterface $entity_query */
-		$entity_query = $this->entityQueryManager->getInstance( $qw_query->getQueryType() );
+		$entity_query = $this->entityQueryManager->getInstance( $query_post_entity->getQueryType() );
 		$entity_query->setArguments( $query_args );
 
 		/** @var FieldTypeManager $field_manager */
@@ -152,17 +152,17 @@ class QueryProcessor implements ContainerInjectionInterface {
 		/** @var RowStyleTypeManager $row_style_manager */
 		$row_style_manager = $this->handlerManager->get( 'row_style' );
 		$row_style_manager->collect();
-		$row_style = $row_style_manager->getDataFromQuery( $qw_query );
+		$row_style = $row_style_manager->getDataFromQuery( $query_post_entity );
 		$row_style_type = $row_style_manager->get( $row_style['type'] );
-		$wrapper_context['rows'] = $row_style_type->render( $qw_query, $entity_query, $field_manager );
+		$wrapper_context['rows'] = $row_style_type->render( $query_post_entity, $entity_query, $field_manager );
 
-		if ( $qw_query->getPagerEnabled() ) {
+		if ( $query_post_entity->getPagerEnabled() ) {
 			$query_page_number = $this->getQueryPageNumber( $entity_query );
 
 			/** @var PagerStyleTypeManager $pager_style_manager */
 			$pager_style_manager = $this->handlerManager->get( 'pager_style' );
 			$pager_style_manager->collect();
-			$pager_style = $pager_style_manager->getDataFromQuery( $qw_query );
+			$pager_style = $pager_style_manager->getDataFromQuery( $query_post_entity );
 			$pager_style_type = $pager_style_manager->get( $pager_style['type'] );
 			$wrapper_context['pager'] = $pager_style_type->render( $pager_style, $entity_query, $query_page_number );
 		}
@@ -171,21 +171,21 @@ class QueryProcessor implements ContainerInjectionInterface {
 			/** @var TemplateStyleTypeManager $template_style_manager */
 			$template_style_manager = $this->handlerManager->get( 'template_style' );
 			$template_style_manager->collect();
-			$template_style = $template_style_manager->getDataFromQuery( $qw_query );
+			$template_style = $template_style_manager->getDataFromQuery( $query_post_entity );
 			$template_style_type = $template_style_manager->get( $template_style['type'] );
-			$wrapper_context['content'] = $template_style_type->render( $qw_query, $wrapper_context['rows'] );
+			$wrapper_context['content'] = $template_style_type->render( $query_post_entity, $wrapper_context['rows'] );
 		}
 
 		/** @var WrapperStyleTypeManager $template_style_manager */
 		$wrapper_style_manager= $this->handlerManager->get( 'wrapper_style' );
 		$wrapper_style_manager->collect();
-		$wrapper_style = $wrapper_style_manager->getDataFromQuery( $qw_query );
+		$wrapper_style = $wrapper_style_manager->getDataFromQuery( $query_post_entity );
 		$wrapper_style_type = $wrapper_style_manager->get( $wrapper_style['type'] );
-		$rendered = $wrapper_style_type->render( $qw_query, $wrapper_style, $wrapper_context );
+		$rendered = $wrapper_style_type->render( $query_post_entity, $wrapper_style, $wrapper_context );
 
 		$dump = $wrapper_context + [
 			'args' => $query_args,
-			'qw_query' => $qw_query,
+			'qw_query' => $query_post_entity,
 		];
 		unset($dump['content']);
 		dump( $dump );

@@ -36,6 +36,13 @@ class WrapperStyleTypeManager extends HandlerTypeManagerBase {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getDataFromQuery( QueryPostEntity $query ) {
+		return $query->getWrapperStyle();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public function collect() {
@@ -79,13 +86,6 @@ class WrapperStyleTypeManager extends HandlerTypeManagerBase {
 			}
 			catch ( \ReflectionException $exception ) {}
 		}
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getDataFromQuery( QueryPostEntity $query ) {
-		return $query->getWrapperStyle();
 	}
 
 }

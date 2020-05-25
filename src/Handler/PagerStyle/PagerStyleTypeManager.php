@@ -36,6 +36,13 @@ class PagerStyleTypeManager extends HandlerTypeManagerBase {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getDataFromQuery( QueryPostEntity $query ) {
+		return $query->getPagerStyle();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public function collect() {
@@ -69,10 +76,4 @@ class PagerStyleTypeManager extends HandlerTypeManagerBase {
 		}
 	}
 
-	/**
-	 * @inheritDoc
-	 */
-	public function getDataFromQuery( QueryPostEntity $query ) {
-		return $query->getPagerStyle();
-	}
 }

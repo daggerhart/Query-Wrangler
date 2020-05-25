@@ -36,6 +36,13 @@ class TemplateStyleTypeManager extends HandlerTypeManagerBase {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getDataFromQuery( QueryPostEntity $query ) {
+		return $query->getTemplateStyle();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public function collect() {
@@ -82,13 +89,6 @@ class TemplateStyleTypeManager extends HandlerTypeManagerBase {
 			}
 			catch ( \ReflectionException $exception ) {}
 		}
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getDataFromQuery( QueryPostEntity $query ) {
-		return $query->getTemplateStyle();
 	}
 
 }

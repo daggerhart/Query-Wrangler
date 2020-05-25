@@ -36,6 +36,13 @@ class SortTypeManager extends HandlerTypeManagerBase {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getDataFromQuery( QueryPostEntity $query ) {
+		return $query->getSorts();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public function collect() {
@@ -83,10 +90,4 @@ class SortTypeManager extends HandlerTypeManagerBase {
 		}
 	}
 
-	/**
-	 * @inheritDoc
-	 */
-	public function getDataFromQuery( QueryPostEntity $query ) {
-		return $query->getSorts();
-	}
 }

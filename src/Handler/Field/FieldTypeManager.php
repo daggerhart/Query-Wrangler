@@ -36,6 +36,13 @@ class FieldTypeManager extends HandlerTypeManagerBase {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getDataFromQuery( QueryPostEntity $query ) {
+		return $query->getFields();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public function collect() {
@@ -83,10 +90,4 @@ class FieldTypeManager extends HandlerTypeManagerBase {
 		}
 	}
 
-	/**
-	 * @inheritDoc
-	 */
-	public function getDataFromQuery( QueryPostEntity $query ) {
-		return $query->getFields();
-	}
 }

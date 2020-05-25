@@ -50,6 +50,13 @@ class RowStyleTypeManager extends HandlerTypeManagerBase implements ContainerAwa
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getDataFromQuery( QueryPostEntity $query ) {
+		return $query->getRowStyle();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public function collect() {
@@ -85,13 +92,6 @@ class RowStyleTypeManager extends HandlerTypeManagerBase implements ContainerAwa
 			}
 			catch ( \ReflectionException $exception ) {}
 		}
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getDataFromQuery( QueryPostEntity $query ) {
-		return $query->getRowStyle();
 	}
 
 }

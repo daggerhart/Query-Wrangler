@@ -36,6 +36,13 @@ class PagingTypeManager extends HandlerTypeManagerBase {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getDataFromQuery( QueryPostEntity $query ) {
+		return $query->getPaging();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public function collect() {
@@ -69,10 +76,4 @@ class PagingTypeManager extends HandlerTypeManagerBase {
 		}
 	}
 
-	/**
-	 * @inheritDoc
-	 */
-	public function getDataFromQuery( QueryPostEntity $query ) {
-		return $query->getPaging();
-	}
 }

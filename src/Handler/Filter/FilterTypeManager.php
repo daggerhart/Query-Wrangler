@@ -36,6 +36,13 @@ class FilterTypeManager extends HandlerTypeManagerBase {
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getDataFromQuery( QueryPostEntity $query ) {
+		return $query->getFilters();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public function collect() {
@@ -81,13 +88,6 @@ class FilterTypeManager extends HandlerTypeManagerBase {
 			}
 			catch ( \ReflectionException $exception ) {}
 		}
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getDataFromQuery( QueryPostEntity $query ) {
-		return $query->getFilters();
 	}
 
 }

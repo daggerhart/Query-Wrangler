@@ -22,17 +22,17 @@ interface HandlerTypeManagerInterface extends RegistryInterface {
 	public function multiple();
 
 	/**
-	 * Gather all item types of the handler type.
-	 *
-	 * @void
-	 */
-	public function collect();
-
-	/**
 	 * @param QueryPostEntity $query
 	 *
 	 * @return array
 	 */
 	public function getDataFromQuery( QueryPostEntity $query );
+
+	/**
+	 * Gather all item types of the handler type.
+	 *
+	 * @void
+	 */
+	public function collect();
 
 }
