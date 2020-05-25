@@ -23,6 +23,9 @@ class QueryPostEntity extends Post {
 	protected $templateStyle = [];
 	protected $wrapperStyle = [];
 
+	protected $renderedTitle = '';
+	protected $renderedContent = '';
+
 	/**
 	 * QwQuery constructor.
 	 *
@@ -64,6 +67,34 @@ class QueryPostEntity extends Post {
 	 */
 	public function isLoaded() {
 		return !! $this->object();
+	}
+
+	/**
+	 * @param $content
+	 */
+	public function setRenderedContent( $content ) {
+		$this->renderedContent = $content;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRenderedContent() {
+		return $this->renderedContent;
+	}
+
+	/**
+	 * @param $title
+	 */
+	public function setRenderedTitle( $title ) {
+		$this->renderedTitle = $title;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRenderedTitle() {
+		return $this->renderedTitle;
 	}
 
 	/**

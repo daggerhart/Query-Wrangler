@@ -8,27 +8,27 @@ use QueryWrangler\QueryPostType;
 use WP_Query;
 use WP_Term;
 
-class TaxonomyArchive implements OverrideInterface {
+class PostTypeArchive implements OverrideInterface {
 
 	/**
 	 * @inheritDoc
 	 */
 	public function type() {
-		return 'taxonomies';
+		return 'post_type_archive';
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function title() {
-		return __( 'Taxonomy Archive', 'query-wrangler' );
+		return __( 'Post Type Archive', 'query-wrangler' );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function description() {
-		return __( 'Override term archive pages for an entire taxonomy.', 'query-wrangler' );
+		return __( 'Override the archive page for the given post types.', 'query-wrangler' );
 	}
 
 	/**
@@ -42,9 +42,7 @@ class TaxonomyArchive implements OverrideInterface {
 	 * @inheritDoc
 	 */
 	public function getOverride( WP_Query $wp_query ) {
-		if ( $wp_query->is_archive() && ( $wp_query->is_tag() || $wp_query->is_category() || $wp_query->is_tag() ) ) {
-			/** @var WP_Term $term */
-			$term = $wp_query->get_queried_object();
+		if ( $wp_query->is_post_type_archive() ) {
 			$posts = get_posts( [
 				'post_type' => QueryPostType::SLUG,
 				'post_status' => 'publish',
@@ -54,7 +52,7 @@ class TaxonomyArchive implements OverrideInterface {
 					$this->type() => [
 						// @todo - implement this meta_key
 						'key' => 'query_override_'. $this->type(),
-						'value' => $term->taxonomy,
+						'value' => $wp_query->query_vars['post_type'],
 					],
 				],
 			] );
@@ -71,7 +69,7 @@ class TaxonomyArchive implements OverrideInterface {
 	 * @inheritDoc
 	 */
 	public function doOverride( WP_Query $wp_query, QueryPostEntity $entity ) {
-		// @todo - Need to alter the QW Query to filter by the current taxonomy
+		// @todo - Need to alter the QW Query to filter by the current post type
 		$post = $entity->object();
 		$tmp_query = new \WP_Query( [
 			'post__in' => [ $post->ID ],

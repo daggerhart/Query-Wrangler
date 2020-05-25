@@ -53,7 +53,8 @@ class Loader {
 		add_action( 'admin_menu', [ $this, 'adminMenu' ] );
 		add_action( 'parse_query', [ $this, 'overrideFind' ] );
 		add_action( 'pre_get_posts', [ $this, 'overrideExecute' ], -1000 );
-		add_action( 'the_content', [ $this, 'queryTheContent' ] );
+		add_action( 'the_title', [ $this, 'queryTheTitle' ], 100 );
+		add_action( 'the_content', [ $this, 'queryTheContent' ],100 );
 	}
 
 	protected function setupContainer() {
@@ -208,6 +209,42 @@ class Loader {
 	}
 
 	/**
+	 * @todo - This is dumb, do this somewhere else.
+	 * @var QueryPostEntity
+	 */
+	protected $processedFrontEndQuery;
+
+	protected function getProcessedFrontEndQuery() {
+		if ( !$this->processedFrontEndQuery ) {
+			/** @var QueryProcessor $processor */
+			$processor = $this->container->get( 'query.processor' );
+			$this->processedFrontEndQuery = QueryPostEntity::load( get_the_ID() );
+			try {
+				$processor->execute( $this->processedFrontEndQuery );
+			}
+			catch ( \Exception $exception ) {}
+		}
+
+		return $this->processedFrontEndQuery;
+	}
+
+	/**
+	 * When displaying QueryPostType on the frontend, provide processed
+	 * query as the_title() for the post.
+	 *
+	 * @param $title
+	 *
+	 * @return string
+	 */
+	public function queryTheTitle( $title ) {
+		if ( !is_admin() && get_post_type() == QueryPostType::SLUG ) {
+			$title = $this->getProcessedFrontEndQuery()->getRenderedTitle();
+		}
+
+		return $title;
+	}
+
+	/**
 	 * When displaying QueryPostType on the frontend, provide processed
 	 * query as the_content() for the post.
 	 *
@@ -217,15 +254,7 @@ class Loader {
 	 */
 	public function queryTheContent( $content ) {
 		if ( !is_admin() && get_post_type() == QueryPostType::SLUG ) {
-			/** @var QueryProcessor $processor */
-			$processor = $this->container->get( 'query.processor' );
-			$query_post_entity = QueryPostEntity::load( get_the_ID() );
-			try {
-				$content = $processor->execute( $query_post_entity );
-			}
-			catch ( \Exception $exception ) {
-				$content = "<!-- Query Wrangler ERROR: {$exception->getMessage()} -->";
-			}
+			$content = $this->getProcessedFrontEndQuery()->getRenderedContent();
 		}
 
 		return $content;

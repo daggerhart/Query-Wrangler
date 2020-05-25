@@ -194,6 +194,12 @@ class QueryProcessor implements ContainerInjectionInterface {
 		$wrapper_style_type = $wrapper_style_manager->get( $wrapper_style['type'] );
 		$rendered = $wrapper_style_type->render( $query_post_entity, $wrapper_style, $wrapper_context );
 
+		// @todo - Replace this with real title rendering
+		//       - that can be altered by other handlers.
+		// @todo - also, i don't know that i like storing
+		//       - processed query content on the object...
+		$query_post_entity->setRenderedTitle( $wrapper_style['title'] );
+		$query_post_entity->setRenderedContent( $rendered );
 		$dump = $wrapper_context + [
 			'args' => $query_args,
 			'qw_query' => $query_post_entity,
