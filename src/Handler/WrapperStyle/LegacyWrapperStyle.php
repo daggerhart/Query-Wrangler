@@ -60,32 +60,32 @@ class LegacyWrapperStyle implements WrapperStyleInterface {
 	 */
 	public function render( QueryPostEntity $query_post_entity, QueryInterface $entity_query, array $settings, array $context ) {
 		$pager_settings = $query_post_entity->getPagerStyle();
+		$render_context = $query_post_entity->getRenderContext();
+		$render_context->set( 'slug', $query_post_entity->slug() );
+		$render_context->set( 'style', $this->type() );
+		$render_context->set( 'header', $settings['header'] ?: null );
+		$render_context->set( 'footer', $settings['footer'] ?: null );
+		$render_context->set( 'title', $settings['title'] );
+		$render_context->set( 'empty', $settings['empty'] );
+		$render_context->set( 'wrapper_classes', implode( ' ', [
+			'query',
+			"query-{$query_post_entity->slug()}-wrapper",
+			$settings['wrapper_classes'],
+		] ) );
+		$render_context->set( 'pager_classes', implode( ' ', [
+			'query-pager',
+			"pager-{$pager_settings['type']}",
+		] ) );
 		$templates = [
 			"query-wrapper-{$query_post_entity->slug()}",
 			"query-wrapper",
 		];
-		$context += [
-			'slug' => $query_post_entity->slug(),
-			'style' => $this->type(),
-			'header' => $settings['header'] ?: null,
-			'footer' => $settings['footer'] ?: null,
-			'title' => $settings['title'],
-			'empty' => $settings['empty'],
-			'wrapper_classes' => implode( ' ', [
-				'query',
-				"query-{$query_post_entity->slug()}-wrapper",
-				$settings['wrapper_classes'],
-			] ),
-			'pager_classes' => implode( ' ', [
-				'query-pager',
-				"pager-{$pager_settings['type']}",
-			] ),
-		];
+
 		if ( empty( $context['content'] ) ) {
-			$context['content'] = "<div class='query-empty'>{$context['empty']}</div>";
-			$context['pager'] = null;
+			$render_context->set( 'content', "<div class='query-empty'>{$context['empty']}</div>" );
+			$render_context->set( 'pager', null );
 		}
-		return $this->fileRenderer->render( $templates, $context );
+		return $this->fileRenderer->render( $templates, $render_context->all() );
 	}
 
 }

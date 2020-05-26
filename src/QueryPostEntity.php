@@ -3,6 +3,8 @@
 namespace QueryWrangler;
 
 use Kinglet\Entity\Type\Post;
+use Kinglet\Registry\Registry;
+use Kinglet\Registry\RegistryInterface;
 use WP_Post;
 
 class QueryPostEntity extends Post {
@@ -23,8 +25,10 @@ class QueryPostEntity extends Post {
 	protected $templateStyle = [];
 	protected $wrapperStyle = [];
 
-	protected $renderedTitle = '';
-	protected $renderedContent = '';
+	/**
+	 * @var RegistryInterface
+	 */
+	protected $renderContext;
 
 	/**
 	 * QwQuery constructor.
@@ -36,6 +40,7 @@ class QueryPostEntity extends Post {
 
 		if ( $this->isLoaded() ) {
 			$this->populate();
+			$this->renderContext = new Registry();
 		}
 	}
 
@@ -70,31 +75,31 @@ class QueryPostEntity extends Post {
 	}
 
 	/**
-	 * @param $content
+	 * @return RegistryInterface
 	 */
-	public function setRenderedContent( $content ) {
-		$this->renderedContent = $content;
+	public function getRenderContext() {
+		return $this->renderContext;
 	}
 
 	/**
-	 * @return string
+	 * Set an item value in the render registry.
+	 *
+	 * @param $key
+	 * @param $value
 	 */
-	public function getRenderedContent() {
-		return $this->renderedContent;
+	public function setRendered( $key, $value ) {
+		$this->renderContext->set( $key, $value );
 	}
 
 	/**
-	 * @param $title
+	 * Retrieve a value from the render registry.
+	 *
+	 * @param $key
+	 *
+	 * @return mixed|null
 	 */
-	public function setRenderedTitle( $title ) {
-		$this->renderedTitle = $title;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getRenderedTitle() {
-		return $this->renderedTitle;
+	public function getRendered( $key ) {
+		return $this->renderContext->get( $key );
 	}
 
 	/**
@@ -116,6 +121,19 @@ class QueryPostEntity extends Post {
 	 */
 	public function getFilters() {
 		return $this->filters;
+	}
+
+	/**
+	 * Add a new filter to the query.
+	 *
+	 * @param string $name
+	 * @param string $type
+	 * @param array $settings
+	 */
+	public function addFilter( string $name, string $type, array $settings ) {
+		$this->filters[ $name ] = $settings + [
+			'type' => $type,
+		];
 	}
 
 	/**

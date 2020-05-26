@@ -238,7 +238,7 @@ class Loader {
 	 */
 	public function queryTheTitle( $title ) {
 		if ( !is_admin() && get_post_type() == QueryPostType::SLUG ) {
-			$title = $this->getProcessedFrontEndQuery()->getRenderedTitle();
+			$title = $this->getProcessedFrontEndQuery()->getRendered( 'title' );
 		}
 
 		return $title;
@@ -254,7 +254,7 @@ class Loader {
 	 */
 	public function queryTheContent( $content ) {
 		if ( !is_admin() && get_post_type() == QueryPostType::SLUG ) {
-			$content = $this->getProcessedFrontEndQuery()->getRenderedContent();
+			$content = $this->getProcessedFrontEndQuery()->getRendered( 'wrapper' );
 		}
 
 		return $content;
