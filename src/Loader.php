@@ -14,6 +14,8 @@ use QueryWrangler\Admin\MetaBox\QueryEditor;
 use QueryWrangler\Admin\MetaBox\QueryPreview;
 use QueryWrangler\Admin\Page\Import;
 use QueryWrangler\Admin\Page\Settings;
+use QueryWrangler\EventSubscriber\QueryPostTypeEventSubscriber;
+use QueryWrangler\EventSubscriber\OverrideWPQueryEventSubscriber;
 use QueryWrangler\Handler\Field\FieldTypeManager;
 use QueryWrangler\Handler\Filter\FilterTypeManager;
 use QueryWrangler\Handler\HandlerManager;
@@ -36,25 +38,16 @@ class Loader {
 	protected $container;
 
     /**
-     * @var array
-     */
-	protected $postTypes = [];
-
-    /**
      * @var MetaBoxBase[]
      */
 	protected $metaboxes = [];
 
 	public function __construct() {
 		$this->setupContainer();
-		add_action( 'plugins_loaded', [ $this, 'registerPostTypes' ] );
+		$this->setupEventSubscribers();
 		add_action( 'admin_init', [ $this, 'registerMetaBoxes' ] );
 		add_action( 'init', [ $this, 'registerShortcodes' ] );
 		add_action( 'admin_menu', [ $this, 'adminMenu' ] );
-		add_action( 'parse_query', [ $this, 'overrideFind' ] );
-		add_action( 'pre_get_posts', [ $this, 'overrideExecute' ], -1000 );
-		add_action( 'the_title', [ $this, 'queryTheTitle' ], 100 );
-		add_action( 'the_content', [ $this, 'queryTheContent' ],100 );
 	}
 
 	protected function setupContainer() {
@@ -127,6 +120,14 @@ class Loader {
 	}
 
 	/**
+	 * Hook groups of functionality into WP.
+	 */
+	protected function setupEventSubscribers() {
+		QueryPostTypeEventSubscriber::subscribe( $this->container );
+		OverrideWPQueryEventSubscriber::subscribe( $this->container );
+	}
+
+	/**
 	 * WARNING: This is not the right way to get the container.
 	 * For legacy compatibility ONLY.
 	 *
@@ -134,15 +135,6 @@ class Loader {
 	 */
 	public function getContainer() {
 		return $this->container;
-	}
-
-	/**
-	 * Register all plugin post types.
-	 */
-	public function registerPostTypes() {
-	    $settings = $this->container->get( 'settings' );
-		$query = new QueryPostType( $settings );
-		$this->postTypes[ $query::SLUG ] = $query;
 	}
 
 	/**
@@ -184,80 +176,6 @@ class Loader {
 		$this->metaboxes[ $editor->id() ] = $editor;
 
 		new QueryDebug( QueryPostType::SLUG, $this->container );
-	}
-
-	/**
-	 * Hook into WP and attempt to resolve an override.
-	 *
-	 * @param WP_Query $wp_query
-	 */
-	public function overrideFind( WP_Query $wp_query) {
-		/** @var OverrideTypeManager $override */
-		$override = $this->container->get( 'handler.override.manager' );
-		$override->findOverride( $wp_query );
-	}
-
-	/**
-	 * Hook into WP and potentially perform an override.
-	 *
-	 * @param WP_Query $wp_query
-	 */
-	public function overrideExecute( WP_Query $wp_query ) {
-		/** @var OverrideTypeManager $override */
-		$override = $this->container->get( 'handler.override.manager' );
-		$override->executeOverride( $wp_query );
-	}
-
-	/**
-	 * @todo - This is dumb, do this somewhere else.
-	 * @var QueryPostEntity
-	 */
-	protected $processedFrontEndQuery;
-
-	protected function getProcessedFrontEndQuery() {
-		if ( !$this->processedFrontEndQuery ) {
-			/** @var QueryProcessor $processor */
-			$processor = $this->container->get( 'query.processor' );
-			$this->processedFrontEndQuery = QueryPostEntity::load( get_the_ID() );
-			try {
-				$processor->execute( $this->processedFrontEndQuery );
-			}
-			catch ( \Exception $exception ) {}
-		}
-
-		return $this->processedFrontEndQuery;
-	}
-
-	/**
-	 * When displaying QueryPostType on the frontend, provide processed
-	 * query as the_title() for the post.
-	 *
-	 * @param $title
-	 *
-	 * @return string
-	 */
-	public function queryTheTitle( $title ) {
-		if ( !is_admin() && get_post_type() == QueryPostType::SLUG ) {
-			$title = $this->getProcessedFrontEndQuery()->getRendered( 'title' );
-		}
-
-		return $title;
-	}
-
-	/**
-	 * When displaying QueryPostType on the frontend, provide processed
-	 * query as the_content() for the post.
-	 *
-	 * @param string $content
-	 *
-	 * @return string
-	 */
-	public function queryTheContent( $content ) {
-		if ( !is_admin() && get_post_type() == QueryPostType::SLUG ) {
-			$content = $this->getProcessedFrontEndQuery()->getRendered( 'wrapper' );
-		}
-
-		return $content;
 	}
 
 }

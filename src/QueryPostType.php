@@ -2,34 +2,16 @@
 
 namespace QueryWrangler;
 
-use Kinglet\Registry\OptionRepository;
-
 class QueryPostType {
 
 	const SLUG = 'qw_query';
 
-	static protected $initialized = FALSE;
-
-    /**
-     * @var OptionRepository
-     */
-	protected $settings;
-
-    /**
-     * QWQuery constructor.
-     *
-     * @param OptionRepository $settings
-     */
-	public function __construct( OptionRepository $settings ) {
-	    $this->settings = $settings;
-
-		if ( !self::$initialized ) {
-			self::$initialized = TRUE;
-			add_action( 'init', [ $this, 'registerPostType' ] );
-		}
-	}
-
-	public function labels() {
+	/**
+	 * Post type labels.
+	 *
+	 * @return array
+	 */
+	public static function labels() {
 		return [
 			'name' => _x( 'Queries', 'post type general name', 'query-wrangler' ),
 			'singular_name' => _x( 'Query', 'post type singular name', 'query-wrangler' ),
@@ -48,9 +30,14 @@ class QueryPostType {
 		];
 	}
 
-	public function config() {
+	/**
+	 * Post type complete configuration.
+	 *
+	 * @return array
+	 */
+	public static function config() {
 		return [
-			'labels' => $this->labels(),
+			'labels' => static::labels(),
 			'description' => __( 'Description.', 'query-wrangler' ),
 			'public' => TRUE,
 			'exclude_from_search' => TRUE,
@@ -70,8 +57,11 @@ class QueryPostType {
 		];
 	}
 
-	public function registerPostType() {
-		register_post_type( self::SLUG, $this->config() );
+	/**
+	 * Register the post type.
+	 */
+	public static function register() {
+		register_post_type( self::SLUG, static::config() );
 	}
 
 }

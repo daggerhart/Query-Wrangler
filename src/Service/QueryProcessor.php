@@ -57,7 +57,6 @@ class QueryProcessor implements ContainerInjectionInterface {
 	 * @param bool $full_override
 	 *
 	 * @return string
-	 * @throws ReflectionException
 	 */
 	public function execute( QueryPostEntity $query_post_entity, $query_data_overrides = [], $full_override = FALSE ) {
 		/**
@@ -95,7 +94,12 @@ class QueryProcessor implements ContainerInjectionInterface {
 		 * Previously @see qw_generate_query_args()
 		 */
 		/** @var QueryInterface $entity_query */
-		$entity_query = $this->entityQueryManager->getInstance( $query_post_entity->getQueryType() );
+		try {
+			$entity_query = $this->entityQueryManager->getInstance( $query_post_entity->getQueryType() );
+		}
+		catch ( \ReflectionException $exception ) {
+			return "Query Wrangler ERROR: {$exception->getMessage()}";
+		}
 		$query_args = [];
 
 		/**
