@@ -165,7 +165,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 		$row_style_manager->collect();
 		$row_style = $row_style_manager->getDataFromQuery( $query_post_entity );
 		$row_style_type = $row_style_manager->get( $row_style['type'] );
-		$wrapper_context['rows'] = $row_style_type->render( $query_post_entity, $entity_query, $field_manager );
+		$wrapper_context['rows'] = $row_style_type->render( $query_post_entity, $entity_query, $row_style, $field_manager );
 
 		if ( $query_post_entity->getPagerEnabled() ) {
 			$query_page_number = $this->getQueryPageNumber( $entity_query );
@@ -175,7 +175,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 			$pager_style_manager->collect();
 			$pager_style = $pager_style_manager->getDataFromQuery( $query_post_entity );
 			$pager_style_type = $pager_style_manager->get( $pager_style['type'] );
-			$wrapper_context['pager'] = $pager_style_type->render( $pager_style, $entity_query, $query_page_number );
+			$wrapper_context['pager'] = $pager_style_type->render( $query_post_entity, $entity_query, $pager_style, $query_page_number );
 		}
 
 		if ( is_array( $wrapper_context['rows'] ) && count( $wrapper_context['rows'] ) ) {
@@ -184,7 +184,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 			$template_style_manager->collect();
 			$template_style = $template_style_manager->getDataFromQuery( $query_post_entity );
 			$template_style_type = $template_style_manager->get( $template_style['type'] );
-			$wrapper_context['content'] = $template_style_type->render( $query_post_entity, $wrapper_context['rows'] );
+			$wrapper_context['content'] = $template_style_type->render( $query_post_entity, $entity_query, $template_style, $wrapper_context['rows'] );
 		}
 
 		/** @var WrapperStyleTypeManager $template_style_manager */
@@ -192,7 +192,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 		$wrapper_style_manager->collect();
 		$wrapper_style = $wrapper_style_manager->getDataFromQuery( $query_post_entity );
 		$wrapper_style_type = $wrapper_style_manager->get( $wrapper_style['type'] );
-		$rendered = $wrapper_style_type->render( $query_post_entity, $wrapper_style, $wrapper_context );
+		$rendered = $wrapper_style_type->render( $query_post_entity, $entity_query, $wrapper_style, $wrapper_context );
 
 		// @todo - Replace this with real title rendering
 		//       - that can be altered by other handlers.

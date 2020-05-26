@@ -4,6 +4,7 @@ namespace QueryWrangler\Handler\PagerStyle\ItemType;
 
 use Kinglet\Entity\QueryInterface;
 use QueryWrangler\Handler\PagerStyle\PagerStyleInterface;
+use QueryWrangler\QueryPostEntity;
 
 class NumbersPager implements PagerStyleInterface {
 
@@ -38,8 +39,8 @@ class NumbersPager implements PagerStyleInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function render( array $settings, QueryInterface $query, int $page_number ) {
-		$wp_query = $query->query();
+	public function render( QueryPostEntity $query_post_entity, QueryInterface $entity_query, array $settings, int $page_number ) {
+		$wp_query = $entity_query->query();
 		$big = intval( $wp_query->found_posts . '000' );
 		$args = [
 			'base'    => str_replace( $big, '%#%', get_pagenum_link( $big ) ),

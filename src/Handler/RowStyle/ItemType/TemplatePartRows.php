@@ -48,15 +48,14 @@ class TemplatePartRows extends RowStyleBase {
 	/**
 	 * @inheritDoc
 	 */
-	public function render( QueryPostEntity $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager ) {
-		$row_style_settings = $qw_query->getRowStyle();
+	public function render( QueryPostEntity $query_post_entity, QueryInterface $entity_query, array $settings, HandlerTypeManagerInterface $field_type_manager ) {
 		$grouped_rows = [];
 		$current_post_id = get_the_ID();
 		$i = 0;
 
-		$entity_query->execute( function( $item ) use ( $qw_query, $row_style_settings, $current_post_id, &$grouped_rows, &$i ) {
-			$path = $row_style_settings['path'];
-			$name = $row_style_settings['name'];
+		$entity_query->execute( function( $item ) use ( $query_post_entity, $settings, $current_post_id, &$grouped_rows, &$i ) {
+			$path = $settings['path'];
+			$name = $settings['name'];
 			$row = [
 				'row_classes' => [],
 				'fields' => [],

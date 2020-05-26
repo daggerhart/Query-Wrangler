@@ -2,6 +2,7 @@
 
 namespace QueryWrangler\Handler\WrapperStyle;
 
+use Kinglet\Entity\QueryInterface;
 use Kinglet\Template\RendererInterface;
 use QueryWrangler\Handler\HandlerItemTypeInterface;
 use QueryWrangler\QueryPostEntity;
@@ -23,12 +24,13 @@ interface WrapperStyleInterface extends HandlerItemTypeInterface {
 	/**
 	 * Entry point into the rendering of a query row for the template style.
 	 *
-	 * @param QueryPostEntity $qw_query
+	 * @param QueryPostEntity $query_post_entity
+	 * @param QueryInterface $entity_query
 	 * @param array $settings
 	 * @param array $context
 	 *
 	 * @return string
 	 */
-	public function render( QueryPostEntity $qw_query, array $settings, array $context );
+	public function render( QueryPostEntity $query_post_entity, QueryInterface $entity_query, array $settings, array $context );
 
 }

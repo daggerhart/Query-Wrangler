@@ -34,14 +34,16 @@ interface RowStyleInterface extends HandlerItemTypeInterface {
 	/**
 	 * Entry point into the rendering of a query row for the row style.
 	 *
-	 * @param QueryPostEntity $qw_query
+	 * @param QueryPostEntity $query_post_entity
 	 *   Type entity. Contains all the configuration for the WordPress query.
 	 * @param QueryInterface $entity_query
 	 *   Query entity. Performs the WordPress query.
+	 * @param array $settings
+	 *   Row style settings.
 	 * @param HandlerTypeManagerInterface $field_type_manager
 	 *
 	 * @return array
 	 */
-	public function render(  QueryPostEntity $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager );
+	public function render( QueryPostEntity $query_post_entity, QueryInterface $entity_query, array $settings, HandlerTypeManagerInterface $field_type_manager );
 
 }

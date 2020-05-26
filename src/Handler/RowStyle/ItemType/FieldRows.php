@@ -49,10 +49,10 @@ class FieldRows extends RowStyleBase {
 	/**
 	 * @inheritDoc
 	 */
-	public function render( QueryPostEntity $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager ) {
-		$display = $qw_query->getDisplay();
-		$fields = $qw_query->getFields();
-		$row_style_settings = $qw_query->getRowStyle();
+	public function render( QueryPostEntity $query_post_entity, QueryInterface $entity_query, array $settings, HandlerTypeManagerInterface $field_type_manager ) {
+		$display = $query_post_entity->getDisplay();
+		$fields = $query_post_entity->getFields();
+		$row_style_settings = $query_post_entity->getRowStyle();
 		$grouped_rows = [];
 		$tokens = [];
 		$current_post_id = get_the_ID();

@@ -48,13 +48,13 @@ class PostRows extends RowStyleBase {
 	/**
 	 * @inheritDoc
 	 */
-	public function render( QueryPostEntity $qw_query, QueryInterface $entity_query, HandlerTypeManagerInterface $field_type_manager ) {
-		$row_style_settings = $qw_query->getRowStyle();
+	public function render( QueryPostEntity $query_post_entity, QueryInterface $entity_query, array $settings, HandlerTypeManagerInterface $field_type_manager ) {
+		$row_style_settings = $query_post_entity->getRowStyle();
 		$grouped_rows = [];
 		$current_post_id = get_the_ID();
 		$i = 0;
 
-		$entity_query->execute( function( $item ) use ( $qw_query, $row_style_settings, $current_post_id, &$grouped_rows, &$i ) {
+		$entity_query->execute( function( $item ) use ( $query_post_entity, $row_style_settings, $current_post_id, &$grouped_rows, &$i ) {
 			/** @var TypeInterface $item */
 			$row = [
 				'row_classes' => [],
@@ -72,7 +72,7 @@ class PostRows extends RowStyleBase {
 			// @todo - replace TW rendering
 			$row['fields'][ $i ]['output']  = theme( 'query_display_rows', [
 				'template' => 'query-' . $row_style_settings['size'],
-				'slug'     => $qw_query->slug(),
+				'slug'     => $query_post_entity->slug(),
 				'style'    => $row_style_settings['size'],
 			] );
 			$row['fields'][ $i ]['content'] = $row['fields'][ $i ]['output'];

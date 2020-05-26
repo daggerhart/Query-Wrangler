@@ -2,6 +2,7 @@
 
 namespace QueryWrangler\Handler\TemplateStyle;
 
+use Kinglet\Entity\QueryInterface;
 use Kinglet\Template\RendererInterface;
 use QueryWrangler\QueryPostEntity;
 
@@ -83,14 +84,14 @@ class LegacyTemplateStyle implements TemplateStyleInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function render( QueryPostEntity $qw_query, array $rows ) {
+	public function render( QueryPostEntity $query_post_entity, QueryInterface $entity_query, array $settings, array $rows ) {
 		$templates = [
-			"{$this->registration['template']}-{$qw_query->slug()}",
+			"{$this->registration['template']}-{$query_post_entity->slug()}",
 			"{$this->registration['template']}",
 		];
 		$context = [
 			'template' => 'query-' . $this->type(),
-			'slug' => $qw_query->slug(),
+			'slug' => $query_post_entity->slug(),
 			'style' => $this->type(),
 			'rows' => $rows,
 		];

@@ -2,6 +2,7 @@
 
 namespace QueryWrangler\Handler\WrapperStyle;
 
+use Kinglet\Entity\QueryInterface;
 use Kinglet\Template\RendererInterface;
 use QueryWrangler\QueryPostEntity;
 
@@ -57,14 +58,14 @@ class LegacyWrapperStyle implements WrapperStyleInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function render( QueryPostEntity $qw_query, array $settings, array $context ) {
-		$pager_settings = $qw_query->getPagerStyle();
+	public function render( QueryPostEntity $query_post_entity, QueryInterface $entity_query, array $settings, array $context ) {
+		$pager_settings = $query_post_entity->getPagerStyle();
 		$templates = [
-			"query-wrapper-{$qw_query->slug()}",
+			"query-wrapper-{$query_post_entity->slug()}",
 			"query-wrapper",
 		];
 		$context += [
-			'slug' => $qw_query->slug(),
+			'slug' => $query_post_entity->slug(),
 			'style' => $this->type(),
 			'header' => $settings['header'] ?: null,
 			'footer' => $settings['footer'] ?: null,
@@ -72,7 +73,7 @@ class LegacyWrapperStyle implements WrapperStyleInterface {
 			'empty' => $settings['empty'],
 			'wrapper_classes' => implode( ' ', [
 				'query',
-				"query-{$qw_query->slug()}-wrapper",
+				"query-{$query_post_entity->slug()}-wrapper",
 				$settings['wrapper_classes'],
 			] ),
 			'pager_classes' => implode( ' ', [
