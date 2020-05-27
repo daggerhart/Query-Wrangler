@@ -63,10 +63,6 @@ class LegacyWrapperStyle implements WrapperStyleInterface {
 		$render_context = $query_post_entity->getRenderContext();
 		$render_context->set( 'slug', $query_post_entity->slug() );
 		$render_context->set( 'style', $this->type() );
-		$render_context->set( 'header', $settings['header'] ?: null );
-		$render_context->set( 'footer', $settings['footer'] ?: null );
-		$render_context->set( 'title', $settings['title'] );
-		$render_context->set( 'empty', $settings['empty'] );
 		$render_context->set( 'wrapper_classes', implode( ' ', [
 			'query',
 			"query-{$query_post_entity->slug()}-wrapper",
@@ -76,15 +72,24 @@ class LegacyWrapperStyle implements WrapperStyleInterface {
 			'query-pager',
 			"pager-{$pager_settings['type']}",
 		] ) );
-		$templates = [
-			"query-wrapper-{$query_post_entity->slug()}",
-			"query-wrapper",
-		];
 
 		if ( empty( $context['content'] ) ) {
 			$render_context->set( 'content', "<div class='query-empty'>{$context['empty']}</div>" );
 			$render_context->set( 'pager', null );
 		}
+
+		// Don't replace values that have already been set for some wrapper items.
+		foreach ( [ 'header', 'footer', 'title', 'empty' ] as $item ) {
+			if ( !$render_context->has( $item ) ) {
+				$render_context->set( $item, $settings[ $item ] ?: null );
+			}
+		}
+
+		$templates = [
+			"query-wrapper-{$query_post_entity->slug()}",
+			"query-wrapper",
+		];
+
 		return $this->fileRenderer->render( $templates, $render_context->all() );
 	}
 

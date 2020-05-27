@@ -9,6 +9,9 @@ use Kinglet\Registry\ClassRegistryInterface;
 use QueryWrangler\Handler\Field\FieldTypeManager;
 use QueryWrangler\Handler\Filter\FilterTypeManager;
 use QueryWrangler\Handler\HandlerManager;
+use QueryWrangler\Handler\Override\OverrideContextInterface;
+use QueryWrangler\Handler\Override\OverrideInterface;
+use QueryWrangler\Handler\Override\OverrideTypeManager;
 use QueryWrangler\Handler\PagerStyle\PagerStyleTypeManager;
 use QueryWrangler\Handler\Paging\PagingTypeManager;
 use QueryWrangler\Handler\RowStyle\RowStyleTypeManager;
@@ -16,7 +19,6 @@ use QueryWrangler\Handler\Sort\SortTypeManager;
 use QueryWrangler\Handler\TemplateStyle\TemplateStyleTypeManager;
 use QueryWrangler\Handler\WrapperStyle\WrapperStyleTypeManager;
 use QueryWrangler\QueryPostEntity;
-use ReflectionException;
 
 class QueryProcessor implements ContainerInjectionInterface {
 
@@ -101,6 +103,22 @@ class QueryProcessor implements ContainerInjectionInterface {
 			return "Query Wrangler ERROR: {$exception->getMessage()}";
 		}
 		$query_args = [];
+
+		/**
+		 * Overrides can alter the query before processing. They do this by
+		 * modifying the query entity directly.
+		 *
+		 * @todo - is there a better approach than accessing the global wp_query here?
+		 */
+		global $wp_query;
+		if ( isset( $wp_query->query_wrangler_override_context ) ) {
+			/** @var OverrideContextInterface $override_context */
+			$override_context = $wp_query->query_wrangler_override_context;
+			$override_type = $override_context->getOverrideType();
+			if ( in_array( $entity_query->type(), $override_type->queryTypes() ) ) {
+				$override_type->overrideEntity( $query_post_entity, $override_context );
+			}
+		}
 
 		/**
 		 * Paging Type does not allow for multiple instances of its items.

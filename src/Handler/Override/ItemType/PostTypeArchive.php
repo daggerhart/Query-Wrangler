@@ -2,13 +2,13 @@
 
 namespace QueryWrangler\Handler\Override\ItemType;
 
-use QueryWrangler\Handler\Override\OverrideInterface;
+use QueryWrangler\Handler\Override\OverrideContextInterface;
+use QueryWrangler\Handler\Override\OverrideTypeBase;
 use QueryWrangler\QueryPostEntity;
 use QueryWrangler\QueryPostType;
 use WP_Query;
-use WP_Term;
 
-class PostTypeArchive implements OverrideInterface {
+class PostTypeArchive extends OverrideTypeBase {
 
 	/**
 	 * @inheritDoc
@@ -34,14 +34,7 @@ class PostTypeArchive implements OverrideInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function queryTypes() {
-		return [ 'post' ];
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getOverride( WP_Query $wp_query ) {
+	public function findOverrideEntity( WP_Query $wp_query ) {
 		if ( $wp_query->is_post_type_archive() ) {
 			$posts = get_posts( [
 				'post_type' => QueryPostType::SLUG,
@@ -49,7 +42,7 @@ class PostTypeArchive implements OverrideInterface {
 				'posts_per_page' => 1,
 				'fields' => 'ids',
 				'meta_query' => [
-					$this->type() => [
+					'query_override_'. $this->type() => [
 						// @todo - implement this meta_key
 						'key' => 'query_override_'. $this->type(),
 						'value' => $wp_query->query_vars['post_type'],
@@ -68,13 +61,12 @@ class PostTypeArchive implements OverrideInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function doOverride( WP_Query $wp_query, QueryPostEntity $entity ) {
-		// @todo - Need to alter the QW Query to filter by the current post type
-		$post = $entity->object();
-		$tmp_query = new \WP_Query( [
-			'post__in' => [ $post->ID ],
-			'post_type' => [ $post->post_type ],
+	public function overrideEntity( QueryPostEntity $entity, OverrideContextInterface $override_context ) {
+		$query_vars = $override_context->getOriginalQueryVars();
+		// @todo - This is how 1.x did it. decide if this is the right NEW way
+		$entity->addFilter( 'query_override_' . $this->type(), 'post_types', [
+			'post_types' => [ $query_vars['post_type'] ]
 		] );
-		$wp_query->query_vars = $tmp_query->query_vars;
 	}
+
 }

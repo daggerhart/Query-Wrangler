@@ -2,12 +2,12 @@
 
 namespace QueryWrangler\Handler\Override\ItemType;
 
-use QueryWrangler\Handler\Override\OverrideInterface;
+use QueryWrangler\Handler\Override\OverrideTypeBase;
 use QueryWrangler\QueryPostEntity;
 use QueryWrangler\QueryPostType;
 use WP_Query;
 
-class PagePath implements OverrideInterface {
+class PagePath extends OverrideTypeBase {
 
 	/**
 	 * @inheritDoc
@@ -33,14 +33,7 @@ class PagePath implements OverrideInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function queryTypes() {
-		return [ 'post' ];
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getOverride( WP_Query $wp_query ) {
+	public function findOverrideEntity( WP_Query $wp_query ) {
 		if ( $wp_query->is_singular() ) {
 			$path = trim( $_SERVER['REQUEST_URI'], '/' );
 			$path = explode( '/page/', $path )[0];
@@ -50,7 +43,7 @@ class PagePath implements OverrideInterface {
 				'posts_per_page' => 1,
 				'fields' => 'ids',
 				'meta_query' => [
-					$this->type() => [
+					'query_override_'. $this->type() => [
 						// @todo - implement this meta_key
 						'key' => 'query_override_'. $this->type(),
 						'value' => $path,
@@ -64,18 +57,6 @@ class PagePath implements OverrideInterface {
 		}
 
 		return false;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function doOverride( WP_Query $wp_query, QueryPostEntity $entity ) {
-		$post = $entity->object();
-		$tmp_query = new \WP_Query( [
-			'post__in' => [ $post->ID ],
-			'post_type' => [ $post->post_type ],
-		] );
-		$wp_query->query_vars = $tmp_query->query_vars;
 	}
 
 }

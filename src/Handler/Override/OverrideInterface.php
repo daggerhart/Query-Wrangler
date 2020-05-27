@@ -17,15 +17,23 @@ interface OverrideInterface extends HandlerItemTypeInterface {
 	 *
 	 * @return false|QueryPostEntity
 	 */
-	public function getOverride( WP_Query $wp_query );
+	public function findOverrideEntity( WP_Query $wp_query );
 
 	/**
 	 * Modify the given WP_Query so that the resolved query entity takes over
 	 * the page.
 	 *
 	 * @param WP_Query $wp_query
-	 * @param QueryPostEntity $entity
+	 * @param OverrideContextInterface $override_context
 	 */
-	public function doOverride( WP_Query $wp_query, QueryPostEntity $entity );
+	public function overrideWPQuery( WP_Query $wp_query, OverrideContextInterface $override_context );
+
+	/**
+	 * Modify the given entity with values from
+	 *
+	 * @param QueryPostEntity $entity
+	 * @param OverrideContextInterface $override_context
+	 */
+	public function overrideEntity( QueryPostEntity $entity, OverrideContextInterface $override_context );
 
 }

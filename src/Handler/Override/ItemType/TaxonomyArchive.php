@@ -2,13 +2,14 @@
 
 namespace QueryWrangler\Handler\Override\ItemType;
 
-use QueryWrangler\Handler\Override\OverrideInterface;
+use QueryWrangler\Handler\Override\OverrideContextInterface;
+use QueryWrangler\Handler\Override\OverrideTypeBase;
 use QueryWrangler\QueryPostEntity;
 use QueryWrangler\QueryPostType;
 use WP_Query;
 use WP_Term;
 
-class TaxonomyArchive implements OverrideInterface {
+class TaxonomyArchive extends OverrideTypeBase {
 
 	/**
 	 * @inheritDoc
@@ -34,14 +35,7 @@ class TaxonomyArchive implements OverrideInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function queryTypes() {
-		return [ 'post' ];
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getOverride( WP_Query $wp_query ) {
+	public function findOverrideEntity( WP_Query $wp_query ) {
 		if ( $wp_query->is_archive() && ( $wp_query->is_tag() || $wp_query->is_category() || $wp_query->is_tag() ) ) {
 			/** @var WP_Term $term */
 			$term = $wp_query->get_queried_object();
@@ -51,7 +45,7 @@ class TaxonomyArchive implements OverrideInterface {
 				'posts_per_page' => 1,
 				'fields' => 'ids',
 				'meta_query' => [
-					$this->type() => [
+					'query_override_'. $this->type() => [
 						// @todo - implement this meta_key
 						'key' => 'query_override_'. $this->type(),
 						'value' => $term->taxonomy,
@@ -70,13 +64,17 @@ class TaxonomyArchive implements OverrideInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function doOverride( WP_Query $wp_query, QueryPostEntity $entity ) {
-		// @todo - Need to alter the QW Query to filter by the current taxonomy
-		$post = $entity->object();
-		$tmp_query = new \WP_Query( [
-			'post__in' => [ $post->ID ],
-			'post_type' => [ $post->post_type ],
+	public function overrideEntity( QueryPostEntity $entity, OverrideContextInterface $override_context ) {
+		/** @var WP_Term $term */
+		$term = $override_context->getOriginalQueriedObject();
+
+		// @todo - This is how 1.x did it. decide if this is the right NEW way
+		$entity->addFilter( 'query_override_' . $this->type(), 'taxonomy_' . $term->taxonomy, [
+			'terms'            => [ $term->term_id => $term->name ],
+			'operator'         => 'IN',
+			'include_children' => TRUE,
 		] );
-		$wp_query->query_vars = $tmp_query->query_vars;
+		$entity->setRendered( 'title', single_term_title( '', false ) );
 	}
+
 }
