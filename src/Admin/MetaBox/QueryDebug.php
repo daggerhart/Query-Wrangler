@@ -22,11 +22,11 @@ class QueryDebug extends MetaBoxBase {
 	 * Preview constructor.
 	 *
 	 * @param string|string[] $post_types
-	 * @param ContainerInterface $container
 	 */
-    public function __construct( $post_types, ContainerInterface $container ) {
+    public function __construct( $post_types ) {
         parent::__construct( $post_types );
-        $this->container = $container;
+        global $query_wrangler_loader;
+        $this->container = $query_wrangler_loader->getContainer();
     }
 
 	/**

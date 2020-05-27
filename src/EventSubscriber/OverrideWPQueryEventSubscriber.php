@@ -21,18 +21,18 @@ class OverrideWPQueryEventSubscriber {
 	 */
 	private function __construct( OverrideTypeManager $override_type_manager ) {
 		$this->overrideTypeManager = $override_type_manager;
+
+		add_action( 'parse_query', [ $this, 'findOverride' ] );
+		add_action( 'pre_get_posts', [ $this, 'executeOverride' ], -1000 );
 	}
 
 	/**
 	 * @param ContainerInterface $container
 	 */
 	public static function subscribe( ContainerInterface $container ) {
-		$self = new static(
+		new static(
 			$container->get( 'handler.override.manager' )
 		);
-
-		add_action( 'parse_query', [ $self, 'findOverride' ] );
-		add_action( 'pre_get_posts', [ $self, 'executeOverride' ], -1000 );
 	}
 
 	/**

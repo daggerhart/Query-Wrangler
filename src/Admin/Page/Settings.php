@@ -6,12 +6,12 @@ use Kinglet\Admin\Messenger;
 use Kinglet\Admin\PageBase;
 use Kinglet\Form\Form;
 use Kinglet\Form\FormFactory;
-use Kinglet\Registry\OptionRepository;
+use Kinglet\Registry\RegistryRepositoryInterface;
 
 class Settings extends PageBase {
 
     /**
-     * @var OptionRepository
+     * @var RegistryRepositoryInterface
      */
 	protected $settings;
 
@@ -23,11 +23,11 @@ class Settings extends PageBase {
     /**
      * Settings constructor.
      *
-     * @param OptionRepository $settings
+     * @param RegistryRepositoryInterface $settings
      * @param FormFactory $form_factory
      * @param Messenger $messenger
      */
-	public function __construct( OptionRepository $settings, FormFactory $form_factory, Messenger $messenger  ) {
+	public function __construct( RegistryRepositoryInterface $settings, FormFactory $form_factory, Messenger $messenger  ) {
 		$this->settings = $settings;
 		$this->formFactory = $form_factory;
 		$this->messenger = $messenger;

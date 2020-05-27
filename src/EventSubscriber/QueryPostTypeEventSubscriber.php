@@ -30,19 +30,19 @@ class QueryPostTypeEventSubscriber {
 	private function __construct( QueryProcessor $query_processor ) {
 		$this->queryProcessor = $query_processor;
 		$this->processedQueryEntities = new Registry();
+
+		add_action( 'init', [ $this, 'actionInit' ] );
+		add_action( 'the_title', [ $this, 'actionTheTitle' ], 100 );
+		add_action( 'the_content', [ $this, 'actionTheContent' ],100 );
 	}
 
 	/**
 	 * @param ContainerInterface $container
 	 */
 	public static function subscribe( ContainerInterface $container ) {
-		$self = new static(
+		new static(
 			$container->get( 'query.processor' )
 		);
-
-		add_action( 'init', [ $self, 'actionInit' ] );
-		add_action( 'the_title', [ $self, 'actionTheTitle' ], 100 );
-		add_action( 'the_content', [ $self, 'actionTheContent' ],100 );
 	}
 
 	/**

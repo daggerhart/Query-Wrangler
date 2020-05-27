@@ -2,18 +2,12 @@
 
 namespace QueryWrangler;
 
-use Kinglet\Admin\MetaBoxBase;
 use Kinglet\Container\ContainerInterface;
 use Kinglet\FileSystem\Finder;
 use Kinglet\Registry\OptionRepository;
 use Kinglet\Template\FileRenderer;
 use Kinglet\Template\StringRenderer;
-use QueryWrangler\Admin\MetaBox\QueryDebug;
-use QueryWrangler\Admin\MetaBox\QueryDetails;
-use QueryWrangler\Admin\MetaBox\QueryEditor;
-use QueryWrangler\Admin\MetaBox\QueryPreview;
-use QueryWrangler\Admin\Page\Import;
-use QueryWrangler\Admin\Page\Settings;
+use QueryWrangler\EventSubscriber\AdminEventSubscriber;
 use QueryWrangler\EventSubscriber\QueryPostTypeEventSubscriber;
 use QueryWrangler\EventSubscriber\OverrideWPQueryEventSubscriber;
 use QueryWrangler\Handler\Field\FieldTypeManager;
@@ -28,7 +22,6 @@ use QueryWrangler\Handler\TemplateStyle\TemplateStyleTypeManager;
 use QueryWrangler\Handler\WrapperStyle\WrapperStyleTypeManager;
 use QueryWrangler\Service\QueryProcessor;
 use QueryWrangler\Service\WordPressRegistry;
-use WP_Query;
 
 class Loader {
 
@@ -37,19 +30,15 @@ class Loader {
      */
 	protected $container;
 
-    /**
-     * @var MetaBoxBase[]
-     */
-	protected $metaboxes = [];
-
 	public function __construct() {
-		$this->setupContainer();
-		$this->setupEventSubscribers();
-		add_action( 'admin_init', [ $this, 'registerMetaBoxes' ] );
-		add_action( 'init', [ $this, 'registerShortcodes' ] );
-		add_action( 'admin_menu', [ $this, 'adminMenu' ] );
+		add_action( 'plugins_loaded', function() { $this->setupContainer(); }, -1000 );
+		add_action( 'plugins_loaded', function() { $this->setupEventSubscribers(); } );
+		add_action( 'init', function() { $this->registerShortcodes(); } );
 	}
 
+	/**
+	 * Setup a DI container for the app.
+	 */
 	protected function setupContainer() {
 		$container = \Kinglet\Loader::createContainer();
 		$container->set( 'settings', function() {
@@ -125,6 +114,17 @@ class Loader {
 	protected function setupEventSubscribers() {
 		QueryPostTypeEventSubscriber::subscribe( $this->container );
 		OverrideWPQueryEventSubscriber::subscribe( $this->container );
+		AdminEventSubscriber::subscribe( $this->container );
+	}
+
+	/**
+	 * Register all plugin shortcodes.
+	 */
+	protected function registerShortcodes() {
+		$settings = $this->container->get( 'settings' );
+		$query_shortcode = $this->container->get( 'query.shortcode' );
+		$tag = $settings->get('shortcode_compat') ? 'qw_query' : 'query';
+		add_shortcode( $tag, [ $query_shortcode, 'doShortcode' ] );
 	}
 
 	/**
@@ -135,47 +135,6 @@ class Loader {
 	 */
 	public function getContainer() {
 		return $this->container;
-	}
-
-	/**
-	 * Register all plugin shortcodes.
-	 */
-	public function registerShortcodes() {
-		$settings = $this->container->get( 'settings' );
-		$query_shortcode = $this->container->get( 'query.shortcode' );
-		$tag = $settings->get('shortcode_compat') ? 'qw_query' : 'query';
-		add_shortcode( $tag, [ $query_shortcode, 'doShortcode' ] );
-	}
-
-	/**
-	 * Register all plugin admin menu items.
-	 */
-	public function adminMenu() {
-        $settings = $this->container->get( 'settings' );
-        $form_factory = $this->container->get( 'form.factory' );
-		$messenger = $this->container->get( 'messenger' );
-
-		$import = new Import( $form_factory, $messenger );
-		$import->addToSubMenu( $import->parentSlug() );
-
-		$settingsPage = new Settings( $settings, $form_factory, $messenger );
-		$settingsPage->addToSubMenu( $settingsPage->parentSlug() );
-	}
-
-	/**
-	 * Register all plugin meta boxes.
-	 */
-	public function registerMetaBoxes() {
-		$settings = $this->container->get( 'settings' );
-		$form_factory = $this->container->get( 'form.factory' );
-		$details = new QueryDetails( QueryPostType::SLUG, $settings, $form_factory );
-		$editor = new QueryEditor( QueryPostType::SLUG, $settings, $form_factory );
-		$preview = new QueryPreview( QueryPostType::SLUG, $settings, $form_factory );
-		$this->metaboxes[ $details->id() ] = $details;
-		$this->metaboxes[ $preview->id() ] = $preview;
-		$this->metaboxes[ $editor->id() ] = $editor;
-
-		new QueryDebug( QueryPostType::SLUG, $this->container );
 	}
 
 }

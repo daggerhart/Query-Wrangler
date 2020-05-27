@@ -3,14 +3,15 @@
 namespace QueryWrangler\Admin\MetaBox;
 
 use Kinglet\Admin\MetaBoxBase;
+use Kinglet\Form\Form;
 use Kinglet\Form\FormFactory;
-use Kinglet\Registry\OptionRepository;
+use Kinglet\Registry\RegistryRepositoryInterface;
 use QueryWrangler\QueryPostEntity;
 
 class QueryEditor extends MetaBoxBase {
 
 	/**
-	 * @var OptionRepository
+	 * @var RegistryRepositoryInterface
      */
 	protected $settings;
 
@@ -28,10 +29,10 @@ class QueryEditor extends MetaBoxBase {
      * Preview constructor.
      *
      * @param string|string[] $post_types
-     * @param OptionRepository $settings
+     * @param RegistryRepositoryInterface $settings
      * @param FormFactory $form_factory
      */
-	public function __construct( $post_types, OptionRepository $settings, FormFactory $form_factory ) {
+	public function __construct( $post_types, RegistryRepositoryInterface $settings, FormFactory $form_factory ) {
 		parent::__construct( $post_types );
 		$this->settings = $settings;
 		$this->formFactory = $form_factory;
@@ -75,7 +76,7 @@ class QueryEditor extends MetaBoxBase {
 	}
 
     /**
-     * @return \Kinglet\Form\Form
+     * @return Form
      */
 	public function form() {
 	    $data = $this->query->meta( 'query_data' );
