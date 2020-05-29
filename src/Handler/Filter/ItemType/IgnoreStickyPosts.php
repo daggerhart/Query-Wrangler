@@ -51,19 +51,19 @@ class IgnoreStickyPosts implements FilterInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function process( array $args, array $values ) {
-		$args['ignore_sticky_posts'] = 0;
+	public function process( array $query_args, array $filter_settings ) {
+		$query_args['ignore_sticky_posts'] = 0;
 
-		if ( isset( $values['value'] ) ) {
-			$args['ignore_sticky_posts'] = intval( $values['ignore_sticky_posts'] );
+		if ( isset( $filter_settings['value'] ) ) {
+			$query_args['ignore_sticky_posts'] = intval( $filter_settings['ignore_sticky_posts'] );
 		}
-		return $args;
+		return $query_args;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function settingsForm( array $filter ) {
+	public function settingsForm( array $filter_settings ) {
 		// TODO: Implement settingsForm() method.
 	}
 

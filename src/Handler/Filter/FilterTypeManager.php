@@ -58,7 +58,8 @@ class FilterTypeManager extends HandlerTypeManagerBase {
 		foreach ($legacy as $type => $item) {
 			$instance = new LegacyFilter( $type, $item );
 			$instance->setInvoker( $this->invoker );
-			$instance->setRenderer( $this->callableRenderer );
+			$instance->setFileRenderer( $this->fileRenderer );
+			$instance->setCallableRenderer( $this->callableRenderer );
 			$this->set( $instance->type(), $instance );
 		}
 	}

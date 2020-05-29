@@ -51,19 +51,19 @@ class PostStatus implements FilterInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function process( array $args, array $values ) {
-		$args['post_status'] = [ 'publish' ];
+	public function process( array $query_args, array $filter_settings ) {
+		$query_args['post_status'] = [ 'publish' ];
 
-		if ( isset( $values['value'] ) ) {
-			$args['post_status'] = (array) $values['value'];
+		if ( isset( $filter_settings['value'] ) ) {
+			$query_args['post_status'] = (array) $filter_settings['value'];
 		}
-		return $args;
+		return $query_args;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function settingsForm( array $filter ) {
+	public function settingsForm( array $filter_settings ) {
 		// TODO: Implement settingsForm() method.
 	}
 

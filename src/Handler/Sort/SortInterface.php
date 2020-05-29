@@ -30,12 +30,12 @@ interface SortInterface extends HandlerItemTypeInterface {
 	/**
 	 * Modify the WP_Query args array.
 	 *
-	 * @param array $args
-	 * @param array $values
+	 * @param array $query_args
+	 * @param array $sort_settings
 	 *
 	 * @return array
 	 */
-	public function process( array $args, array $values );
+	public function process( array $query_args, array $sort_settings );
 
 	/**
 	 * HTML form output for the administration configuration of this sort.

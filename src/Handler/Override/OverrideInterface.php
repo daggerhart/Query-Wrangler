@@ -37,7 +37,7 @@ interface OverrideInterface extends HandlerItemTypeInterface {
 	 *
 	 * @return array
 	 */
-	public function process( array $query_args, QueryPostEntity $entity, OverrideContextInterface $override_context ): array;
+	public function process( array $query_args, QueryPostEntity $entity, OverrideContextInterface $override_context );
 
 	/**
 	 * Name of the post meta key that stores override target values. This is used

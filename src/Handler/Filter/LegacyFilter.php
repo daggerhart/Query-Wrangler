@@ -30,7 +30,12 @@ class LegacyFilter implements FilterInterface, FilterExposableInterface {
 	/**
 	 * @var RendererInterface
 	 */
-	protected $renderer;
+	protected $callableRenderer;
+
+	/**
+	 * @var RendererInterface
+	 */
+	protected $fileRenderer;
 
 	/**
 	 * LegacyFilter constructor.
@@ -42,6 +47,11 @@ class LegacyFilter implements FilterInterface, FilterExposableInterface {
 		$this->registration = $registration;
 		$this->type = !empty( $this->registration['type'] ) ? $this->type = $this->registration['type'] : $type;
 		$this->hook_key = $type;
+
+		// Need to record all of this to the registration array for the sake of passing into
+		// legacy callbacks.
+		$this->registration['type'] = $this->type;
+		$this->registration['hook_key'] = $this->type;
 	}
 
 	/**
@@ -51,8 +61,18 @@ class LegacyFilter implements FilterInterface, FilterExposableInterface {
 		$this->invoker = $invoker;
 	}
 
-	public function setRenderer( RendererInterface $renderer ) {
-		$this->renderer = $renderer;
+	/**
+	 * @param RendererInterface $renderer
+	 */
+	public function setFileRenderer( RendererInterface $renderer ) {
+		$this->fileRenderer = $renderer;
+	}
+
+	/**
+	 * @param RendererInterface $renderer
+	 */
+	public function setCallableRenderer( RendererInterface $renderer ) {
+		$this->callableRenderer = $renderer;
 	}
 
 	/**
@@ -109,48 +129,73 @@ class LegacyFilter implements FilterInterface, FilterExposableInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function process( array $args, array $values ) {
-		if ( empty( $values['values'] ) && isset( $values[ $values['type'] ] ) ) {
-			$values['values'][ $values['type'] ] = $values[ $values['type'] ];
+	public function process( array $query_args, array $filter_settings ) {
+		if ( empty( $filter_settings['values'] ) && isset( $filter_settings[ $filter_settings['type'] ] ) ) {
+			$filter_settings['values'][ $filter_settings['type'] ] = $filter_settings[ $filter_settings['type'] ];
 		}
 		if ( $this->isLegacyBasic() ) {
 			/*
 			 * @todo - need to make sure to set $filter['values'], or change this.
 			 * @todo - was hard-coded in QW 1.x - qw_generate_query_args()
 			 */
-			$args[ $this->type() ] = $values['values'][ $this->type() ];
+			$query_args[ $this->type() ] = $filter_settings['values'][ $this->type() ];
 		}
 
 		if ( !empty( $this->registration['query_args_callback'] ) && is_callable( $this->registration['query_args_callback'] ) ) {
 			call_user_func_array( $this->registration['query_args_callback'], [
-				'args' => &$args,
-				'filter' => $values,
+				'args' => &$query_args,
+				'filter' => $filter_settings,
 			] );
 		}
 
-		return $args;
+		// @todo - all this exposed stuff needs testing
+		if ( $this->exposable() && $this->isExposed( $filter_settings ) ) {
+			$submitted_values = $this->exposedGetSubmittedValues( $filter_settings );
+
+			if ( !empty( $submitted_values ) ) {
+				$query_args = $this->exposedProcess( $query_args, $filter_settings, $submitted_values );
+			}
+		}
+
+		return $query_args;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function settingsForm( array $filter ) {
+	public function settingsForm( array $filter_settings ) {
 		if ( !empty( $this->registration['form_callback'] ) && is_callable( $this->registration['form_callback'] ) ) {
-			return $this->renderer->render( $this->registration['form_callback'], [
-				'filter' => $filter,
+			return $this->callableRenderer->render( $this->registration['form_callback'], [
+				'filter' => $filter_settings,
 			] );
 		}
 		return '';
 	}
 
 	/**
+	 * {@inheritDoc}
+	 */
+	public function isExposed( array $filter_settings ) {
+		// @todo - based on old way. need to test.
+		return !!$filter_settings['values']['is_exposed'];
+	}
+
+	/**
 	 * @inheritDoc
 	 */
-	public function exposedForm( array $filter, array $values ) {
+	public function exposedForm( array $filter_settings, array $form_values ) {
 		if ( !empty( $this->registration['exposed_form'] ) && is_callable( $this->registration['exposed_form'] ) ) {
-			return $this->renderer->render( $this->registration['exposed_form'], [
-				'filter' => $filter,
-				'values' => $values,
+			$exposed_form = $this->callableRenderer->render( $this->registration['exposed_form'], [
+				'filter' => $filter_settings,
+				'values' => $form_values,
+			] );
+
+			$submitted = $this->exposedGetSubmittedValues( $filter_settings );
+
+			return $this->fileRenderer->render( [ 'exposed-handler-wrapper' ], [
+				'item' => $filter_settings,
+				'values' => !empty( $submitted ) ? $submitted : $form_values,
+				'exposed_form' => $exposed_form,
 			] );
 		}
 		return '';
@@ -159,31 +204,45 @@ class LegacyFilter implements FilterInterface, FilterExposableInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function exposedProcessValues( array $values ) {
-		return $values;
+	public function exposedGetSubmittedValues( array $filter_settings ) {
+		$exposed_key = $filter_settings['values']['exposed_key'] ?? 'exposed_' . $filter_settings['values']['name'];
+
+		if ( !isset( $_REQUEST[ $exposed_key ] ) ) {
+			return [];
+		}
+
+		$submitted = $_REQUEST[ $exposed_key ];
+		if ( is_array( $submitted ) ) {
+			array_walk_recursive( $submitted, 'sanitize_text_field' );
+		}
+		else {
+			$submitted = sanitize_text_field( urldecode( $submitted ) );
+		}
+
+		return $submitted;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function exposedProcess( array $args, array $filter, array $values ) {
+	public function exposedProcess( array $query_args, array $filter_settings, array $form_values ) {
 		if ( !empty( $this->registration['exposed_process'] ) && is_callable( $this->registration['exposed_process'] ) ) {
 			return $this->invoker->call( $this->registration['exposed_process'], [
-				'args' => $args,
-				'filter' => $filter,
-				'values' => $values,
+				'args' => $query_args,
+				'filter' => $this->registration,
+				'values' => $form_values,
 			] );
 		}
-		return $args;
+		return $query_args;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function exposedSettingsForm( array $filter ) {
+	public function exposedSettingsForm( array $filter_settings ) {
 		if ( !empty( $this->registration['exposed_settings_form'] ) && is_callable( $this->registration['exposed_settings_form'] ) ) {
-			return $this->renderer->render( $this->registration['exposed_settings_form'], [
-				'filter' => $filter,
+			return $this->callableRenderer->render( $this->registration['exposed_settings_form'], [
+				'filter' => $filter_settings,
 			] );
 		}
 		return '';

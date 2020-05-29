@@ -1,9 +1,11 @@
 <?php
+
+
 add_filter( 'qw_handlers', 'qw_handlers_default' );
 add_filter( 'tw_templates', 'qw_handlers_templates' );
 
 /*
- * @todo - INPROGRESS
+ * @todo - DONE ENOUGH
  * @todo - DONE: title, desc, data, all
  * @todo - REMAINING: form_prefix, wrapper_template
  * Default handlers
@@ -49,7 +51,8 @@ function qw_handlers_default( $handlers ) {
 	return $handlers;
 }
 
-/**
+/*
+ * @todo - SKIPPED
  * Filter to add handler wrapper templates to tw
  *
  * @param $templates
@@ -86,34 +89,7 @@ function qw_handlers_templates( $templates ) {
 }
 
 /*
- * @todo - DONE
- * Simple functions for getting handler data from the query options
- */
-function qw_handler_field_data( $options ) {
-	if ( isset( $options['display']['field_settings']['fields'] ) ) {
-		return $options['display']['field_settings']['fields'];
-	}
-}
-// @todo - DONE
-function qw_handler_sort_data( $options ) {
-	if ( isset( $options['args']['sorts'] ) ) {
-		return $options['args']['sorts'];
-	}
-}
-// @todo - DONE
-function qw_handler_filter_data( $options ) {
-	if ( isset( $options['args']['filters'] ) ) {
-		return $options['args']['filters'];
-	}
-}
-// @todo - DONE
-function qw_handler_override_data( $options ) {
-	if ( isset( $options['override'] ) ) {
-		return $options['override'];
-	}
-}
-
-/*
+ * @todo - SKIPPED
  * Organize an existing filters and give it all the data they needs
  *
  * @param $type
@@ -181,6 +157,35 @@ function qw_preprocess_handlers( $options ) {
 }
 
 /*
+ * @todo - DONE
+ * Simple functions for getting handler data from the query options
+ */
+function qw_handler_field_data( $options ) {
+	if ( isset( $options['display']['field_settings']['fields'] ) ) {
+		return $options['display']['field_settings']['fields'];
+	}
+}
+// @todo - DONE
+function qw_handler_sort_data( $options ) {
+	if ( isset( $options['args']['sorts'] ) ) {
+		return $options['args']['sorts'];
+	}
+}
+// @todo - DONE
+function qw_handler_filter_data( $options ) {
+	if ( isset( $options['args']['filters'] ) ) {
+		return $options['args']['filters'];
+	}
+}
+// @todo - DONE
+function qw_handler_override_data( $options ) {
+	if ( isset( $options['override'] ) ) {
+		return $options['override'];
+	}
+}
+
+/*
+ * @todo - SKIPPED
  * Look for handler forms and settings forms and execute the callbacks
  */
 function qw_handler_make_form( &$handler ) {

@@ -88,6 +88,7 @@ function qw_process_exposed_handlers( $options ) {
 }
 
 /*
+ * @todo - DONE - part of legacy filter
  * Make getting the subitted exposed data easy
  */
 function qw_exposed_submitted_data() {
@@ -120,6 +121,7 @@ function qw_exposed_submitted_data() {
 }
 
 /*
+ * @todo - DONE - part of legacy filter
  * Single exposed handler wrapper html
  */
 function qw_theme_single_exposed_handler( $item ) {
