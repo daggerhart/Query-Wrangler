@@ -17,6 +17,13 @@ abstract class OverrideTypeBase implements OverrideInterface {
 	/**
 	 * {@inheritDoc}
 	 */
+	public function metaKey() {
+		return "query_override_{$this->type()}";
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public function overrideWPQuery( WP_Query $wp_query, OverrideContextInterface $override_context ) {
 		$post = $override_context->getFoundEntity()->object();
 		$tmp_query = new \WP_Query( [

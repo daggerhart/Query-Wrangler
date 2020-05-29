@@ -45,9 +45,9 @@ class TagArchive extends OverrideTypeBase {
 				'posts_per_page' => 1,
 				'fields' => 'ids',
 				'meta_query' => [
-					'query_override_'. $this->type() => [
+					$this->metaKey() => [
 						// @todo - implement this meta_key
-						'key' => 'query_override_'. $this->type(),
+						'key' => $this->metaKey(),
 						'value' => $term->term_id,
 					],
 				],
