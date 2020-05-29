@@ -105,22 +105,6 @@ class QueryProcessor implements ContainerInjectionInterface {
 		$query_args = [];
 
 		/**
-		 * Overrides can alter the query before processing. They do this by
-		 * modifying the query entity directly.
-		 *
-		 * @todo - is there a better approach than accessing the global wp_query here?
-		 */
-		global $wp_query;
-		if ( isset( $wp_query->query_wrangler_override_context ) ) {
-			/** @var OverrideContextInterface $override_context */
-			$override_context = $wp_query->query_wrangler_override_context;
-			$override_type = $override_context->getOverrideType();
-			if ( in_array( $entity_query->type(), $override_type->queryTypes() ) ) {
-				$override_type->overrideEntity( $query_post_entity, $override_context );
-			}
-		}
-
-		/**
 		 * Paging Type does not allow for multiple instances of its items.
 		 * Loop through _all_ paging types because any of them could affect the query args.
 		 */
@@ -168,6 +152,21 @@ class QueryProcessor implements ContainerInjectionInterface {
 					continue;
 				}
 				$query_args = $sort_type->process( $query_args, $item );
+			}
+		}
+
+		/**
+		 * Overrides can alter the query_args and query_post_entity directly.
+		 *
+		 * @todo - is there a better approach than accessing the global wp_query here?
+		 */
+		global $wp_query;
+		if ( isset( $wp_query->query_wrangler_override_context ) ) {
+			/** @var OverrideContextInterface $override_context */
+			$override_context = $wp_query->query_wrangler_override_context;
+			$override_type = $override_context->getOverrideType();
+			if ( in_array( $entity_query->type(), $override_type->queryTypes() ) ) {
+				$query_args = $override_type->process( $query_args, $query_post_entity, $override_context );
 			}
 		}
 

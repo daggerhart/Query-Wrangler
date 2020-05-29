@@ -2,7 +2,7 @@
 
 namespace QueryWrangler\Admin\Page;
 
-use Kinglet\Admin\Messenger;
+use Kinglet\Admin\MessengerUser;
 use Kinglet\Admin\PageBase;
 use Kinglet\Form\Form;
 use Kinglet\Form\FormFactory;
@@ -25,9 +25,9 @@ class Settings extends PageBase {
      *
      * @param RegistryRepositoryInterface $settings
      * @param FormFactory $form_factory
-     * @param Messenger $messenger
+     * @param MessengerUser $messenger
      */
-	public function __construct( RegistryRepositoryInterface $settings, FormFactory $form_factory, Messenger $messenger  ) {
+	public function __construct( RegistryRepositoryInterface $settings, FormFactory $form_factory, MessengerUser $messenger  ) {
 		$this->settings = $settings;
 		$this->formFactory = $form_factory;
 		$this->messenger = $messenger;

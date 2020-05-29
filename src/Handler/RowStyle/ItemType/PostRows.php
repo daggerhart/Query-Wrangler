@@ -50,41 +50,39 @@ class PostRows extends RowStyleBase {
 	 */
 	public function render( QueryPostEntity $query_post_entity, QueryInterface $entity_query, array $settings, HandlerTypeManagerInterface $field_type_manager ) {
 		$row_style_settings = $query_post_entity->getRowStyle();
-		$grouped_rows = [];
+		$rows = [];
 		$current_post_id = get_the_ID();
 		$i = 0;
 
-		$entity_query->execute( function( $item ) use ( $query_post_entity, $row_style_settings, $current_post_id, &$grouped_rows, &$i ) {
-			/** @var TypeInterface $item */
-			$row = [
-				'row_classes' => [],
-				'fields' => [],
-			];
+		$entity_query->execute( function( $item ) use ( $query_post_entity, $row_style_settings, $current_post_id, &$rows, &$i ) {
+
+			// There if no template context because this template uses template tags like the_title().
+			$output = $this->fileRenderer->render( [
+				"query-{$row_style_settings['size']}-{$query_post_entity->slug()}",
+				"query-{$row_style_settings['size']}",
+				"query-unformatted",
+			] );
+
 			$field_classes = [ 'query-post-wrapper' ];
 
 			// add class for active menu trail
-			if ( is_singular() && get_the_ID() === $current_post_id ) {
+			if ( is_singular() && ( get_the_ID() === $current_post_id ) ) {
 				$field_classes[] = 'active-item';
 			}
 
-			$row['fields'][ $i ]['classes'] = implode( " ", $field_classes );
-
-			// @todo - replace TW rendering
-			$row['fields'][ $i ]['output']  = theme( 'query_display_rows', [
-				'template' => 'query-' . $row_style_settings['size'],
-				'slug'     => $query_post_entity->slug(),
-				'style'    => $row_style_settings['size'],
-			] );
-			$row['fields'][ $i ]['content'] = $row['fields'][ $i ]['output'];
-
-
-			// can't really group posts row style
-			$grouped_rows[ $i ][ $i ] = $row;
+			$rows[ $i ] = [
+				'row_classes' => [],
+				'fields' => [
+					$i => [
+						'classes' => implode( " ", $field_classes ),
+						'output' => $output,
+						'content' => $output,
+					]
+				],
+			];
 			$i += 1;
 		} );
 
-		// Flatten and add classes.
-		$rows = $this->flattenGroupedRows( $grouped_rows );
 		$last_row = count( $rows ) -1;
 		foreach ( $rows as $i => $row ) {
 			$classes = array_merge( $rows[ $i ]['row_classes'], $this->rowClasses( $i, $last_row ) );

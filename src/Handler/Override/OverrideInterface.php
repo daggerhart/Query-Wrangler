@@ -31,9 +31,12 @@ interface OverrideInterface extends HandlerItemTypeInterface {
 	/**
 	 * Modify the given entity with values from
 	 *
+	 * @param array $query_args
 	 * @param QueryPostEntity $entity
 	 * @param OverrideContextInterface $override_context
+	 *
+	 * @return array
 	 */
-	public function overrideEntity( QueryPostEntity $entity, OverrideContextInterface $override_context );
+	public function process( array $query_args, QueryPostEntity $entity, OverrideContextInterface $override_context ): array;
 
 }

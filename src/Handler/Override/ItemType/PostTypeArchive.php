@@ -61,12 +61,12 @@ class PostTypeArchive extends OverrideTypeBase {
 	/**
 	 * @inheritDoc
 	 */
-	public function overrideEntity( QueryPostEntity $entity, OverrideContextInterface $override_context ) {
+	public function process( array $query_args, QueryPostEntity $entity, OverrideContextInterface $override_context ): array {
 		$query_vars = $override_context->getOriginalQueryVars();
-		// @todo - This is how 1.x did it. decide if this is the right NEW way
-		$entity->addFilter( 'query_override_' . $this->type(), 'post_types', [
-			'post_types' => [ $query_vars['post_type'] ]
-		] );
+
+		$query_args['post_type'] = [ $query_vars['post_type'] ];
+
+		return $query_args;
 	}
 
 }

@@ -29,6 +29,6 @@ abstract class OverrideTypeBase implements OverrideInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function overrideEntity( QueryPostEntity $entity, OverrideContextInterface $override_context ) {}
+	public function process( array $query_args, QueryPostEntity $entity, OverrideContextInterface $override_context ): array {}
 
 }

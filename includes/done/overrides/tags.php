@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @todo -- SKIPPED. This never worked because it tried to add a "categories" filter
+ *   instead of a "post_tags" filter. So there is no reason to continue supporting
+ *   this when the Taxonomy Archive override will work for the same use case.
+ */
 // add default overrides to the filter
 add_filter( 'qw_overrides', 'qw_override_tags' );
 add_filter( 'qw_pre_save', 'qw_override_tags_pre_save', 10, 2 );

@@ -2,7 +2,7 @@
 
 namespace QueryWrangler\Admin\Page;
 
-use Kinglet\Admin\Messenger;
+use Kinglet\Admin\MessengerUser;
 use Kinglet\Admin\PageBase;
 use Kinglet\Form\FormFactory;
 use QueryWrangler\QueryPostType;
@@ -18,9 +18,9 @@ class Import extends PageBase {
 	 * Import constructor.
 	 *
 	 * @param FormFactory $form_factory
-	 * @param Messenger $messenger
+	 * @param MessengerUser $messenger
 	 */
-    public function __construct( FormFactory $form_factory, Messenger $messenger ) {
+    public function __construct( FormFactory $form_factory, MessengerUser $messenger ) {
         $this->formFactory = $form_factory;
         $this->messenger = $messenger;
 	    parent::__construct();

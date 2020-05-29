@@ -9,34 +9,34 @@ use QueryWrangler\QueryPostType;
 use WP_Query;
 use WP_Term;
 
-class TaxonomyArchive extends OverrideTypeBase {
+class CategoryArchive extends OverrideTypeBase {
 
 	/**
 	 * @inheritDoc
 	 */
 	public function type() {
-		return 'taxonomies';
+		return 'categories';
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function title() {
-		return __( 'Taxonomy Archive', 'query-wrangler' );
+		return __( 'Category Archive', 'query-wrangler' );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function description() {
-		return __( 'Override term archive pages for an entire taxonomy.', 'query-wrangler' );
+		return __( 'Override term archive pages for individual categories.', 'query-wrangler' );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function findOverrideEntity( WP_Query $wp_query ) {
-		if ( $wp_query->is_archive() && ( $wp_query->is_tag() || $wp_query->is_category() || $wp_query->is_tag() ) ) {
+		if ( $wp_query->is_archive() && $wp_query->is_category() ) {
 			/** @var WP_Term $term */
 			$term = $wp_query->get_queried_object();
 			$posts = get_posts( [
@@ -48,7 +48,7 @@ class TaxonomyArchive extends OverrideTypeBase {
 					'query_override_'. $this->type() => [
 						// @todo - implement this meta_key
 						'key' => 'query_override_'. $this->type(),
-						'value' => $term->taxonomy,
+						'value' => $term->term_id,
 					],
 				],
 			] );
@@ -69,12 +69,7 @@ class TaxonomyArchive extends OverrideTypeBase {
 		$term = $override_context->getOriginalQueriedObject();
 		$entity->setRendered( 'title', single_term_title( '', false ) );
 
-		// Alter the QW query to show only results from the original term queried.
-		$query_args['tax_query'][ "override_{$term->taxonomy}" ] = [
-			'terms' => [ $term->term_id => $term->name ],
-			'operator' => 'IN',
-			'include_children' => TRUE,
-		];
+		$query_args['cat'] = $term->term_id;
 		return $query_args;
 	}
 

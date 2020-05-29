@@ -2,7 +2,7 @@
 
 namespace QueryWrangler\EventSubscriber;
 
-use Kinglet\Admin\Messenger;
+use Kinglet\Admin\MessengerUser;
 use Kinglet\Container\ContainerInterface;
 use Kinglet\Form\FormFactory;
 use Kinglet\Registry\RegistryRepositoryInterface;
@@ -27,7 +27,7 @@ class AdminEventSubscriber {
 	protected $formFactory;
 
 	/**
-	 * @var Messenger
+	 * @var MessengerUser
 	 */
 	protected $messenger;
 
@@ -36,9 +36,9 @@ class AdminEventSubscriber {
 	 *
 	 * @param RegistryRepositoryInterface $settings
 	 * @param FormFactory $form_factory
-	 * @param Messenger $messenger
+	 * @param MessengerUser $messenger
 	 */
-	private function __construct( RegistryRepositoryInterface $settings, FormFactory $form_factory, Messenger $messenger ) {
+	private function __construct( RegistryRepositoryInterface $settings, FormFactory $form_factory, MessengerUser $messenger ) {
 		$this->settings = $settings;
 		$this->formFactory = $form_factory;
 		$this->messenger = $messenger;
