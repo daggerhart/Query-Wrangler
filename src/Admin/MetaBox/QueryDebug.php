@@ -50,7 +50,7 @@ class QueryDebug extends MetaBoxBase {
 		try {
 			$is_new = empty( $post->post_title );
 			$this->query = new QueryPostEntity( $post );
-			dump($this->query);
+			//dump($this->query);
 			$queryProcessor = $this->container->get('query.processor');
 			echo $queryProcessor->execute( $this->query );
 			$this->d('end of debug metabox');

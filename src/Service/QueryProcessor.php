@@ -10,8 +10,6 @@ use QueryWrangler\Handler\Field\FieldTypeManager;
 use QueryWrangler\Handler\Filter\FilterTypeManager;
 use QueryWrangler\Handler\HandlerManager;
 use QueryWrangler\Handler\Override\OverrideContextInterface;
-use QueryWrangler\Handler\Override\OverrideInterface;
-use QueryWrangler\Handler\Override\OverrideTypeManager;
 use QueryWrangler\Handler\PagerStyle\PagerStyleTypeManager;
 use QueryWrangler\Handler\Paging\PagingTypeManager;
 use QueryWrangler\Handler\RowStyle\RowStyleTypeManager;
@@ -244,7 +242,7 @@ class QueryProcessor implements ContainerInjectionInterface {
 			'rendered' => $render_context->all(),
 		];
 		unset($dump['rendered']['content'], $dump['rendered']['wrapper']);
-		dump( $dump );
+		//dump( $dump );
 
 		return $query_post_entity->getRendered( 'wrapper' );
 	}
